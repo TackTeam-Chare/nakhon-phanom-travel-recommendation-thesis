@@ -7,7 +7,6 @@ import {
 } from "@/services/user/api"
 import Image from "next/image"
 import Link from "next/link"
-import { showInfoAlert } from "@/lib/sweetalert"
 
 const RealTimeSeasonalAttractions = () => {
   const [attractions, setAttractions] = useState([])

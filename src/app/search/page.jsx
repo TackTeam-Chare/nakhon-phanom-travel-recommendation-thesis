@@ -1,10 +1,10 @@
-"use client"
-import React, { useState, useEffect } from "react"
-import dynamic from "next/dynamic"
-import Slider from "react-slick"
-import "slick-carousel/slick/slick.css"
-import "slick-carousel/slick/slick-theme.css"
-import Tooltip from "react-tooltip"
+"use client";
+import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import Tooltip from "react-tooltip";
 import {
   FaMapMarkerAlt,
   FaSearch,
@@ -21,170 +21,177 @@ import {
   FaCloudRain,
   FaSnowflake,
   FaGlobe
-} from "react-icons/fa"
-import { FallingLines } from "react-loader-spinner"
-import Link from "next/link"
-import "react-toastify/dist/ReactToastify.css"
+} from "react-icons/fa";
+import { FallingLines } from "react-loader-spinner";
+import Link from "next/link";
+import "react-toastify/dist/ReactToastify.css";
 import {
   fetchPlacesNearbyByCoordinates,
   searchTouristEntitiesUnified,
   fetchAllFilters
-} from "@/services/user/api"
-import Image from "next/image"
-import { useJsApiLoader } from "@react-google-maps/api"
+} from "@/services/user/api";
+import Image from "next/image";
+import { useJsApiLoader } from "@react-google-maps/api";
 
 const MapComponent = dynamic(() => import("@/components/Map/MapSearch"), {
   ssr: false
-})
+});
 
-const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 const GeocodingSearchPage = () => {
-  const [userLocation, setUserLocation] = useState(null)
-  const [nearbyPlaces, setNearbyPlaces] = useState([])
-  const [searchResults, setSearchResults] = useState([])
-  const [selectedPlace, setSelectedPlace] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [userLocation, setUserLocation] = useState(null);
+  const [nearbyPlaces, setNearbyPlaces] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
+  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
     seasons: [],
     districts: [],
     categories: []
-  })
-  const [searchParams, setSearchParams] = useState({})
-  const [selectedCategory, setSelectedCategory] = useState(null)
-  const [selectedSeason, setSelectedSeason] = useState(null)
-  const [selectedDistrict, setSelectedDistrict] = useState(null)
-  const [selectedDay, setSelectedDay] = useState(null)
-  const [isTimeFilterVisible, setIsTimeFilterVisible] = useState(false) // State to show opening hours input
-  const [mapCenter, setMapCenter] = useState({ lat: 0, lng: 0 })
-  const [isClient, setIsClient] = useState(false)
+  });
+  const [searchParams, setSearchParams] = useState({});
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedSeason, setSelectedSeason] = useState(null);
+  const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [isTimeFilterVisible, setIsTimeFilterVisible] = useState(false); // State to show opening hours input
+  const [mapCenter, setMapCenter] = useState({ lat: 0, lng: 0 });
+  const [isClient, setIsClient] = useState(false);
+  const [isSeasonEnabled, setIsSeasonEnabled] = useState(true); // State to enable/disable season toggle
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY
-  })
+  });
 
   useEffect(() => {
-    setIsClient(true)
+    setIsClient(true);
     const loadFilters = async () => {
       try {
-        const data = await fetchAllFilters()
-        setFilters(data)
+        const data = await fetchAllFilters();
+        setFilters(data);
       } catch (error) {
-        console.error("Error fetching filters:", error)
+        console.error("Error fetching filters:", error);
       }
-    }
+    };
 
-    loadFilters()
-  }, [])
+    loadFilters();
+  }, []);
 
   useEffect(() => {
-    if (!isClient) return
+    if (!isClient) return;
 
     const updateLocation = () => {
-      setLoading(true)
+      setLoading(true);
       navigator.geolocation.getCurrentPosition(
         position => {
-          const { latitude, longitude } = position.coords
-          setUserLocation({ lat: latitude, lng: longitude })
-          fetchNearbyPlaces(latitude, longitude)
-          setLoading(false)
+          const { latitude, longitude } = position.coords;
+          setUserLocation({ lat: latitude, lng: longitude });
+          fetchNearbyPlaces(latitude, longitude);
+          setLoading(false);
         },
         error => {
-          console.error("Error getting user's location:", error)
-          setLoading(false)
+          console.error("Error getting user's location:", error);
+          setLoading(false);
         }
-      )
-    }
+      );
+    };
 
-    updateLocation()
-  }, [isClient])
+    updateLocation();
+  }, [isClient]);
 
   const fetchNearbyPlaces = async (lat, lng) => {
     try {
-      setLoading(true)
-      const data = await fetchPlacesNearbyByCoordinates(lat, lng, 5000)
-      setNearbyPlaces(data)
+      setLoading(true);
+      const data = await fetchPlacesNearbyByCoordinates(lat, lng, 5000);
+      setNearbyPlaces(data);
     } catch (error) {
-      console.error("Error fetching nearby places:", error)
-      setNearbyPlaces([])
+      console.error("Error fetching nearby places:", error);
+      setNearbyPlaces([]);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const searchPlaces = async params => {
     try {
-      setLoading(true)
-      const data = await searchTouristEntitiesUnified(params)
-      setSearchResults(data)
+      setLoading(true);
+      const data = await searchTouristEntitiesUnified(params);
+      setSearchResults(data);
 
       if (data.length > 0) {
-        const firstResult = data[0]
+        const firstResult = data[0];
         setMapCenter({
           lat: Number(firstResult.latitude),
           lng: Number(firstResult.longitude)
-        })
+        });
       }
     } catch (error) {
-      console.error("Error searching places:", error)
-      setSearchResults([])
+      console.error("Error searching places:", error);
+      setSearchResults([]);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleSearchByField = (field, value) => {
     setSearchParams(prevParams => ({
       ...prevParams,
       [field]: value // เพิ่มค่าที่เลือกใหม่
-    }))
-    searchPlaces({ ...searchParams, [field]: value })
+    }));
+    searchPlaces({ ...searchParams, [field]: value });
 
     // จัดการกับชื่อฟิลเตอร์ที่เลือกแสดงผล
     if (field === "category") {
-      const categoryName =
-        filters.categories.find(cat => cat.id === value)?.name || null
-      setSelectedCategory(categoryName)
+      const selectedCategory = filters.categories.find(cat => cat.id === value);
+      setSelectedCategory(selectedCategory?.name || null);
+
+      // Disable or enable season toggle based on category selection
+      setIsSeasonEnabled(value === 1); // Only enable for "สถานที่ท่องเที่ยว" (ID 1)
     }
+
     if (field === "season") {
       const seasonName =
-        filters.seasons.find(season => season.id === value)?.name || null
-      setSelectedSeason(seasonName)
+        filters.seasons.find(season => season.id === value)?.name || null;
+      setSelectedSeason(seasonName);
     }
+
     if (field === "district") {
       const districtName =
-        filters.districts.find(district => district.id === value)?.name || null
-      setSelectedDistrict(districtName)
+        filters.districts.find(district => district.id === value)?.name || null;
+      setSelectedDistrict(districtName);
     }
+
     if (field === "day_of_week") {
-      setSelectedDay(value)
+      setSelectedDay(value);
     }
-  }
+  };
 
   const handleCurrentLocationClick = () => {
     if (userLocation) {
-      fetchNearbyPlaces(userLocation.lat, userLocation.lng)
-      setMapCenter(userLocation)
+      fetchNearbyPlaces(userLocation.lat, userLocation.lng);
+      setMapCenter(userLocation);
     }
-  }
+  };
 
   const clearSearch = () => {
-    setSearchParams({})
-    setSearchResults([])
-    setNearbyPlaces([])
-    setSelectedCategory(null)
-    setSelectedSeason(null)
-    setSelectedDistrict(null)
-    setSelectedDay(null)
-    setIsTimeFilterVisible(false)
+    setSearchParams({});
+    setSearchResults([]);
+    setNearbyPlaces([]);
+    setSelectedCategory(null);
+    setSelectedSeason(null);
+    setSelectedDistrict(null);
+    setSelectedDay(null);
+    setIsTimeFilterVisible(false);
     if (userLocation) {
-      setMapCenter(userLocation)
+      setMapCenter(userLocation);
     }
-  }
+  };
 
   const resetTogglesAndSearch = () => {
-    setIsTimeFilterVisible(false)
-  }
+    setIsTimeFilterVisible(false);
+  };
+
   const settings = {
     dots: true,
     infinite: true,
@@ -210,11 +217,11 @@ const GeocodingSearchPage = () => {
         }
       }
     ]
-  }
+  };
 
   const categorizePlaces = categoryId => {
-    return nearbyPlaces.filter(place => place.category_id === categoryId)
-  }
+    return nearbyPlaces.filter(place => place.category_id === categoryId);
+  };
 
   return (
     <div className="container mx-auto p-4 relative">
@@ -260,26 +267,30 @@ const GeocodingSearchPage = () => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 justify-center mb-4">
         <button
           onClick={() => {
-            resetTogglesAndSearch()
-            setSelectedCategory(prev => (prev ? null : "category"))
+            resetTogglesAndSearch();
+            setSelectedCategory(prev => (prev ? null : "category"));
           }}
           className="border-2 border-orange-500 text-orange-500 rounded-full py-1 px-3 flex items-center justify-center"
         >
           <FaLayerGroup className="mr-2" /> ประเภทสถานที่
         </button>
+
+        {/* Disable/Enable Season button based on category */}
         <button
           onClick={() => {
-            resetTogglesAndSearch()
-            setSelectedSeason(prev => (prev ? null : "season"))
+            resetTogglesAndSearch();
+            setSelectedSeason(prev => (prev ? null : "season"));
           }}
-          className="border-2 border-orange-500 text-orange-500 rounded-full py-1 px-3 flex items-center justify-center"
+          className={`border-2 border-orange-500 text-orange-500 rounded-full py-1 px-3 flex items-center justify-center ${!isSeasonEnabled ? "opacity-50 cursor-not-allowed" : ""}`}
+          disabled={!isSeasonEnabled} // Disable if the season is not enabled
         >
           <FaLeaf className="mr-2" /> สถานที่ตามฤดูกาล
         </button>
+
         <button
           onClick={() => {
-            resetTogglesAndSearch()
-            setSelectedDistrict(prev => (prev ? null : "district"))
+            resetTogglesAndSearch();
+            setSelectedDistrict(prev => (prev ? null : "district"));
           }}
           className="border-2 border-orange-500 text-orange-500 rounded-full py-1 px-3 flex items-center justify-center"
         >
@@ -287,8 +298,8 @@ const GeocodingSearchPage = () => {
         </button>
         <button
           onClick={() => {
-            resetTogglesAndSearch()
-            setIsTimeFilterVisible(prev => !prev)
+            resetTogglesAndSearch();
+            setIsTimeFilterVisible(prev => !prev);
           }}
           className="border-2 border-orange-500 text-orange-500 rounded-full py-1 px-3 flex items-center justify-center"
         >
@@ -512,7 +523,7 @@ const GeocodingSearchPage = () => {
 
       {/* Display categorized places using sliders with counts */}
       {filters.categories.map(category => {
-        const categorizedPlaces = categorizePlaces(category.id)
+        const categorizedPlaces = categorizePlaces(category.id);
         return (
           <div key={category.id} className="mb-8">
             <h2 className="text-2xl font-bold text-orange-500 mb-4">
@@ -551,10 +562,10 @@ const GeocodingSearchPage = () => {
               ))}
             </Slider>
           </div>
-        )
+        );
       })}
     </div>
-  )
-}
+  );
+};
 
-export default GeocodingSearchPage
+export default GeocodingSearchPage;

@@ -6,7 +6,7 @@ import { FaChevronRight } from "react-icons/fa"
 import {
   fetchDistricts,
   fetchSouvenirShopsByDistrict
-} from "@/services/user/api"
+} from "../../../services/user/api"
 
 const SouvenirShopsPage = () => {
   const [souvenirShops, setSouvenirShops] = useState([])

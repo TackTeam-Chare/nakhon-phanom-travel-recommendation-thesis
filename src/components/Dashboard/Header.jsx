@@ -129,7 +129,7 @@ export default function Header() {
                       text: "ติดอันดับ"
                     },
                     {
-                      href: "/place",
+                      href: "/places",
                       icon: BuildingOfficeIcon,
                       text: "สถานที่ทั้งหมด"
                     },
@@ -326,7 +326,7 @@ export default function Header() {
                       text: "ติดอันดับ"
                     },
                     {
-                      href: "/place",
+                      href: "/places",
                       icon: BuildingOfficeIcon,
                       text: "สถานที่ทั้งหมด"
                     },

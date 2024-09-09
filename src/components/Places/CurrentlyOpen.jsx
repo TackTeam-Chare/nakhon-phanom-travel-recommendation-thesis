@@ -1,4 +1,5 @@
 "use client"
+
 import { useEffect, useState } from "react"
 import Slider from "react-slick"
 import "slick-carousel/slick/slick.css"
@@ -6,10 +7,31 @@ import "slick-carousel/slick/slick-theme.css"
 import { fetchCurrentlyOpenTouristEntities } from "@/services/user/api"
 import Image from "next/image"
 import Link from "next/link"
-import { showInfoAlert, showErrorAlert } from "@/lib/sweetalert"
+import Swal from "sweetalert2"
+import withReactContent from "sweetalert2-react-content"
+
+const MySwal = withReactContent(Swal)
 
 const CurrentlyOpenPlaces = () => {
   const [places, setPlaces] = useState([])
+
+  const showInfoAlert = (title, text) => {
+    MySwal.fire({
+      title,
+      text,
+      icon: "info",
+      confirmButtonText: "ตกลง"
+    })
+  }
+
+  const showErrorAlert = (title, text) => {
+    MySwal.fire({
+      title,
+      text,
+      icon: "error",
+      confirmButtonText: "ตกลง"
+    })
+  }
 
   useEffect(() => {
     const getCurrentlyOpenPlaces = async () => {

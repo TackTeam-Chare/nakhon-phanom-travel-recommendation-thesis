@@ -52,42 +52,42 @@ export default function Header() {
               <div className="py-2">
                 {[
                   {
-                    href: "/place/currently-open-places",
+                    href: "/places/currently-open-places",
                     icon: ClockIcon,
                     text: "เปิดในขณะนี้"
                   },
                   {
-                    href: "/place/season-real-time",
+                    href: "/places/season-real-time",
                     icon: SunIcon,
                     text: "ฤดูกาลนี้"
                   },
                   {
-                    href: "/place/top-rated-tourist-entities",
+                    href: "/places/top-rated-tourist-entities",
                     icon: StarIcon,
                     text: "ติดอันดับ"
                   },
                   {
-                    href: "/place",
+                    href: "/places",
                     icon: BuildingOfficeIcon,
                     text: "สถานที่ทั้งหมด"
                   },
                   {
-                    href: "/place/tourist-attractions",
+                    href: "/places/tourist-attractions",
                     icon: SunIcon,
                     text: "สถานที่ท่องเที่ยว"
                   },
                   {
-                    href: "/place/accommodations",
+                    href: "/places/accommodations",
                     icon: BuildingStorefrontIcon,
                     text: "ที่พัก"
                   },
                   {
-                    href: "/place/restaurants",
+                    href: "/places/restaurants",
                     icon: GiftIcon,
                     text: "ร้านอาหาร"
                   },
                   {
-                    href: "/place/souvenir-shops",
+                    href: "/places/souvenir-shops",
                     icon: ShoppingBagIcon,
                     text: "ร้านค้าของฝาก"
                   }
@@ -172,42 +172,42 @@ export default function Header() {
               <Disclosure.Panel className="mt-2 space-y-2">
                 {[
                   {
-                    href: "/place/currently-open-places",
+                    href: "/places/currently-open-places",
                     icon: ClockIcon,
                     text: "เปิดในขณะนี้"
                   },
                   {
-                    href: "/place/season-real-time",
+                    href: "/places/season-real-time",
                     icon: SunIcon,
                     text: "ฤดูกาลนี้"
                   },
                   {
-                    href: "/place/top-rated-tourist-entities",
+                    href: "/places/top-rated-tourist-entities",
                     icon: StarIcon,
                     text: "ติดอันดับ"
                   },
                   {
-                    href: "/place",
+                    href: "/places",
                     icon: BuildingOfficeIcon,
                     text: "สถานที่ทั้งหมด"
                   },
                   {
-                    href: "/place/tourist-attractions",
+                    href: "/places/tourist-attractions",
                     icon: SunIcon,
                     text: "สถานที่ท่องเที่ยว"
                   },
                   {
-                    href: "/place/accommodations",
+                    href: "/places/accommodations",
                     icon: BuildingStorefrontIcon,
                     text: "ที่พัก"
                   },
                   {
-                    href: "/place/restaurants",
+                    href: "/places/restaurants",
                     icon: GiftIcon,
                     text: "ร้านอาหาร"
                   },
                   {
-                    href: "/place/souvenir-shops",
+                    href: "/places/souvenir-shops",
                     icon: ShoppingBagIcon,
                     text: "ร้านค้าของฝาก"
                   }

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react"
 import Carousel from "react-multi-carousel"
 import "react-multi-carousel/lib/styles.css"
-import { getTopRatedTouristAttractions } from "../../services/user/api"
+import { getTopRatedTouristAttractions } from "@/services/user/api"
 import Image from "next/image"
 import Link from "next/link"
 import { FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa"

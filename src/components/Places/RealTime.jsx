@@ -41,7 +41,7 @@ const RealTimeSeasonalAttractions = () => {
   }, [])
 
   if (attractions.length === 0) {
-    return null // Hide the entire content if there's no data
+    return null
   }
 
   return (
