@@ -164,11 +164,12 @@ export default function Header() {
               </a>
             ))}
             <Disclosure as="div">
-              <Disclosure.Button className="group flex w-full items-center justify-between rounded-lg py-2 px-4 text-lg hover:bg-orange-600 transition duration-300 ease-in-out transform hover:scale-105">
-                <MapIcon className="h-5 w-5 mr-2" />
-                สถานที่
-                <ChevronDownIcon className="h-5 w-5 group-data-[open]:rotate-180 transition duration-300 ease-in-out" />
-              </Disclosure.Button>
+            <Disclosure.Button className="group flex w-full items-start  justify-start rounded-lg py-2 px-4 text-lg hover:bg-orange-600 transition duration-300 ease-in-out transform hover:scale-105">
+  <MapIcon className="h-5 w-5 mr-2" />
+  สถานที่
+  <ChevronDownIcon className="h-5 w-5 mr-2 group-data-[open]:rotate-180 transition duration-300 ease-in-out" />
+</Disclosure.Button>
+
               <Disclosure.Panel className="mt-2 space-y-2">
                 {[
                   {

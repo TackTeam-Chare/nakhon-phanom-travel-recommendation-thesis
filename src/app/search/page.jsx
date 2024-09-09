@@ -1,10 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import Swal from "sweetalert2";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import Tooltip from "react-tooltip";
 import {
   FaMapMarkerAlt,
   FaSearch,
@@ -38,6 +38,8 @@ const MapComponent = dynamic(() => import("@/components/Map/MapSearch"), {
 });
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+const Tooltip = dynamic(() => import("react-tooltip"), { ssr: false });
+
 
 const GeocodingSearchPage = () => {
   const [userLocation, setUserLocation] = useState(null);
@@ -55,10 +57,10 @@ const GeocodingSearchPage = () => {
   const [selectedSeason, setSelectedSeason] = useState(null);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [selectedDay, setSelectedDay] = useState(null);
-  const [isTimeFilterVisible, setIsTimeFilterVisible] = useState(false); // State to show opening hours input
+  const [isTimeFilterVisible, setIsTimeFilterVisible] = useState(false); 
   const [mapCenter, setMapCenter] = useState({ lat: 0, lng: 0 });
   const [isClient, setIsClient] = useState(false);
-  const [isSeasonEnabled, setIsSeasonEnabled] = useState(true); // State to enable/disable season toggle
+  const [isSeasonEnabled, setIsSeasonEnabled] = useState(true);
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY
@@ -84,14 +86,22 @@ const GeocodingSearchPage = () => {
     const updateLocation = () => {
       setLoading(true);
       navigator.geolocation.getCurrentPosition(
-        position => {
+        (position) => {
           const { latitude, longitude } = position.coords;
           setUserLocation({ lat: latitude, lng: longitude });
           fetchNearbyPlaces(latitude, longitude);
           setLoading(false);
         },
-        error => {
+        (error) => {
           console.error("Error getting user's location:", error);
+
+          Swal.fire({
+            title: "ข้อผิดพลาด!",
+            text: "ไม่สามารถดึงข้อมูลตำแหน่งของคุณได้ กรุณาเปิดใช้งานบริการตำแหน่ง",
+            icon: "error",
+            confirmButtonText: "ตกลง"
+          });
+
           setLoading(false);
         }
       );
@@ -113,7 +123,7 @@ const GeocodingSearchPage = () => {
     }
   };
 
-  const searchPlaces = async params => {
+  const searchPlaces = async (params) => {
     try {
       setLoading(true);
       const data = await searchTouristEntitiesUnified(params);
@@ -135,30 +145,30 @@ const GeocodingSearchPage = () => {
   };
 
   const handleSearchByField = (field, value) => {
-    setSearchParams(prevParams => ({
+    setSearchParams((prevParams) => ({
       ...prevParams,
-      [field]: value // เพิ่มค่าที่เลือกใหม่
+      [field]: value 
     }));
     searchPlaces({ ...searchParams, [field]: value });
 
-    // จัดการกับชื่อฟิลเตอร์ที่เลือกแสดงผล
     if (field === "category") {
-      const selectedCategory = filters.categories.find(cat => cat.id === value);
+      const selectedCategory = filters.categories.find(
+        (cat) => cat.id === value
+      );
       setSelectedCategory(selectedCategory?.name || null);
-
-      // Disable or enable season toggle based on category selection
-      setIsSeasonEnabled(value === 1); // Only enable for "สถานที่ท่องเที่ยว" (ID 1)
+      setIsSeasonEnabled(value === 1); 
     }
 
     if (field === "season") {
       const seasonName =
-        filters.seasons.find(season => season.id === value)?.name || null;
+        filters.seasons.find((season) => season.id === value)?.name || null;
       setSelectedSeason(seasonName);
     }
 
     if (field === "district") {
       const districtName =
-        filters.districts.find(district => district.id === value)?.name || null;
+        filters.districts.find((district) => district.id === value)?.name ||
+        null;
       setSelectedDistrict(districtName);
     }
 
@@ -175,17 +185,29 @@ const GeocodingSearchPage = () => {
   };
 
   const clearSearch = () => {
-    setSearchParams({});
-    setSearchResults([]);
-    setNearbyPlaces([]);
-    setSelectedCategory(null);
-    setSelectedSeason(null);
-    setSelectedDistrict(null);
-    setSelectedDay(null);
-    setIsTimeFilterVisible(false);
-    if (userLocation) {
-      setMapCenter(userLocation);
-    }
+    Swal.fire({
+      title: "ยืนยันการล้างการค้นหา?",
+      text: "คุณต้องการล้างผลการค้นหาทั้งหมดใช่หรือไม่?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "ใช่, ล้างการค้นหา!",
+      cancelButtonText: "ยกเลิก"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setSearchParams({});
+        setSearchResults([]);
+        setNearbyPlaces([]);
+        setSelectedCategory(null);
+        setSelectedSeason(null);
+        setSelectedDistrict(null);
+        setSelectedDay(null);
+        setIsTimeFilterVisible(false);
+        if (userLocation) {
+          setMapCenter(userLocation);
+        }
+        Swal.fire("ล้างข้อมูลแล้ว!", "การค้นหาของคุณถูกล้างแล้ว", "success");
+      }
+    });
   };
 
   const resetTogglesAndSearch = () => {
@@ -219,8 +241,8 @@ const GeocodingSearchPage = () => {
     ]
   };
 
-  const categorizePlaces = categoryId => {
-    return nearbyPlaces.filter(place => place.category_id === categoryId);
+  const categorizePlaces = (categoryId) => {
+    return nearbyPlaces.filter((place) => place.category_id === categoryId);
   };
 
   return (
@@ -296,15 +318,16 @@ const GeocodingSearchPage = () => {
         >
           <FaMapMarkerAlt className="mr-2" /> เลือกอำเภอ
         </button>
-        <button
-          onClick={() => {
-            resetTogglesAndSearch();
-            setIsTimeFilterVisible(prev => !prev);
-          }}
-          className="border-2 border-orange-500 text-orange-500 rounded-full py-1 px-3 flex items-center justify-center"
-        >
-          <FaCalendarAlt className="mr-2" /> วันและเวลา
-        </button>
+     {/* Toggle for Day and Time Filter */}
+  <button
+    onClick={() => {
+      resetTogglesAndSearch();
+      setIsTimeFilterVisible((prev) => !prev);
+    }}
+    className="border-2 border-orange-500 text-orange-500 rounded-full py-1 px-3 flex items-center justify-center"
+  >
+    <FaCalendarAlt className="mr-2" /> วันและเวลา
+  </button>
       </div>
 
       {/* Category, Season, District, and Time Filters */}
@@ -531,7 +554,7 @@ const GeocodingSearchPage = () => {
             </h2>
             <Slider {...settings}>
               {categorizedPlaces.map(place => (
-                <Link href={`/place/${place.id}`} key={place.id}>
+                <Link href={`/places/${place.id}`} key={place.id}>
                   <div className="p-4 cursor-pointer">
                     <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full">
                       <Image

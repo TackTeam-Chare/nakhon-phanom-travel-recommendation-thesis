@@ -114,7 +114,7 @@ const RealTimeSeasonalAttractions = () => {
             {paginatedAttractions.map((attraction, index) => (
               <Link
                 key={index}
-                href={`/place/${attraction.id}`}
+                href={`/places/${attraction.id}`}
                 className="p-4 block"
               >
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full">

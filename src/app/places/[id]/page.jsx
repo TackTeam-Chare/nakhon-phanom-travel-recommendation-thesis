@@ -205,7 +205,7 @@ const PlaceNearbyPage = ({ params }) => {
           {nearbyEntities.map(entity => (
             <Link
               key={entity.id}
-              href={`/place/${entity.id}`}
+              href={`/places/${entity.id}`}
               className="block"
             >
               <div

@@ -106,7 +106,7 @@ const AccommodationsPage = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {paginatedAccommodations.map(accommodation => (
-          <Link href={`/place/${accommodation.id}`} key={accommodation.id}>
+          <Link href={`/places/${accommodation.id}`} key={accommodation.id}>
             <div className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full">
               {accommodation.image_url && accommodation.image_url[0] ? (
                 <Image
@@ -133,7 +133,7 @@ const AccommodationsPage = () => {
                   {accommodation.season_name}
                 </p>
                 <Link
-                  href={`/place/${accommodation.id}`}
+                  href={`/places/${accommodation.id}`}
                   className="text-orange-500 mt-2 font-bold self-end flex items-center hover:underline"
                 >
                   อ่านเพิ่มเติม

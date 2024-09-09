@@ -101,7 +101,7 @@ const SouvenirShopsPage = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {paginatedSouvenirShops.map(shop => (
-          <Link href={`/place/${shop.id}`} key={shop.id}>
+          <Link href={`/places/${shop.id}`} key={shop.id}>
             <div className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full">
               {shop.image_url && shop.image_url[0] ? (
                 <Image
