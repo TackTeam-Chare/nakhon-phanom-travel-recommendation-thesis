@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import Layout from "@/components/layout"
+import Layout from "@/components/Layout"
 import { usePathname } from "next/navigation"
 
 export default function LayoutWrapper({ children }) {
