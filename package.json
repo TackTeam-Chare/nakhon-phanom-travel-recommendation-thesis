@@ -1,0 +1,39 @@
+{
+  "name": "web-application-recommends-travel-and-shops-in-nearby-tourist-attractions-in-nakhon-phanom-province",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@headlessui/react": "^2.1.5",
+    "@heroicons/react": "^2.1.5",
+    "axios": "^1.7.7",
+    "chart.js": "^4.4.4",
+    "next": "14.2.8",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-hook-form": "^7.53.0",
+    "react-icons": "^5.3.0",
+    "react-multi-carousel": "^2.8.5",
+    "react-slick": "^0.30.2",
+    "react-table": "^7.8.0",
+    "react-toastify": "^10.0.5",
+    "recharts": "^2.12.7",
+    "slick-carousel": "^1.8.1",
+    "sweetalert2": "^11.14.0",
+    "sweetalert2-react-content": "^5.0.7"
+  },
+  "devDependencies": {
+    "@types/node": "22.5.4",
+    "@types/react": "18.3.5",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "5.5.4"
+  }
+}
