@@ -1,4 +1,5 @@
 import axios from "axios"
+import Cookies from "js-cookie"
 
 // Create Axios instance with base configuration
 const auth = axios.create({
@@ -16,7 +17,7 @@ auth.interceptors.request.use(config => {
 })
 
 // Function to get token from localStorage
-const getToken = () => localStorage.getItem("token")
+const getToken = () => Cookies.get("token")
 
 // Function to create a tourist entity
 export const createTouristEntity = async data => {

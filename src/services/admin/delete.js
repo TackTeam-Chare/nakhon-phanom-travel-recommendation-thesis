@@ -1,4 +1,5 @@
 import axios from "axios"
+import Cookies from "js-cookie"
 
 const auth = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
@@ -14,8 +15,9 @@ auth.interceptors.request.use(config => {
   return config
 })
 
-// Function to get token from localStorage
-const getToken = () => localStorage.getItem("token")
+// ดึง token จาก Cookies
+const getToken = () => Cookies.get("token")
+// console.log(token)
 
 // Delete Place
 export const deletePlace = async id => {

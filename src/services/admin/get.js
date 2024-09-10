@@ -1,11 +1,11 @@
 import axios from "axios"
+import Cookies from "js-cookie"
 
 const auth = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
   timeout: 5000
 })
 
-// Add token to headers of every request
 auth.interceptors.request.use(config => {
   const token = getToken()
   if (token) {
@@ -15,8 +15,7 @@ auth.interceptors.request.use(config => {
   return config
 })
 
-// Function to get token from localStorage
-const getToken = () => localStorage.getItem("token")
+const getToken = () => Cookies.get("token")
 
 // Function to fetch all places
 export const getPlaces = async () => {

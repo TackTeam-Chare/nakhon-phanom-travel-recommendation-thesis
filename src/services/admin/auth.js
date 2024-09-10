@@ -19,12 +19,23 @@ auth.interceptors.request.use(config => {
 })
 
 // ดึง token จาก Cookies
-const getToken = () => Cookies.get("token") // ใช้ Cookies.get แทน
+const getToken = () => Cookies.get("token")
+
+// Function to set token in Cookies
+const setToken = (token) => {
+  // Set token with a secure option, and expiration of 7 days
+  Cookies.set("token", token, { expires: 7, secure: true })
+}
+
+// Function to remove token from Cookies (used for logout)
+const removeToken = () => {
+  Cookies.remove("token")
+}
 
 export const login = async data => {
   try {
     const response = await auth.post("/auth/login", data)
-    Cookies.set("token", response.data.token, { expires: 7 }) // เก็บ token ใน cookies และตั้งอายุการใช้งานเป็น 7 วัน
+    setToken(response.data.token) // Store token in Cookies
     return response.data
   } catch (error) {
     console.error("Error logging in:", error)
@@ -34,11 +45,11 @@ export const login = async data => {
 
 export const logout = async () => {
   try {
-    const token = getToken() // ดึง token จาก cookies
+    const token = getToken()
     const response = await auth.post("/auth/logout", null, {
       headers: { Authorization: `Bearer ${token}` }
     })
-    Cookies.remove("token") // ลบ token เมื่อผู้ใช้ออกจากระบบ
+    removeToken() // Remove token from Cookies
     return response.data
   } catch (error) {
     console.error("Error logging out:", error)

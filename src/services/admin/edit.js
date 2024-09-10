@@ -1,4 +1,5 @@
 import axios from "axios"
+import Cookies from "js-cookie"
 
 const auth = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
@@ -14,8 +15,7 @@ auth.interceptors.request.use(config => {
   return config
 })
 
-// Function to get token from localStorage
-const getToken = () => localStorage.getItem("token")
+const getToken = () => Cookies.get("token")
 
 // Function to update a tourist entity
 export const updateTouristEntity = async (id, data) => {

@@ -1,4 +1,5 @@
 import axios from "axios"
+import Cookies from "js-cookie"
 
 const auth = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
@@ -14,7 +15,7 @@ auth.interceptors.request.use(config => {
   return config
 })
 
-const getToken = () => localStorage.getItem("token")
+const getToken = () => Cookies.get("token")
 
 export const fetchCategories = async () => {
   try {
