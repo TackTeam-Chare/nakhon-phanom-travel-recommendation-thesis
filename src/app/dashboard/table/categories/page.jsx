@@ -1,92 +1,87 @@
-"use client"
-import React, { useEffect, useState, useMemo } from "react"
-import { getCategories } from "@/services/admin/get"
-import { deleteCategory } from "@/services/admin/delete"
-import {
-  useTable,
-  useSortBy,
-  usePagination,
-  useGlobalFilter
-} from "react-table"
-import { ToastContainer, toast } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
-import { FaPlus, FaEdit, FaTrash } from "react-icons/fa"
-import CreateCategory from "@/components/Dashboard/Modal/Add/AddCategoryModal"
-import EditCategoryModal from "@/components/Dashboard/Modal/Edit/EditCategoryModal"
+"use client";
+
+import React, { useEffect, useState, useMemo } from "react";
+import { getCategories } from "@/services/admin/get";
+import { deleteCategory } from "@/services/admin/delete";
+import { useTable, useSortBy, usePagination, useGlobalFilter } from "react-table";
+import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import CreateCategory from "@/components/Dashboard/Modal/Add/AddCategoryModal";
+import EditCategoryModal from "@/components/Dashboard/Modal/Edit/EditCategoryModal";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
 
 const CategoriesPage = () => {
-  const [categories, setCategories] = useState([])
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [editCategoryId, setEditCategoryId] = useState(null)
+  const [categories, setCategories] = useState([]);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editCategoryId, setEditCategoryId] = useState(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const result = await getCategories()
-        setCategories(result)
+        const result = await getCategories();
+        setCategories(result);
       } catch (err) {
-        toast.error("เกิดข้อผิดพลาดในการดึงข้อมูลหมวดหมู่")
+        MySwal.fire({
+          icon: "error",
+          title: "เกิดข้อผิดพลาด",
+          text: "เกิดข้อผิดพลาดในการดึงข้อมูลหมวดหมู่",
+        });
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const handleDelete = async (id) => {
+    const result = await MySwal.fire({
+      title: "คุณแน่ใจหรือไม่?",
+      text: "คุณต้องการลบหมวดหมู่นี้ใช่ไหม?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ใช่, ลบเลย",
+      cancelButtonText: "ยกเลิก",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await deleteCategory(id);
+        setCategories((prevCategories) =>
+          prevCategories.filter((category) => category.id !== id)
+        );
+        MySwal.fire({
+          icon: "success",
+          title: "สำเร็จ",
+          text: "ลบหมวดหมู่สำเร็จ!",
+        });
+      } catch (error) {
+        MySwal.fire({
+          icon: "error",
+          title: "เกิดข้อผิดพลาด",
+          text: "เกิดข้อผิดพลาดในการลบหมวดหมู่ กรุณาลองใหม่อีกครั้ง",
+        });
       }
     }
+  };
 
-    fetchCategories()
-  }, [])
-
-  const handleDelete = async id => {
-    toast(
-      ({ closeToast }) => (
-        <div>
-          <p>คุณแน่ใจหรือไม่ว่าต้องการลบหมวดหมู่นี้?</p>
-          <button
-            onClick={async () => {
-              try {
-                await deleteCategory(id)
-                setCategories(prevCategories =>
-                  prevCategories.filter(category => category.id !== id)
-                )
-                toast.success("ลบหมวดหมู่สำเร็จ!")
-                closeToast()
-              } catch (error) {
-                console.error(
-                  `เกิดข้อผิดพลาดในการลบหมวดหมู่ที่มี ID ${id}:`,
-                  error
-                )
-                toast.error(
-                  "เกิดข้อผิดพลาดในการลบหมวดหมู่ กรุณาลองใหม่อีกครั้ง"
-                )
-              }
-            }}
-            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-300 ease-in-out"
-          >
-            ใช่
-          </button>
-          <button
-            onClick={closeToast}
-            className="bg-gray-600 text-white px-4 py-2 rounded-md ml-2 hover:bg-gray-700 transition duration-300 ease-in-out"
-          >
-            ไม่
-          </button>
-        </div>
-      ),
-      { closeButton: false }
-    )
-  }
-
-  const handleEdit = id => {
-    setEditCategoryId(id.toString())
-    setIsEditModalOpen(true)
-  }
+  const handleEdit = (id) => {
+    setEditCategoryId(id.toString());
+    setIsEditModalOpen(true);
+  };
 
   const columns = useMemo(
     () => [
       {
         Header: "รหัส",
-        accessor: "id"
+        accessor: "id",
       },
       {
         Header: "ชื่อหมวดหมู่",
-        accessor: "name"
+        accessor: "name",
       },
       {
         Header: "การจัดการ",
@@ -107,11 +102,11 @@ const CategoriesPage = () => {
               ลบ
             </button>
           </div>
-        )
-      }
+        ),
+      },
     ],
     []
-  )
+  );
 
   const {
     getTableProps,
@@ -125,19 +120,19 @@ const CategoriesPage = () => {
     pageOptions,
     prepareRow,
     state,
-    setGlobalFilter
+    setGlobalFilter,
   } = useTable(
     {
       columns,
       data: categories,
-      initialState: { pageIndex: 0 }
+      initialState: { pageIndex: 0 },
     },
     useGlobalFilter,
     useSortBy,
     usePagination
-  )
+  );
 
-  const { globalFilter, pageIndex } = state
+  const { globalFilter, pageIndex } = state;
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
@@ -155,7 +150,7 @@ const CategoriesPage = () => {
           </button>
           <input
             value={globalFilter || ""}
-            onChange={e => setGlobalFilter(e.target.value)}
+            onChange={(e) => setGlobalFilter(e.target.value)}
             placeholder="ค้นหา..."
             className="p-2 border border-gray-300 rounded-md"
           />
@@ -166,9 +161,9 @@ const CategoriesPage = () => {
             className="min-w-full bg-white border border-gray-200"
           >
             <thead className="bg-gray-100">
-              {headerGroups.map(headerGroup => (
+              {headerGroups.map((headerGroup) => (
                 <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
-                  {headerGroup.headers.map(column => (
+                  {headerGroup.headers.map((column) => (
                     <th
                       {...column.getHeaderProps(
                         column.getSortByToggleProps
@@ -192,15 +187,15 @@ const CategoriesPage = () => {
               ))}
             </thead>
             <tbody {...getTableBodyProps()}>
-              {page.map(row => {
-                prepareRow(row)
+              {page.map((row) => {
+                prepareRow(row);
                 return (
                   <tr
                     {...row.getRowProps()}
                     key={row.id}
                     className="hover:bg-gray-100 transition duration-300 ease-in-out"
                   >
-                    {row.cells.map(cell => (
+                    {row.cells.map((cell) => (
                       <td
                         {...cell.getCellProps()}
                         key={cell.column.id}
@@ -210,7 +205,7 @@ const CategoriesPage = () => {
                       </td>
                     ))}
                   </tr>
-                )
+                );
               })}
             </tbody>
           </table>
@@ -246,10 +241,9 @@ const CategoriesPage = () => {
             onClose={() => setIsEditModalOpen(false)}
           />
         )}
-        <ToastContainer />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CategoriesPage
+export default CategoriesPage;

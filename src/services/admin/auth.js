@@ -1,29 +1,47 @@
 import axios from "axios"
+import Cookies from "js-cookie"
 
 const auth = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
-  timeout: 5000
+  timeout: 5000,
 })
 
+// Interceptor สำหรับเพิ่ม token ใน Header ทุกครั้งที่ทำคำขอ
 auth.interceptors.request.use(config => {
-  const token = localStorage.getItem("token")
+  const token = Cookies.get("token")
   if (token) {
     config.headers = config.headers || {}
-    config.headers.Authorization = `Bearer ${token}`
+    config.headers.Authorization = `Bearer ${token}` // เพิ่ม token ใน Authorization Header
   }
   return config
+}, error => {
+  return Promise.reject(error)
 })
 
-// ฟังก์ชันดึง token จาก localStorage
-const getToken = () => localStorage.getItem("token")
+// ดึง token จาก Cookies
+const getToken = () => Cookies.get("token") // ใช้ Cookies.get แทน
 
 export const login = async data => {
   try {
     const response = await auth.post("/auth/login", data)
-    localStorage.setItem("token", response.data.token)
+    Cookies.set("token", response.data.token, { expires: 7 }) // เก็บ token ใน cookies และตั้งอายุการใช้งานเป็น 7 วัน
     return response.data
   } catch (error) {
     console.error("Error logging in:", error)
+    throw error
+  }
+}
+
+export const logout = async () => {
+  try {
+    const token = getToken() // ดึง token จาก cookies
+    const response = await auth.post("/auth/logout", null, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    Cookies.remove("token") // ลบ token เมื่อผู้ใช้ออกจากระบบ
+    return response.data
+  } catch (error) {
+    console.error("Error logging out:", error)
     throw error
   }
 }
@@ -153,16 +171,3 @@ export const register = async data => {
   }
 }
 
-export const logout = async () => {
-  try {
-    const token = getToken()
-    const response = await auth.post("/auth/logout", null, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    localStorage.removeItem("token")
-    return response.data
-  } catch (error) {
-    console.error("Error logging out:", error)
-    throw error
-  }
-}

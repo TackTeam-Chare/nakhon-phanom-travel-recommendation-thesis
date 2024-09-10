@@ -1,11 +1,13 @@
 "use client"
+
 import React, { useState } from "react"
 import { useRouter } from "next/navigation"
-import Image from "next/image" // Import Image from next/image
+import Image from "next/image"
 import { login } from "../../../services/admin/auth"
-import { FaUser, FaLock } from "react-icons/fa" // Add icons
-import Swal from "sweetalert2" // Import SweetAlert2
+import { FaUser, FaLock } from "react-icons/fa"
+import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
+import Cookies from "js-cookie"
 
 const MySwal = withReactContent(Swal)
 
@@ -19,22 +21,20 @@ const AdminLogin = () => {
     try {
       const response = await login({ username, password })
       console.log("Login successful:", response)
-      localStorage.setItem("token", response.token)
 
-      // Display success alert
+      // เก็บ token ลงใน cookies
+      Cookies.set("token", response.token, { expires: 7 }) // กำหนดอายุ token เป็น 7 วัน
+
       MySwal.fire({
         icon: "success",
         title: "เข้าสู่ระบบสำเร็จ!",
         showConfirmButton: false,
         timer: 1500
+      }).then(() => {
+        router.push("/dashboard") // ไปยังหน้า dashboard
       })
-
-      // Redirect to dashboard
-      router.push("../../dashboard")
     } catch (error) {
       console.error("Login failed:", error)
-
-      // Display error alert
       MySwal.fire({
         icon: "error",
         title: "เข้าสู่ระบบล้มเหลว",

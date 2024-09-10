@@ -25,6 +25,7 @@
     "axios": "^1.7.4",
     "downshift": "^9.0.8",
     "google-map-react": "^2.2.1",
+    "js-cookie": "^3.0.5",
     "next": "^14.2.7",
     "nuqs": "^1.18.0",
     "react": "^18",

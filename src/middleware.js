@@ -1,17 +1,17 @@
 import { NextResponse } from 'next/server'
 
 export function middleware(req) {
-  const token = req.cookies.get('token') || null;
+  const token = req.cookies.get('token'); // ดึงค่า token จาก cookies
 
-  // ตรวจสอบว่าเส้นทางเป็น /dashboard และไม่มี token
+  // ถ้าผู้ใช้ไม่มี token
   if (req.nextUrl.pathname.startsWith('/dashboard') && !token) {
-    return NextResponse.redirect(new URL('/auth/login', req.url)); // รีไดเรกไปที่หน้า login
+    // Redirect ไปที่หน้า login
+    return NextResponse.redirect(new URL('/auth/login', req.url));
   }
-  
-  return NextResponse.next(); // อนุญาตให้เข้าถึงเส้นทางอื่นๆ ได้ตามปกติ
+
+  return NextResponse.next();
 }
 
-// ระบุเส้นทางที่ต้องการให้ middleware ทำงาน
 export const config = {
   matcher: ['/dashboard/:path*'],
-}
+};
