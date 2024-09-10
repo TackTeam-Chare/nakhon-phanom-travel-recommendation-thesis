@@ -1,13 +1,10 @@
 import React, { useState, useEffect, Fragment } from "react"
 import { Dialog, Transition } from "@headlessui/react"
-import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa"
+import { FaUser, FaLock, FaEye, FaEyeSlash, FaKey } from "react-icons/fa"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
-import {
-  getProfile,
-  updateProfile,
-  verifyPassword
-} from "@/services/admin/auth"
+import Cookies from "js-cookie" // ใช้ cookie
+import { getProfile, updateProfile, verifyPassword } from "@/services/admin/auth"
 
 const MySwal = withReactContent(Swal)
 
@@ -16,16 +13,17 @@ export default function ProfileAccount({ isOpen, onClose }) {
   const [name, setName] = useState("")
   const [oldPassword, setOldPassword] = useState("")
   const [newPassword, setNewPassword] = useState("")
-  const [confirmNewPassword, setConfirmNewPassword] = useState("") // ยืนยันรหัสผ่านใหม่
+  const [confirmNewPassword, setConfirmNewPassword] = useState("")
   const [passwordVerified, setPasswordVerified] = useState(false)
-  const [showPassword, setShowPassword] = useState(false) // สลับการแสดงผลรหัสผ่าน
+  const [isPasswordChanging, setIsPasswordChanging] = useState(false) // สถานะการเปลี่ยนรหัสผ่าน
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem("token")
+        const token = Cookies.get("token") // ดึง token จาก cookie
         if (!token) {
           setError("ไม่พบโทเค็น กรุณาเข้าสู่ระบบอีกครั้ง")
           return
@@ -46,7 +44,7 @@ export default function ProfileAccount({ isOpen, onClose }) {
   const handleVerifyPassword = async e => {
     e.preventDefault()
     try {
-      const token = localStorage.getItem("token")
+      const token = Cookies.get("token") // ดึง token จาก cookie
       const response = await verifyPassword(
         { username, password: oldPassword },
         token
@@ -55,7 +53,7 @@ export default function ProfileAccount({ isOpen, onClose }) {
         setPasswordVerified(true)
         MySwal.fire(
           "ยืนยันรหัสผ่านสำเร็จ",
-          "คุณสามารถอัปเดตโปรไฟล์ได้แล้ว",
+          "คุณสามารถอัปเดตโปรไฟล์หรือเปลี่ยนรหัสผ่านได้",
           "success"
         )
       } else {
@@ -88,7 +86,7 @@ export default function ProfileAccount({ isOpen, onClose }) {
     }
 
     try {
-      const token = localStorage.getItem("token")
+      const token = Cookies.get("token") // ดึง token จาก cookie
       await updateProfile({ username, name }, token)
       MySwal.fire("อัปเดตสำเร็จ", "ข้อมูลโปรไฟล์ได้รับการอัปเดตแล้ว", "success")
       resetState()
@@ -124,7 +122,7 @@ export default function ProfileAccount({ isOpen, onClose }) {
     }
 
     try {
-      const token = localStorage.getItem("token")
+      const token = Cookies.get("token") // ดึง token จาก cookie
       await updateProfile({ password: newPassword }, token)
       MySwal.fire(
         "เปลี่ยนรหัสผ่านสำเร็จ",
@@ -145,8 +143,9 @@ export default function ProfileAccount({ isOpen, onClose }) {
   const resetState = () => {
     setOldPassword("")
     setNewPassword("")
-    setConfirmNewPassword("") // รีเซ็ตรหัสผ่านยืนยัน
+    setConfirmNewPassword("")
     setPasswordVerified(false)
+    setIsPasswordChanging(false) // Reset สถานะการเปลี่ยนรหัสผ่าน
     setError("")
   }
 
@@ -213,7 +212,20 @@ export default function ProfileAccount({ isOpen, onClose }) {
                   </div>
                 </div>
 
-                {passwordVerified ? (
+                {/* ปุ่มเปลี่ยนรหัสผ่าน */}
+                <div className="mb-4">
+                  <button
+                    type="button"
+                    onClick={() => setIsPasswordChanging(!isPasswordChanging)}
+                    className="w-full px-4 py-2 bg-red-600 text-white rounded-md shadow-md hover:bg-red-700 transition duration-300 transform hover:scale-105 flex items-center justify-center"
+                  >
+                    <FaKey className="mr-2" />
+                    เปลี่ยนรหัสผ่าน
+                  </button>
+                </div>
+
+                {/* ฟอร์มเปลี่ยนรหัสผ่านแสดงเมื่อคลิกปุ่มเปลี่ยนรหัสผ่าน */}
+                {isPasswordChanging && (
                   <>
                     <div className="mb-4">
                       <label className="block mb-2 font-semibold">
@@ -254,7 +266,10 @@ export default function ProfileAccount({ isOpen, onClose }) {
                       </div>
                     </div>
                   </>
-                ) : (
+                )}
+
+                {/* ยืนยันรหัสผ่านเก่าก่อนอัปเดตโปรไฟล์หรือเปลี่ยนรหัสผ่าน */}
+                {!passwordVerified && (
                   <div className="mb-4">
                     <label className="block mb-2 font-semibold">
                       รหัสผ่านปัจจุบัน
@@ -287,21 +302,21 @@ export default function ProfileAccount({ isOpen, onClose }) {
                     ยืนยันรหัสผ่าน
                   </button>
 
-                  {passwordVerified ? (
+                  {passwordVerified && isPasswordChanging ? (
                     <button
                       onClick={handleChangePassword}
                       className="w-full ml-2 px-4 py-2 bg-red-600 text-white rounded-md shadow-md hover:bg-red-700 transition duration-300 transform hover:scale-105"
                     >
                       เปลี่ยนรหัสผ่าน
                     </button>
-                  ) : (
+                  ) : passwordVerified ? (
                     <button
                       onClick={handleUpdateProfile}
                       className="w-full ml-2 px-4 py-2 bg-green-600 text-white rounded-md shadow-md hover:bg-green-700 transition duration-300 transform hover:scale-105"
                     >
                       อัปเดตโปรไฟล์
                     </button>
-                  )}
+                  ) : null}
                 </div>
               </form>
             </Dialog.Panel>
