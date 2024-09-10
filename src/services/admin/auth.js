@@ -14,7 +14,7 @@ auth.interceptors.request.use(config => {
   return config
 })
 
-// Function to get token from localStorage
+// ฟังก์ชันดึง token จาก localStorage
 const getToken = () => localStorage.getItem("token")
 
 export const login = async data => {

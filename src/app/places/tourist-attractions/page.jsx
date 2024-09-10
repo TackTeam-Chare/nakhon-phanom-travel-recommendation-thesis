@@ -106,7 +106,7 @@ const TouristAttractionsPage = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {paginatedAttractions.map(attraction => (
-          <Link href={`/places/${attraction.id}`} key={attraction.id}>
+          <Link href={`/place/${attraction.id}`} key={attraction.id}>
             <div className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full">
               {attraction.image_url && attraction.image_url[0] ? (
                 <Image

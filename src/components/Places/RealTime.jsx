@@ -90,7 +90,7 @@ const RealTimeSeasonalAttractions = () => {
         </Carousel>
         <div className="flex justify-end mt-4">
           <Link
-            href="/place/season-real-time"
+            href="/places/season-real-time"
             className="bg-orange-500 text-white font-bold py-2 px-4 rounded-full shadow-lg hover:bg-orange-600 transition duration-300 ease-in-out transform hover:scale-105"
           >
             ดูทั้งหมด

@@ -126,7 +126,7 @@ const TopRatedPlacesPage = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {places.map(place => (
-            <Link href={`/places/${place.id}`} key={place.id}>
+            <Link href={`/place/${place.id}`} key={place.id}>
               <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full">
                 {place.images && place.images.length > 0 ? (
                   <Image

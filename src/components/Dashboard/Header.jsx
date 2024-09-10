@@ -46,28 +46,31 @@ export default function Header() {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "ใช่, ออกจากระบบ",
-      cancelButtonText: "ยกเลิก"
-    })
+      cancelButtonText: "ยกเลิก",
+    });
 
     if (result.isConfirmed) {
-      setLoading(true)
+      setLoading(true);
       try {
-        const response = await logout()
-        console.log("Logout successful:", response)
-        localStorage.removeItem("token") // Ensure token removal
-        MySwal.fire("ออกจากระบบแล้ว!", "คุณออกจากระบบสำเร็จ", "success")
-        router.push("/auth/login")
+        await logout();
+        // ลบ token, session และ cookies
+        localStorage.removeItem("token");
+        sessionStorage.clear();
+        document.cookie =
+          "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"; // ลบ cookies (token)
+        MySwal.fire("ออกจากระบบแล้ว!", "คุณออกจากระบบสำเร็จ", "success");
+        router.push("/auth/login");
       } catch (error) {
-        console.error("Error logging out:", error)
-        setLoading(false)
+        console.error("Error logging out:", error);
+        setLoading(false);
         MySwal.fire(
           "เกิดข้อผิดพลาด!",
           "ไม่สามารถออกจากระบบได้ กรุณาลองอีกครั้ง",
           "error"
-        )
+        );
       }
     }
-  }
+  };
 
   return (
     <>

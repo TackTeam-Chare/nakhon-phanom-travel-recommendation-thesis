@@ -554,7 +554,7 @@ const GeocodingSearchPage = () => {
             </h2>
             <Slider {...settings}>
               {categorizedPlaces.map(place => (
-                <Link href={`/places/${place.id}`} key={place.id}>
+                <Link href={`/place/${place.id}`} key={place.id}>
                   <div className="p-4 cursor-pointer">
                     <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full">
                       <Image

@@ -101,7 +101,7 @@ const RestaurantsPage = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {paginatedRestaurants.map(restaurant => (
-          <Link href={`/places/${restaurant.id}`} key={restaurant.id}>
+          <Link href={`/place/${restaurant.id}`} key={restaurant.id}>
             <div className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full">
               {restaurant.image_url && restaurant.image_url[0] ? (
                 <Image
@@ -128,7 +128,7 @@ const RestaurantsPage = () => {
                   {restaurant.season_name}
                 </p>
                 <Link
-                  href={`/places/${restaurant.id}`}
+                  href={`/place/${restaurant.id}`}
                   className="text-orange-500 mt-2 font-bold self-end flex items-center hover:underline"
                 >
                   อ่านเพิ่มเติม

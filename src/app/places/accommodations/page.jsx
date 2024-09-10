@@ -133,7 +133,7 @@ const AccommodationsPage = () => {
                   {accommodation.season_name}
                 </p>
                 <Link
-                  href={`/places/${accommodation.id}`}
+                  href={`/place/${accommodation.id}`}
                   className="text-orange-500 mt-2 font-bold self-end flex items-center hover:underline"
                 >
                   อ่านเพิ่มเติม
