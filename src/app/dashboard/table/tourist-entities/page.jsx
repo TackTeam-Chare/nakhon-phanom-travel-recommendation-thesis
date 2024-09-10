@@ -10,10 +10,12 @@ import {
   usePagination,
   useGlobalFilter
 } from "react-table"
-import { ToastContainer, toast } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
+import Swal from "sweetalert2"
+import withReactContent from "sweetalert2-react-content"
 import AddPlacesModal from "@/components/Dashboard/Modal/Add/AddPlacesModal"
 import EditPlaceModal from "@/components/Dashboard/Modal/Edit/EditPlaceModal"
+
+const MySwal = withReactContent(Swal)
 
 const FontAwesomeIcon = dynamic(
   () =>
@@ -49,7 +51,7 @@ const PlaceIndexPage = () => {
           setPlaces(result)
         }
       } catch (err) {
-        toast.error("เกิดข้อผิดพลาดในการดึงข้อมูลสถานที่")
+        MySwal.fire("Error", "เกิดข้อผิดพลาดในการดึงข้อมูลสถานที่", "error")
       }
     }
 
@@ -57,38 +59,29 @@ const PlaceIndexPage = () => {
   }, [selectedCategory])
 
   const handleDelete = useCallback(async id => {
-    toast(
-      ({ closeToast }) => (
-        <div>
-          <p>คุณแน่ใจหรือว่าต้องการลบสถานที่นี้?</p>
-          <button
-            onClick={async () => {
-              try {
-                await deletePlace(id)
-                setPlaces(prevPlaces =>
-                  prevPlaces.filter(place => place.id !== id)
-                )
-                toast.success("ลบสถานที่สำเร็จ!")
-                closeToast()
-              } catch (error) {
-                console.error(`Error deleting place with ID ${id}:`, error)
-                toast.error("เกิดข้อผิดพลาดในการลบสถานที่ กรุณาลองใหม่อีกครั้ง")
-              }
-            }}
-            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-300 ease-in-out"
-          >
-            ใช่
-          </button>
-          <button
-            onClick={closeToast}
-            className="bg-gray-600 text-white px-4 py-2 rounded-md ml-2 hover:bg-gray-700 transition duration-300 ease-in-out"
-          >
-            ไม่
-          </button>
-        </div>
-      ),
-      { closeButton: false }
-    )
+    const result = await MySwal.fire({
+      title: "คุณแน่ใจหรือไม่?",
+      text: "คุณต้องการลบสถานที่นี้ใช่ไหม?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "ใช่, ลบเลย!",
+      cancelButtonText: "ยกเลิก",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6"
+    })
+
+    if (result.isConfirmed) {
+      try {
+        await deletePlace(id)
+        setPlaces(prevPlaces =>
+          prevPlaces.filter(place => place.id !== id)
+        )
+        MySwal.fire("ลบสำเร็จ!", "สถานที่ถูกลบแล้ว.", "success")
+      } catch (error) {
+        console.error(`Error deleting place with ID ${id}:`, error)
+        MySwal.fire("Error", "เกิดข้อผิดพลาดในการลบสถานที่ กรุณาลองใหม่อีกครั้ง", "error")
+      }
+    }
   }, [])
 
   const handleCategoryChange = event => {
@@ -304,7 +297,6 @@ const PlaceIndexPage = () => {
             <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
           </button>
         </div>
-        <ToastContainer />
       </div>
 
       {/* Add Modal */}

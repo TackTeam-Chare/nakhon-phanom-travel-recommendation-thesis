@@ -1,4 +1,5 @@
 "use client"
+
 import React, { useEffect, useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { getDistricts } from "@/services/admin/get"
@@ -9,10 +10,12 @@ import {
   usePagination,
   useGlobalFilter
 } from "react-table"
-import { ToastContainer, toast } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
+import Swal from "sweetalert2"
+import withReactContent from "sweetalert2-react-content"
 import AddDistrictModal from "@/components/Dashboard/Modal/Add/AddDistrictModal"
 import EditDistrictModal from "@/components/Dashboard/Modal/Edit/EditDistrictModal"
+
+const MySwal = withReactContent(Swal)
 
 const DistrictsPage = () => {
   const [districts, setDistricts] = useState([])
@@ -27,7 +30,11 @@ const DistrictsPage = () => {
         const result = await getDistricts()
         setDistricts(result)
       } catch (err) {
-        toast.error("เกิดข้อผิดพลาดในการดึงข้อมูลอำเภอ")
+        MySwal.fire({
+          icon: 'error',
+          title: 'เกิดข้อผิดพลาด',
+          text: 'ไม่สามารถดึงข้อมูลอำเภอได้'
+        })
       }
     }
 
@@ -35,41 +42,35 @@ const DistrictsPage = () => {
   }, [])
 
   const handleDelete = async id => {
-    toast(
-      ({ closeToast }) => (
-        <div>
-          <p>คุณแน่ใจหรือไม่ว่าต้องการลบอำเภอนี้?</p>
-          <button
-            onClick={async () => {
-              try {
-                await deleteDistrict(id)
-                setDistricts(prevDistricts =>
-                  prevDistricts.filter(district => district.id !== id)
-                )
-                toast.success("ลบอำเภอสำเร็จ!")
-                closeToast()
-              } catch (error) {
-                console.error(
-                  `เกิดข้อผิดพลาดในการลบอำเภอที่มี ID ${id}:`,
-                  error
-                )
-                toast.error("เกิดข้อผิดพลาดในการลบอำเภอ กรุณาลองอีกครั้ง")
-              }
-            }}
-            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-300 ease-in-out"
-          >
-            ใช่
-          </button>
-          <button
-            onClick={closeToast}
-            className="bg-gray-600 text-white px-4 py-2 rounded-md ml-2 hover:bg-gray-700 transition duration-300 ease-in-out"
-          >
-            ไม่
-          </button>
-        </div>
-      ),
-      { closeButton: false }
-    )
+    MySwal.fire({
+      title: 'คุณแน่ใจหรือไม่?',
+      text: 'คุณต้องการลบอำเภอนี้ใช่ไหม?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'ใช่, ลบเลย!',
+      cancelButtonText: 'ยกเลิก'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await deleteDistrict(id)
+          setDistricts(prevDistricts =>
+            prevDistricts.filter(district => district.id !== id)
+          )
+          MySwal.fire(
+            'ลบสำเร็จ!',
+            'อำเภอได้ถูกลบออกแล้ว.',
+            'success'
+          )
+        } catch (error) {
+          console.error(`เกิดข้อผิดพลาดในการลบอำเภอที่มี ID ${id}:`, error)
+          MySwal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาด',
+            text: 'ไม่สามารถลบอำเภอได้ กรุณาลองอีกครั้ง'
+          })
+        }
+      }
+    })
   }
 
   const openAddModal = () => setIsAddModalOpen(true)
@@ -236,7 +237,6 @@ const DistrictsPage = () => {
             ถัดไป
           </button>
         </div>
-        <ToastContainer />
 
         {/* เพิ่ม Modal อำเภอ */}
         {isAddModalOpen && (

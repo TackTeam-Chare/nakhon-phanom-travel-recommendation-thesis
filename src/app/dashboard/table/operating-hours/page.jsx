@@ -1,4 +1,5 @@
 "use client"
+
 import React, { useEffect, useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { getAllOperatingHours } from "@/services/admin/get"
@@ -9,10 +10,12 @@ import {
   usePagination,
   useGlobalFilter
 } from "react-table"
-import { ToastContainer, toast } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
+import Swal from "sweetalert2"
+import withReactContent from "sweetalert2-react-content"
 import AddOperatingHoursForm from "@/components/Dashboard/Modal/Add/AddOperatingHoursModal"
 import EditOperatingHoursModal from "@/components/Dashboard/Modal/Edit/EditOperatingHoursModal"
+
+const MySwal = withReactContent(Swal)
 
 const OperatingHoursPage = () => {
   const [operatingHours, setOperatingHours] = useState([])
@@ -27,7 +30,11 @@ const OperatingHoursPage = () => {
         const result = await getAllOperatingHours()
         setOperatingHours(result)
       } catch (err) {
-        toast.error("เกิดข้อผิดพลาดในการดึงข้อมูลเวลาทำการ")
+        MySwal.fire({
+          icon: 'error',
+          title: 'เกิดข้อผิดพลาด',
+          text: 'ไม่สามารถดึงข้อมูลเวลาทำการได้'
+        })
       }
     }
 
@@ -35,41 +42,35 @@ const OperatingHoursPage = () => {
   }, [])
 
   const handleDelete = async id => {
-    toast(
-      ({ closeToast }) => (
-        <div>
-          <p>คุณแน่ใจหรือไม่ว่าต้องการลบเวลาทำการนี้?</p>
-          <button
-            onClick={async () => {
-              try {
-                await deleteOperatingHours(id)
-                setOperatingHours(prevHours =>
-                  prevHours.filter(hour => hour.id !== id)
-                )
-                toast.success("ลบเวลาทำการสำเร็จ!")
-                closeToast()
-              } catch (error) {
-                console.error(
-                  `เกิดข้อผิดพลาดในการลบเวลาทำการที่มี ID ${id}:`,
-                  error
-                )
-                toast.error("เกิดข้อผิดพลาดในการลบเวลาทำการ กรุณาลองอีกครั้ง")
-              }
-            }}
-            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-300 ease-in-out"
-          >
-            ใช่
-          </button>
-          <button
-            onClick={closeToast}
-            className="bg-gray-600 text-white px-4 py-2 rounded-md ml-2 hover:bg-gray-700 transition duration-300 ease-in-out"
-          >
-            ไม่
-          </button>
-        </div>
-      ),
-      { closeButton: false }
-    )
+    MySwal.fire({
+      title: 'คุณแน่ใจหรือไม่?',
+      text: 'คุณต้องการลบเวลาทำการนี้ใช่ไหม?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'ใช่, ลบเลย!',
+      cancelButtonText: 'ยกเลิก'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await deleteOperatingHours(id)
+          setOperatingHours(prevHours =>
+            prevHours.filter(hour => hour.id !== id)
+          )
+          MySwal.fire(
+            'ลบสำเร็จ!',
+            'เวลาทำการได้ถูกลบออกแล้ว.',
+            'success'
+          )
+        } catch (error) {
+          console.error(`เกิดข้อผิดพลาดในการลบเวลาทำการที่มี ID ${id}:`, error)
+          MySwal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาด',
+            text: 'ไม่สามารถลบเวลาทำการได้ กรุณาลองอีกครั้ง'
+          })
+        }
+      }
+    })
   }
 
   const openAddModal = () => setIsAddModalOpen(true)
@@ -251,7 +252,6 @@ const OperatingHoursPage = () => {
             ถัดไป
           </button>
         </div>
-        <ToastContainer />
 
         {/* เพิ่ม Modal เวลาทำการ */}
         {isAddModalOpen && (

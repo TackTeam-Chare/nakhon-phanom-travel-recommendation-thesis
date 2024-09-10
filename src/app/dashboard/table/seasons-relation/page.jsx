@@ -1,4 +1,5 @@
 "use client"
+
 import React, { useEffect, useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { getAllSeasonsRelations } from "@/services/admin/get"
@@ -9,10 +10,12 @@ import {
   usePagination,
   useGlobalFilter
 } from "react-table"
-import { ToastContainer, toast } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
+import Swal from "sweetalert2"
+import withReactContent from "sweetalert2-react-content"
 import AddSeasonsRelationModal from "@/components/Dashboard/Modal/Add/AddSeasonsRelationModal"
 import EditSeasonsRelationModal from "@/components/Dashboard/Modal/Edit/EditSeasonsRelationModal"
+
+const MySwal = withReactContent(Swal)
 
 const SeasonsRelationIndexPage = () => {
   const [relations, setRelations] = useState([])
@@ -27,7 +30,11 @@ const SeasonsRelationIndexPage = () => {
         const result = await getAllSeasonsRelations()
         setRelations(result)
       } catch (err) {
-        toast.error("เกิดข้อผิดพลาดในการดึงข้อมูลความสัมพันธ์")
+        MySwal.fire({
+          icon: "error",
+          title: "เกิดข้อผิดพลาด",
+          text: "ไม่สามารถดึงข้อมูลความสัมพันธ์ได้"
+        })
       }
     }
 
@@ -35,43 +42,36 @@ const SeasonsRelationIndexPage = () => {
   }, [])
 
   const handleDelete = async id => {
-    toast(
-      ({ closeToast }) => (
-        <div>
-          <p>คุณแน่ใจหรือไม่ว่าต้องการลบความสัมพันธ์นี้?</p>
-          <button
-            onClick={async () => {
-              try {
-                await deleteSeasonsRelations(id)
-                setRelations(prevRelations =>
-                  prevRelations.filter(relation => relation.id !== id)
-                )
-                toast.success("ลบความสัมพันธ์สำเร็จ!")
-                closeToast()
-              } catch (error) {
-                console.error(
-                  `เกิดข้อผิดพลาดในการลบความสัมพันธ์ที่มี ID ${id}:`,
-                  error
-                )
-                toast.error(
-                  "เกิดข้อผิดพลาดในการลบความสัมพันธ์ กรุณาลองอีกครั้ง"
-                )
-              }
-            }}
-            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-300 ease-in-out"
-          >
-            ใช่
-          </button>
-          <button
-            onClick={closeToast}
-            className="bg-gray-600 text-white px-4 py-2 rounded-md ml-2 hover:bg-gray-700 transition duration-300 ease-in-out"
-          >
-            ไม่
-          </button>
-        </div>
-      ),
-      { closeButton: false }
-    )
+    MySwal.fire({
+      title: "คุณแน่ใจหรือไม่?",
+      text: "คุณต้องการลบความสัมพันธ์นี้ใช่ไหม?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "ใช่, ลบเลย!",
+      cancelButtonText: "ยกเลิก"
+    }).then(async result => {
+      if (result.isConfirmed) {
+        try {
+          await deleteSeasonsRelations(id)
+          setRelations(prevRelations =>
+            prevRelations.filter(relation => relation.id !== id)
+          )
+          MySwal.fire("ลบสำเร็จ!", "ความสัมพันธ์ถูกลบแล้ว", "success")
+        } catch (error) {
+          console.error(
+            `เกิดข้อผิดพลาดในการลบความสัมพันธ์ที่มี ID ${id}:`,
+            error
+          )
+          MySwal.fire({
+            icon: "error",
+            title: "เกิดข้อผิดพลาด",
+            text: "ไม่สามารถลบความสัมพันธ์ได้ กรุณาลองใหม่อีกครั้ง"
+          })
+        }
+      }
+    })
   }
 
   const handleEdit = id => {
@@ -238,7 +238,6 @@ const SeasonsRelationIndexPage = () => {
             ถัดไป
           </button>
         </div>
-        <ToastContainer />
       </div>
 
       {/* Modals */}

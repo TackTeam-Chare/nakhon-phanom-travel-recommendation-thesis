@@ -1,4 +1,5 @@
 "use client"
+
 import React, { useEffect, useState, useMemo } from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -10,16 +11,18 @@ import {
   usePagination,
   useGlobalFilter
 } from "react-table"
-import { ToastContainer, toast } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
+import Swal from "sweetalert2"
+import withReactContent from "sweetalert2-react-content"
 import AddImagesModal from "@/components/Dashboard/Modal/Add/UploadImagesModal"
 import EditImagesModal from "@/components/Dashboard/Modal/Edit/EditImagesModal"
+
+const MySwal = withReactContent(Swal)
 
 const ImagesIndexPage = () => {
   const [images, setImages] = useState([])
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [editImageId, setEditImageId] = useState(null) // Store the ID to edit
+  const [editImageId, setEditImageId] = useState(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -29,7 +32,11 @@ const ImagesIndexPage = () => {
         setImages(imagesData)
       } catch (error) {
         console.error("เกิดข้อผิดพลาดในการดึงข้อมูลรูปภาพ:", error)
-        toast.error("เกิดข้อผิดพลาดในการดึงข้อมูลรูปภาพ")
+        MySwal.fire({
+          icon: "error",
+          title: "เกิดข้อผิดพลาด",
+          text: "ไม่สามารถดึงข้อมูลรูปภาพได้"
+        })
       }
     }
 
@@ -37,41 +44,33 @@ const ImagesIndexPage = () => {
   }, [])
 
   const handleDelete = async id => {
-    toast(
-      ({ closeToast }) => (
-        <div>
-          <p>คุณแน่ใจหรือไม่ว่าต้องการลบรูปภาพนี้?</p>
-          <button
-            onClick={async () => {
-              try {
-                await deletePlaceImage(id)
-                setImages(prevImages =>
-                  prevImages.filter(image => image.id !== id)
-                )
-                toast.success("ลบรูปภาพสำเร็จ!")
-                closeToast()
-              } catch (error) {
-                console.error(
-                  `เกิดข้อผิดพลาดในการลบรูปภาพที่มี ID ${id}:`,
-                  error
-                )
-                toast.error("เกิดข้อผิดพลาดในการลบรูปภาพ กรุณาลองอีกครั้ง")
-              }
-            }}
-            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-300 ease-in-out"
-          >
-            ใช่
-          </button>
-          <button
-            onClick={closeToast}
-            className="bg-gray-600 text-white px-4 py-2 rounded-md ml-2 hover:bg-gray-700 transition duration-300 ease-in-out"
-          >
-            ไม่
-          </button>
-        </div>
-      ),
-      { closeButton: false }
-    )
+    MySwal.fire({
+      title: "คุณแน่ใจหรือไม่?",
+      text: "คุณต้องการลบรูปภาพนี้ใช่ไหม?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "ใช่, ลบเลย!",
+      cancelButtonText: "ยกเลิก"
+    }).then(async result => {
+      if (result.isConfirmed) {
+        try {
+          await deletePlaceImage(id)
+          setImages(prevImages =>
+            prevImages.filter(image => image.id !== id)
+          )
+          MySwal.fire("ลบสำเร็จ!", "รูปภาพถูกลบแล้ว", "success")
+        } catch (error) {
+          console.error(`เกิดข้อผิดพลาดในการลบรูปภาพที่มี ID ${id}:`, error)
+          MySwal.fire({
+            icon: "error",
+            title: "เกิดข้อผิดพลาด",
+            text: "ไม่สามารถลบรูปภาพได้ กรุณาลองใหม่อีกครั้ง"
+          })
+        }
+      }
+    })
   }
 
   const openEditModal = id => {
@@ -245,7 +244,6 @@ const ImagesIndexPage = () => {
             ถัดไป
           </button>
         </div>
-        <ToastContainer />
       </div>
 
       {isAddModalOpen && (

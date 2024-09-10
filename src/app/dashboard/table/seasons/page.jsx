@@ -1,4 +1,5 @@
 "use client"
+
 import React, { useEffect, useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { getSeasons } from "@/services/admin/get"
@@ -9,10 +10,12 @@ import {
   usePagination,
   useGlobalFilter
 } from "react-table"
-import { ToastContainer, toast } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
+import Swal from "sweetalert2"
+import withReactContent from "sweetalert2-react-content"
 import AddSeasonForm from "@/components/Dashboard/Modal/Add/AddSeasonModal"
 import EditSeasonModal from "@/components/Dashboard/Modal/Edit/EditSeasonModal"
+
+const MySwal = withReactContent(Swal)
 
 const SeasonsPage = () => {
   const [seasons, setSeasons] = useState([])
@@ -27,7 +30,11 @@ const SeasonsPage = () => {
         const result = await getSeasons()
         setSeasons(result)
       } catch (err) {
-        toast.error("เกิดข้อผิดพลาดในการดึงข้อมูลฤดูกาล")
+        MySwal.fire({
+          icon: 'error',
+          title: 'เกิดข้อผิดพลาด',
+          text: 'ไม่สามารถดึงข้อมูลฤดูกาลได้'
+        })
       }
     }
 
@@ -35,38 +42,35 @@ const SeasonsPage = () => {
   }, [])
 
   const handleDelete = async id => {
-    toast(
-      ({ closeToast }) => (
-        <div>
-          <p>คุณแน่ใจหรือไม่ว่าต้องการลบฤดูกาลนี้?</p>
-          <button
-            onClick={async () => {
-              try {
-                await deleteSeason(id)
-                setSeasons(prevSeasons =>
-                  prevSeasons.filter(season => season.id !== id)
-                )
-                toast.success("ลบฤดูกาลสำเร็จ!")
-                closeToast()
-              } catch (error) {
-                console.error(`เกิดข้อผิดพลาดในการลบฤดูกาล ID ${id}:`, error)
-                toast.error("เกิดข้อผิดพลาดในการลบฤดูกาล กรุณาลองใหม่อีกครั้ง")
-              }
-            }}
-            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-300 ease-in-out"
-          >
-            ใช่
-          </button>
-          <button
-            onClick={closeToast}
-            className="bg-gray-600 text-white px-4 py-2 rounded-md ml-2 hover:bg-gray-700 transition duration-300 ease-in-out"
-          >
-            ไม่
-          </button>
-        </div>
-      ),
-      { closeButton: false }
-    )
+    MySwal.fire({
+      title: 'คุณแน่ใจหรือไม่?',
+      text: 'คุณต้องการลบฤดูกาลนี้ใช่ไหม?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'ใช่, ลบเลย!',
+      cancelButtonText: 'ยกเลิก'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await deleteSeason(id)
+          setSeasons(prevSeasons =>
+            prevSeasons.filter(season => season.id !== id)
+          )
+          MySwal.fire(
+            'ลบสำเร็จ!',
+            'ฤดูกาลได้ถูกลบออกแล้ว.',
+            'success'
+          )
+        } catch (error) {
+          console.error(`เกิดข้อผิดพลาดในการลบฤดูกาล ID ${id}:`, error)
+          MySwal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาด',
+            text: 'ไม่สามารถลบฤดูกาลได้ กรุณาลองอีกครั้ง'
+          })
+        }
+      }
+    })
   }
 
   const handleEdit = id => {
@@ -233,7 +237,6 @@ const SeasonsPage = () => {
             ถัดไป
           </button>
         </div>
-        <ToastContainer />
       </div>
 
       {/* Modals */}
