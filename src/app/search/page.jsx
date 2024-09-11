@@ -328,7 +328,6 @@ const GeocodingSearchPage = () => {
      {/* Toggle for Day and Time Filter */}
   <button
     onClick={() => {
-      resetTogglesAndSearch();
       setIsTimeFilterVisible((prev) => !prev);
     }}
     className="border-2 border-orange-500 text-orange-500 rounded-full py-1 px-3 flex items-center justify-center"
