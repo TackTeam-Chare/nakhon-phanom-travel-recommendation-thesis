@@ -87,7 +87,7 @@ const MapNearbyPlaces = ({ center, places, mainPlace, isLoaded }) => {
   }
 
   return (
-    <div className="w-full h-[400px] md:h-[500px] lg:h-[600px] xl:h-[700px] rounded-lg shadow-md overflow-hidden">
+<div className="w-full h-[300px] md:h-[400px] lg:h-[500px] xl:h-[600px] rounded-lg shadow-md overflow-hidden">
       <GoogleMap
         mapContainerStyle={{ width: "100%", height: "100%" }}
         center={center}
