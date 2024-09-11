@@ -20,7 +20,9 @@ import {
   FaSun,
   FaCloudRain,
   FaSnowflake,
-  FaGlobe
+  FaGlobe,
+  FaChevronDown,
+  FaChevronUp 
 } from "react-icons/fa";
 import { FallingLines } from "react-loader-spinner";
 import Link from "next/link";
@@ -56,6 +58,7 @@ const GeocodingSearchPage = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSeason, setSelectedSeason] = useState(null);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [isDistrictDropdownOpen, setIsDistrictDropdownOpen] = useState(false); 
   const [selectedDay, setSelectedDay] = useState(null);
   const [isTimeFilterVisible, setIsTimeFilterVisible] = useState(false); 
   const [mapCenter, setMapCenter] = useState({ lat: 0, lng: 0 });
@@ -80,6 +83,7 @@ const GeocodingSearchPage = () => {
     loadFilters();
   }, []);
 
+  
   useEffect(() => {
     if (!isClient) return;
 
@@ -170,6 +174,8 @@ const GeocodingSearchPage = () => {
         filters.districts.find((district) => district.id === value)?.name ||
         null;
       setSelectedDistrict(districtName);
+      // setSelectedDistrict(false); 
+      setIsDistrictDropdownOpen(false);
     }
 
     if (field === "day_of_week") {
@@ -308,16 +314,17 @@ const GeocodingSearchPage = () => {
         >
           <FaLeaf className="mr-2" /> สถานที่ตามฤดูกาล
         </button>
-
         <button
-          onClick={() => {
-            resetTogglesAndSearch();
-            setSelectedDistrict(prev => (prev ? null : "district"));
-          }}
-          className="border-2 border-orange-500 text-orange-500 rounded-full py-1 px-3 flex items-center justify-center"
-        >
-          <FaMapMarkerAlt className="mr-2" /> เลือกอำเภอ
-        </button>
+            onClick={() => {
+              resetTogglesAndSearch();
+              setIsDistrictDropdownOpen(prev => (prev ? null : "district"));
+            }}
+            className="border-2 border-orange-500 text-orange-500 rounded-full py-1 px-3 flex items-center justify-center"
+          >
+            <FaMapMarkerAlt className="mr-2" /> เลือกอำเภอ
+            {isDistrictDropdownOpen ? <FaChevronUp className="ml-2" /> : <FaChevronDown className="ml-2" />}
+          </button>
+
      {/* Toggle for Day and Time Filter */}
   <button
     onClick={() => {
@@ -378,24 +385,23 @@ const GeocodingSearchPage = () => {
           ))}
         </div>
       )}
-
-      {selectedDistrict && (
-        <div className="flex flex-wrap gap-2 justify-center mb-4">
-          {filters.districts.map(district => (
-            <button
-              key={district.id}
-              className={`border-2 border-orange-500 text-orange-500 rounded-full py-1 px-3 flex items-center justify-center ${
-                searchParams.district === district.id
-                  ? "bg-orange-500 text-white"
-                  : ""
-              }`}
-              onClick={() => handleSearchByField("district", district.id)}
-            >
-              {district.name}
-            </button>
-          ))}
-        </div>
-      )}
+{isDistrictDropdownOpen && (
+            <div className="absolute z-10 w-full bg-white border border-orange-500 rounded-md shadow-lg mt-1">
+              {filters.districts.map((district) => (
+                <button
+                  key={district.id}
+                  className={`block w-full text-left py-2 px-4 text-sm ${
+                    searchParams.district === district.id
+                      ? "bg-orange-500 text-white"
+                      : "text-orange-500"
+                  } hover:bg-orange-100`}
+                  onClick={() => handleSearchByField("district", district.id)}
+                >
+                  {district.name}
+                </button>
+              ))}
+            </div>
+          )}
 
       {isTimeFilterVisible && (
         <div className="flex flex-col sm:flex-row justify-center items-center mb-4 space-y-4 sm:space-y-0 sm:space-x-4">
@@ -458,11 +464,11 @@ const GeocodingSearchPage = () => {
             ฤดูกาลที่เลือก: {selectedSeason}
           </p>
         )}
-        {selectedDistrict && (
-          <p className="text-lg font-bold text-orange-500">
-            อำเภอที่เลือก: {selectedDistrict}
-          </p>
-        )}
+     {selectedDistrict && (
+        <p className="text-lg font-bold text-orange-500 text-center mb-4">
+          อำเภอที่เลือก: {selectedDistrict}
+        </p>
+      )}
         {selectedDay && (
           <p className="text-lg font-bold text-orange-500">
             วันที่เลือก: {selectedDay}
