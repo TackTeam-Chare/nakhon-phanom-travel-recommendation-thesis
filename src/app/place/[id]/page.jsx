@@ -306,19 +306,22 @@ const PlaceNearbyPage = ({ params }) => {
           <div key={entity.id} className="p-2 h-full flex">
             <Link href={`/place/${entity.id}`} className="block w-full">
               <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full">
-                {entity.image_path && entity.image_path.length > 0 ? (
-                  <Image
-                    src={entity.image_path[0].image_url}
-                    alt={entity.name}
-                    width={500}
-                    height={300}
-                    className="w-full h-48 object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-                    <span className="text-gray-500">ไม่มีรูปภาพ</span>
-                  </div>
-                )}
+              {entity.images && entity.images.length > 0 ? (
+  <Image
+    src={entity.images[0].image_url} // ใช้ image_url แทน image_path
+    alt={entity.name}
+    width={500}
+    height={300}
+    className="w-full h-48 object-cover"
+  />
+) : (
+  <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+    <span className="text-gray-500">ไม่มีรูปภาพ</span>
+  </div>
+)}
+
+
+
                 <div className="p-4 flex-grow flex flex-col justify-between">
                   <div>
                     <h3 className="text-lg font-semibold mb-2 flex items-center">
