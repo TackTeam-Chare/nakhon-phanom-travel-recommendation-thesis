@@ -11,7 +11,7 @@ auth.interceptors.request.use(config => {
   const token = Cookies.get("token")
   if (token) {
     config.headers = config.headers || {}
-    config.headers.Authorization = `Bearer ${token}` // เพิ่ม token ใน Authorization Header
+    config.headers.Authorization = `Bearer ${token}`
   }
   return config
 }, error => {
@@ -22,9 +22,10 @@ auth.interceptors.request.use(config => {
 const getToken = () => Cookies.get("token")
 
 // Function to set token in Cookies
-const setToken = (token) => {
+const setToken = (token,adminName) => {
   // Set token with a secure option, and expiration of 7 days
-  Cookies.set("token", token, { expires: 7, secure: true })
+  Cookies.set("token", token, { expires: 7, secure: true }); // เก็บ token
+  Cookies.set("adminName", adminName, { expires: 7, secure: true }); 
 }
 
 // Function to remove token from Cookies (used for logout)
@@ -35,7 +36,7 @@ const removeToken = () => {
 export const login = async data => {
   try {
     const response = await auth.post("/auth/login", data)
-    setToken(response.data.token) // Store token in Cookies
+    setToken(response.data.token, response.data.name) // Store token in Cookies
     return response.data
   } catch (error) {
     console.error("Error logging in:", error)

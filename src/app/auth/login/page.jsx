@@ -56,7 +56,7 @@ const AdminLogin = () => {
               height={100}
               className="mb-4"
             />
-            <h1 className="text-3xl font-bold mb-2">ระบบผู้ดูแลระบบ</h1>
+            <h1 className="text-3xl font-bold mb-2">สำหรับผู้ดูแลระบบ</h1>
             <p className="mb-4 text-lg">
               เว็บแอปพลิเคชันแนะนำการท่องเที่ยวและร้านค้าในบริเวณใกล้เคียง
             </p>
@@ -70,7 +70,7 @@ const AdminLogin = () => {
         {/* Login Form */}
         <div className="lg:w-1/2 p-8 bg-gray-50 flex flex-col justify-center">
           <h2 className="text-center text-2xl font-bold text-gray-700 mb-6">
-            เข้าสู่ระบบผู้ดูแล
+            สำหรับผู้ดูแลระบบ
           </h2>
           <form className="space-y-6" onSubmit={handleLogin}>
             <div className="relative z-0 w-full mb-6 group">

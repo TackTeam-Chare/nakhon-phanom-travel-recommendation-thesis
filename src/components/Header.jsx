@@ -109,7 +109,7 @@ export default function Header() {
             className="flex items-center text-lg hover:text-white text-white border border-white-500 bg-transparent hover:bg-orange-600 transition duration-300 ease-in-out transform hover:scale-105 rounded-lg px-3 py-2"
           >
             <UserIcon className="h-5 w-5 mr-2" />
-            เข้าสู่ระบบเเอดมิน
+            เข้าสู่ระบบ
           </a>
         </nav>
 
@@ -229,7 +229,7 @@ export default function Header() {
               className="flex items-center text-lg hover:text-white text-white border border-white-500 bg-transparent hover:bg-orange-600 transition duration-300 ease-in-out transform hover:scale-105 rounded-lg px-3 py-2"
             >
               <UserIcon className="h-5 w-5 mr-2" />
-              เข้าสู่ระบบเเอดมิน
+              เข้าสู่ระบบ
             </a>
           </div>
         </Dialog.Panel>

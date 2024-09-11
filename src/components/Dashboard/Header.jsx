@@ -28,6 +28,7 @@ import withReactContent from "sweetalert2-react-content"
 import { logout } from "@/services/admin/auth"
 import ProfileAccount from "@/components/Dashboard/Modal/Profile/ProfileAccount" // Import the ProfileAccount modal
 import { FaUser } from "react-icons/fa"
+import AdminStatus from "@/components/Dashboard/AdminStatus";
 
 const MySwal = withReactContent(Swal)
 
@@ -75,8 +76,8 @@ export default function Header() {
   return (
     <>
       <header className="bg-orange-500 text-white shadow-md p-4">
-        <div className="container mx-auto flex flex-wrap items-center justify-between px-4 md:px-8">
-          <div className="flex flex-1 items-center space-x-4 md:space-x-10">
+        <div className="container mx-auto flex flex-wrap items-center justify-between px-4 md:px-6 lg:px-8 xl:px-12">
+          <div className="flex flex-1 items-center space-x-3 sm:space-x-4 md:space-x-6 lg:space-x-8">
             {/* Logo */}
             <div
               className="text-2xl md:text-4xl font-bold cursor-pointer whitespace-nowrap"
@@ -85,6 +86,8 @@ export default function Header() {
               ผู้ดูเเลระบบ
             </div>
           </div>
+            {/* Admin Status */}
+        <AdminStatus />
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-4">
@@ -251,8 +254,8 @@ export default function Header() {
             </button>
           </nav>
 
-          {/* Mobile Menu Button */}
-          <div className="flex md:hidden">
+       {/* Mobile Menu Button */}
+       <div className="flex md:hidden">
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
@@ -272,7 +275,7 @@ export default function Header() {
           <div className="fixed inset-0 z-10 bg-black bg-opacity-30" />
           <Dialog.Panel className="fixed inset-y-0 right-0 z-20 w-full max-w-sm overflow-y-auto bg-orange-500 text-white px-6 py-6 sm:ring-1 sm:ring-gray-900/10">
             <div className="flex items-center justify-between">
-              <a href="/" className="text-4xl font-bold">
+              <a href="/" className="text-3xl sm:text-4xl font-bold">
                 ระบบผู้ดูเเล
               </a>
               <button
@@ -283,14 +286,10 @@ export default function Header() {
                 <XMarkIcon className="h-6 w-6" />
               </button>
             </div>
-            <div className="mt-6 space-y-4 ">
+            <div className="mt-6 space-y-4">
               {[
                 { href: "/", icon: HomeIcon, text: "หน้าเเรก" },
-                {
-                  href: "/search",
-                  icon: MagnifyingGlassIcon,
-                  text: "ค้นหาสถานที่"
-                }
+                { href: "/search", icon: MagnifyingGlassIcon, text: "ค้นหาสถานที่" },
               ].map((item, index) => (
                 <a
                   key={index}
@@ -302,7 +301,6 @@ export default function Header() {
                 </a>
               ))}
 
-              {/* Mobile Place Management Dropdown */}
               {/* Mobile Place Management Dropdown */}
               <Disclosure as="div">
                 <Disclosure.Button className="group flex justify-center items-center w-full rounded-lg py-2 px-4 text-lg hover:text-white text-white border border-white-500 bg-transparent hover:bg-orange-600 duration-300 ease-in-out transform hover:scale-105">
@@ -316,43 +314,43 @@ export default function Header() {
                     {
                       href: "/dashboard/table/currently-open-places",
                       icon: ClockIcon,
-                      text: "เปิดในขณะนี้"
+                      text: "เปิดในขณะนี้",
                     },
                     {
                       href: "/dashboard/table/season-real-time",
                       icon: SunIcon,
-                      text: "ฤดูกาลนี้"
+                      text: "ฤดูกาลนี้",
                     },
                     {
                       href: "/dashboard/table/top-rated-tourist-entities",
                       icon: StarIcon,
-                      text: "ติดอันดับ"
+                      text: "ติดอันดับ",
                     },
                     {
                       href: "/places",
                       icon: BuildingOfficeIcon,
-                      text: "สถานที่ทั้งหมด"
+                      text: "สถานที่ทั้งหมด",
                     },
                     {
                       href: "/dashboard/table/tourist-attractions",
                       icon: MapIcon,
-                      text: "สถานที่ท่องเที่ยว"
+                      text: "สถานที่ท่องเที่ยว",
                     },
                     {
                       href: "/dashboard/table/accommodations",
                       icon: BuildingStorefrontIcon,
-                      text: "ที่พัก"
+                      text: "ที่พัก",
                     },
                     {
                       href: "/dashboard/table/restaurants",
                       icon: GiftIcon,
-                      text: "ร้านอาหาร"
+                      text: "ร้านอาหาร",
                     },
                     {
                       href: "/dashboard/table/souvenir-shops",
                       icon: ShoppingBagIcon,
-                      text: "ร้านค้าของฝาก"
-                    }
+                      text: "ร้านค้าของฝาก",
+                    },
                   ].map((item, index) => (
                     <a
                       key={index}
@@ -378,38 +376,38 @@ export default function Header() {
                     {
                       href: "/dashboard/table/categories",
                       icon: ClockIcon,
-                      text: "ตารางหมวดหมู่สถานที่"
+                      text: "ตารางหมวดหมู่สถานที่",
                     },
                     {
                       href: "/dashboard/table/districts",
                       icon: SunIcon,
-                      text: "ตารางอำเภอ"
+                      text: "ตารางอำเภอ",
                     },
                     {
                       href: "/dashboard/table/operating-hours",
                       icon: CubeIcon,
-                      text: "ตารางเวลาทำการสถานที่"
+                      text: "ตารางเวลาทำการสถานที่",
                     },
                     {
                       href: "/dashboard/table/seasons",
                       icon: StarIcon,
-                      text: "ตารางฤดูกาล"
+                      text: "ตารางฤดูกาล",
                     },
                     {
                       href: "/dashboard/table/seasons-relation",
                       icon: MapIcon,
-                      text: "ตารางความสัมพันธ์ฤดูกาล"
+                      text: "ตารางความสัมพันธ์ฤดูกาล",
                     },
                     {
                       href: "/dashboard/table/tourism-entities-images",
                       icon: CalendarIcon,
-                      text: "ตารางรููปภาพของสถานที่"
+                      text: "ตารางรูปภาพของสถานที่",
                     },
                     {
                       href: "/dashboard/table/tourist-entities",
                       icon: BuildingOfficeIcon,
-                      text: "ตารางสถานที่"
-                    }
+                      text: "ตารางสถานที่",
+                    },
                   ].map((item, index) => (
                     <a
                       key={index}
@@ -444,6 +442,7 @@ export default function Header() {
             </div>
           </Dialog.Panel>
         </Dialog>
+
 
         {/* Profile Modal */}
         <ProfileAccount
