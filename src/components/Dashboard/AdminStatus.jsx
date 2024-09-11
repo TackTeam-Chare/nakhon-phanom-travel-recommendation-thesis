@@ -19,19 +19,19 @@ const AdminStatus = () => {
   }, []);
 
   return (
-    <div className="flex items-center space-x-3 p-2 bg-orange-500 rounded-lg md:space-x-4 md:p-4 lg:p-6">
-      <FaUser className="text-white h-6 w-6 lg:h-8 lg:w-8" />
+    <div className="flex items-center space-x-2 p-1 bg-orange-500 rounded-md md:space-x-3 md:p-2 lg:p-3">
+      <FaUser className="text-white h-5 w-5 lg:h-6 lg:w-6" />
       <div>
-        <p className="text-white font-bold text-sm md:text-base lg:text-lg">
+        <p className="text-white font-bold text-xs md:text-sm lg:text-base">
           {adminName}
         </p>
         <div className="flex items-center">
           <FaCircle
-            className={`h-3 w-3 mr-1 ${
+            className={`h-2 w-2 mr-1 ${
               onlineStatus ? "text-green-500" : "text-red-500"
             }`}
           />
-          <span className="text-sm text-gray-300">
+          <span className="text-xs text-gray-300">
             {onlineStatus ? "ออนไลน์" : "ออฟไลน์"}
           </span>
         </div>

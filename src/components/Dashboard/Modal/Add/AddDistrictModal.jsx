@@ -1,9 +1,9 @@
 "use client"
+
 import React, { Fragment } from "react"
 import { useForm } from "react-hook-form"
 import { Dialog, Transition } from "@headlessui/react"
-import { createDistrict } from "@/services/admin/insert"
-import { FaPlus, FaTimes } from "react-icons/fa"
+import { FaPlus, FaTimes, FaExclamationTriangle } from "react-icons/fa"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 
@@ -67,7 +67,7 @@ const AddDistrictModal = ({ isOpen, onClose }) => {
                 <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900"
+                    className="text-xl font-semibold leading-6 text-gray-900 flex items-center"
                   >
                     เพิ่มเขตใหม่
                   </Dialog.Title>
@@ -75,24 +75,27 @@ const AddDistrictModal = ({ isOpen, onClose }) => {
                     onSubmit={handleSubmit(onSubmit)}
                     className="mt-4 space-y-4"
                   >
-                    <div>
+                    <div className="relative">
                       <input
                         {...register("name", { required: "กรุณากรอกชื่อเขต" })}
                         placeholder="ชื่อเขต"
                         className={`w-full border ${
                           errors.name ? "border-red-500" : "border-gray-300"
-                        } rounded-md p-2`}
+                        } rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-500`}
                       />
                       {errors.name && (
-                        <p className="text-red-500 text-xs mt-1">
+                        <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                          <FaExclamationTriangle className="h-4 w-4" />
                           {errors.name.message}
                         </p>
                       )}
                     </div>
-                    <div className="mt-4 flex justify-end gap-2">
+
+                    {/* Action Buttons */}
+                    <div className="mt-4 flex justify-end gap-3">
                       <button
                         type="button"
-                        className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 flex items-center gap-2"
+                        className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-all duration-300 flex items-center gap-2"
                         onClick={onClose}
                       >
                         <FaTimes />
@@ -100,7 +103,7 @@ const AddDistrictModal = ({ isOpen, onClose }) => {
                       </button>
                       <button
                         type="submit"
-                        className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 flex items-center gap-2"
+                        className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-all duration-300 flex items-center gap-2"
                       >
                         <FaPlus />
                         เพิ่ม

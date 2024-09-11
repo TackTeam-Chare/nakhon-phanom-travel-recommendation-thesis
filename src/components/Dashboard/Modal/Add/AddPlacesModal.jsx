@@ -16,7 +16,9 @@ import {
   faSnowflake,
   faGlobe,
   faUpload,
-  faClock
+  faClock,
+  faChevronDown,
+  faChevronUp 
 } from "@fortawesome/free-solid-svg-icons"
 import { faStar as faStarSolid } from "@fortawesome/free-solid-svg-icons"
 import { faStar as faStarRegular } from "@fortawesome/free-regular-svg-icons"
@@ -54,6 +56,12 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
   const [selectedImage, setSelectedImage] = useState(null)
   const [submitting, setSubmitting] = useState(false)
   const [rating, setRating] = useState(0)
+  const [dropdownOpen, setDropdownOpen] = useState({
+    district: false,
+    category: false,
+    season: false,
+    operatingHours: false
+  })
 
   useEffect(() => {
     const fetchData = async () => {
@@ -78,6 +86,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
     fetchData()
   }, [])
 
+  
   const handleFileChange = event => {
     const files = Array.from(event.target.files || [])
     if (files.length > 10) {
@@ -145,6 +154,13 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
   const handleRatingClick = value => {
     setRating(value)
     setValue("rating", value)
+  }
+
+  const toggleDropdown = field => {
+    setDropdownOpen(prevState => ({
+      ...prevState,
+      [field]: !prevState[field]
+    }))
   }
 
   return (
@@ -284,8 +300,8 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         </label>
                       </div>
                     </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          {/* Dropdowns with icons for indicating expansion */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                       <div className="relative z-0 w-full group">
                         <FontAwesomeIcon
                           icon={faMapMarkerAlt}
@@ -295,6 +311,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                           id="district_name"
                           {...register("district_name")}
                           className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+                          onClick={() => toggleDropdown("district")}
                         >
                           <option value="">เลือกอำเภอ</option>
                           {districts.map(district => (
@@ -303,6 +320,12 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                             </option>
                           ))}
                         </select>
+                        <FontAwesomeIcon
+                          icon={
+                            dropdownOpen.district ? faChevronUp : faChevronDown
+                          }
+                          className="absolute right-3 top-3 text-gray-400"
+                        />
                         <label
                           htmlFor="district_name"
                           className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
@@ -319,6 +342,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                           id="category_name"
                           {...register("category_name")}
                           className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+                          onClick={() => toggleDropdown("category")}
                         >
                           <option value="">เลือกหมวดหมู่</option>
                           {categories.map(category => (
@@ -327,6 +351,12 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                             </option>
                           ))}
                         </select>
+                        <FontAwesomeIcon
+                          icon={
+                            dropdownOpen.category ? faChevronUp : faChevronDown
+                          }
+                          className="absolute right-3 top-3 text-gray-400"
+                        />
                         <label
                           htmlFor="category_name"
                           className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
@@ -343,6 +373,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                           id="season_id"
                           {...register("season_id")}
                           className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+                          onClick={() => toggleDropdown("season")}
                         >
                           <option value="">เลือกฤดู</option>
                           {seasons.map(season => (
@@ -351,6 +382,12 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                             </option>
                           ))}
                         </select>
+                        <FontAwesomeIcon
+                          icon={
+                            dropdownOpen.season ? faChevronUp : faChevronDown
+                          }
+                          className="absolute right-3 top-3 text-gray-400"
+                        />
                         <label
                           htmlFor="season_id"
                           className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shwn:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
@@ -361,100 +398,92 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                     </div>
 
                     <div className="relative z-0 w-full mb-6 group">
-                      <label
-                        htmlFor="operating_hours"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        เวลาทำการ
-                      </label>
-                      {fields.map((item, index) => (
-                        <div
-                          key={item.id}
-                          className="grid grid-cols-4 gap-4 mb-6 items-center"
-                        >
-                          {" "}
-                          {/* เพิ่ม mb-6 เพื่อเพิ่ม margin */}
-                          <select
-                            {...register(
-                              `operating_hours.${index}.day_of_week`
-                            )}
-                            className="block py-2 px-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
-                          >
-                            <option value="">วันในสัปดาห์</option>
-                            <option value="Sunday">วันอาทิตย์</option>
-                            <option value="Monday">วันจันทร์</option>
-                            <option value="Tuesday">วันอังคาร</option>
-                            <option value="Wednesday">วันพุธ</option>
-                            <option value="Thursday">วันพฤหัสบดี</option>
-                            <option value="Friday">วันศุกร์</option>
-                            <option value="Saturday">วันเสาร์</option>
-                          </select>
-                          <div className="relative mt-2">
-                            {" "}
-                            {/* เพิ่ม mt-2 เพื่อเพิ่มช่องว่างด้านบน */}
-                            <FontAwesomeIcon
-                              icon={faClock}
-                              className="absolute left-3 top-3 text-gray-400"
-                            />
-                            <input
-                              type="time"
-                              {...register(
-                                `operating_hours.${index}.opening_time`
-                              )}
-                              className="block py-2 pl-10 pr-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
-                            />
-                            <label
-                              htmlFor={`operating_hours.${index}.opening_time`}
-                              className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
-                            >
-                              เวลาเปิด
-                            </label>
-                          </div>
-                          <div className="relative mt-2">
-                            {" "}
-                            {/* เพิ่ม mt-2 เพื่อเพิ่มช่องว่างด้านบน */}
-                            <FontAwesomeIcon
-                              icon={faClock}
-                              className="absolute left-3 top-3 text-gray-400"
-                            />
-                            <input
-                              type="time"
-                              {...register(
-                                `operating_hours.${index}.closing_time`
-                              )}
-                              className="block py-2 pl-10 pr-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
-                            />
-                            <label
-                              htmlFor={`operating_hours.${index}.closing_time`}
-                              className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
-                            >
-                              เวลาปิด
-                            </label>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => remove(index)}
-                            className="text-red-500 hover:text-red-700 focus:outline-none"
-                          >
-                            <FontAwesomeIcon icon={faTrash} />
-                          </button>
-                        </div>
-                      ))}
-                      <button
-                        type="button"
-                        onClick={() =>
-                          append({
-                            day_of_week: "",
-                            opening_time: "",
-                            closing_time: ""
-                          })
-                        }
-                        className="col-span-3 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
-                      >
-                        <FontAwesomeIcon icon={faPlus} className="mr-2" />
-                        เพิ่มเวลาทำการ
-                      </button>
-                    </div>
+  <label
+    htmlFor="operating_hours"
+    className="block text-sm font-medium text-gray-700"
+  >
+    เวลาทำการ
+  </label>
+  {fields.map((item, index) => (
+    <div key={item.id} className="grid grid-cols-4 gap-4 mb-6 items-center">
+      <div className="relative w-full">
+        <select
+          {...register(`operating_hours.${index}.day_of_week`)}
+          onClick={() => toggleDropdown("operatingHours")}
+          className="block py-2 px-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+        >
+          <option value="">วันในสัปดาห์</option>
+          <option value="Sunday">วันอาทิตย์</option>
+          <option value="Monday">วันจันทร์</option>
+          <option value="Tuesday">วันอังคาร</option>
+          <option value="Wednesday">วันพุธ</option>
+          <option value="Thursday">วันพฤหัสบดี</option>
+          <option value="Friday">วันศุกร์</option>
+          <option value="Saturday">วันเสาร์</option>
+        </select>
+        <FontAwesomeIcon
+          icon={dropdownOpen.operatingHours ? faChevronUp : faChevronDown}
+          className="absolute right-3 top-3 text-gray-400 pointer-events-none"
+        />
+      </div>
+      <div className="relative mt-2">
+        <FontAwesomeIcon
+          icon={faClock}
+          className="absolute left-3 top-3 text-gray-400"
+        />
+        <input
+          type="time"
+          {...register(`operating_hours.${index}.opening_time`)}
+          className="block py-2 pl-10 pr-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+        />
+        <label
+          htmlFor={`operating_hours.${index}.opening_time`}
+          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+        >
+          เวลาเปิด
+        </label>
+      </div>
+      <div className="relative mt-2">
+        <FontAwesomeIcon
+          icon={faClock}
+          className="absolute left-3 top-3 text-gray-400"
+        />
+        <input
+          type="time"
+          {...register(`operating_hours.${index}.closing_time`)}
+          className="block py-2 pl-10 pr-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+        />
+        <label
+          htmlFor={`operating_hours.${index}.closing_time`}
+          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+        >
+          เวลาปิด
+        </label>
+      </div>
+      <button
+        type="button"
+        onClick={() => remove(index)}
+        className="text-red-500 hover:text-red-700 focus:outline-none"
+      >
+        <FontAwesomeIcon icon={faTrash} />
+      </button>
+    </div>
+  ))}
+  <button
+    type="button"
+    onClick={() =>
+      append({
+        day_of_week: "",
+        opening_time: "",
+        closing_time: ""
+      })
+    }
+    className="col-span-3 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+  >
+    <FontAwesomeIcon icon={faPlus} className="mr-2" />
+    เพิ่มเวลาทำการ
+  </button>
+</div>
 
                     <div className="relative z-0 w-full mb-6 group">
                       <label

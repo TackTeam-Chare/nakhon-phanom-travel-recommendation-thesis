@@ -85,9 +85,9 @@ export default function Header() {
             >
               ผู้ดูเเลระบบ
             </div>
-          </div>
             {/* Admin Status */}
-        <AdminStatus />
+            <AdminStatus />
+          </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-4">
@@ -252,6 +252,7 @@ export default function Header() {
               <ArrowLeftOnRectangleIcon className="h-5 w-5 mr-1" />
               ออกจากระบบ
             </button>
+            
           </nav>
 
        {/* Mobile Menu Button */}

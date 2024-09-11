@@ -147,7 +147,7 @@ const EditImagesModal = ({ id, isOpen, onClose }) => {
                         as="h3"
                         className="text-lg font-medium leading-6 text-gray-900"
                       >
-                        Edit Images for {placeName}
+                        เเก้ไขรูปภาพ{placeName}
                       </Dialog.Title>
                       <form
                         onSubmit={handleSubmit(onSubmit)}

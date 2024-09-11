@@ -5,6 +5,7 @@ import { Dialog, Transition } from "@headlessui/react"
 import { updateDistrict } from "@/services/admin/edit"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
+import { FaSave, FaTimes } from "react-icons/fa" // Import icons
 
 const MySwal = withReactContent(Swal)
 
@@ -98,15 +99,17 @@ const EditDistrictModal = ({ isOpen, onClose, district }) => {
                     <div className="mt-4 flex justify-end gap-2">
                       <button
                         type="button"
-                        className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400"
+                        className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 flex items-center gap-2"
                         onClick={onClose}
                       >
+                        <FaTimes /> {/* ยกเลิกไอคอน */}
                         ยกเลิก
                       </button>
                       <button
                         type="submit"
-                        className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+                        className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 flex items-center gap-2"
                       >
+                        <FaSave /> {/* อัปเดตไอคอน */}
                         อัปเดต
                       </button>
                     </div>
