@@ -118,19 +118,21 @@ const RealTimeSeasonalAttractions = () => {
                 className="p-4 block"
               >
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full">
-                  {attraction.image_url && attraction.image_url.length > 0 ? (
-                    <Image
-                      src={attraction.image_url[0]}
-                      alt={attraction.name}
-                      width={500}
-                      height={300}
-                      className="rounded-lg mb-4 object-cover w-full h-48"
-                    />
-                  ) : (
-                    <div className="w-full h-48 bg-gray-200 flex items-center justify-center rounded-lg mb-4">
-                      <span className="text-gray-500">ไม่มีรูปภาพ</span>
-                    </div>
-                  )}
+                {attraction.images &&
+                attraction.images.length > 0 &&
+                attraction.images[0].image_url ? (
+                  <Image
+                    src={attraction.images[0].image_url}
+                    alt={attraction.name}
+                    width={500}
+                    height={300}
+                    className="w-full h-48 object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+                    <span className="text-gray-500">ไม่มีรูปภาพ</span>
+                  </div>
+                )}
                   <div className="p-4 flex-grow flex flex-col">
                     <h3 className="text-xl font-semibold">{attraction.name}</h3>
                     {/* Display highlighted season name */}

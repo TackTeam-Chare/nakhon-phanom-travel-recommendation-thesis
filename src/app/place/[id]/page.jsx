@@ -200,7 +200,7 @@ const PlaceNearbyPage = ({ params }) => {
     !isNaN(Number(tourismData.latitude)) && !isNaN(Number(tourismData.longitude));
 
   return (
-    <div className="container mx-auto mt-10 px-4">
+    <div className="container mx-auto mt-12 mb-12 px-4">
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="w-full lg:w-2/3">
           <Slide easing="ease" prevArrow={<CustomLeftArrow />} nextArrow={<CustomRightArrow />}>

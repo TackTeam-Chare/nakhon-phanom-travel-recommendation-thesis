@@ -183,11 +183,15 @@ export const searchBySeason = async seasonId => {
     const response = await api.get(`/seasons/${seasonId}/place`)
     const data = Array.isArray(response.data) ? response.data : []
 
+    // Properly format the images array to match the expected type
     return data.map(place => ({
       ...place,
-      image_url: place.image_url
-        ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/${place.image_url}`
-        : null
+      images: place.images
+        ? place.images.map(image => ({
+            image_path: image.image_path,
+            image_url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/${image.image_path}`
+          }))
+        : [] // Default to an empty array if no images
     }))
   } catch (error) {
     console.error("Error searching by season:", error)
