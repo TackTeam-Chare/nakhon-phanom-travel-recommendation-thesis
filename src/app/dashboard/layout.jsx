@@ -1,14 +1,20 @@
 import React from "react"
-import Header from "@/components/Dashboard/Header" // Import Header ของ Dashboard
+import Header from "@/components/Dashboard/Header"
+import Footer from "@/components/Dashboard/Footer"
 
 export default function DashboardLayout({ children }) {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen">  
       {/* Header สำหรับ Dashboard */}
       <Header />
 
       {/* Main content area */}
-      <main className="flex-grow p-4 bg-gray-100">{children}</main>
+      <main className="flex-grow p-4 bg-gray-100">
+        {children}
+      </main>
+
+      {/* Footer */}
+      <Footer />
     </div>
   )
 }

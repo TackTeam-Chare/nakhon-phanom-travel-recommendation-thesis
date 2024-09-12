@@ -155,15 +155,6 @@ const NearbyPlaces = () => {
                       ระยะห่าง {convertMetersToKilometers(place.distance)} กิโลเมตร
                     </p>
                   </div>
-                  
-                  <div className="flex justify-end mt-auto">
-                    <Link
-                      href={`/place/${place.id}`}
-                      className="text-orange-500 hover:text-orange-600 font-semibold"
-                    >
-                      ดูเพิ่มเติม →
-                    </Link>
-                  </div>
                 </div>
               </div>
             </Link>

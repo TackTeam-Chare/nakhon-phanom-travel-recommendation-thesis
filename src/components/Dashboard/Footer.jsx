@@ -15,7 +15,7 @@ export default function Footer() {
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
         {/* Logo and Description */}
         <div className="mb-8 md:mb-0 text-center md:text-left">
-          <h1 className="text-4xl font-bold mb-4">นครพนม</h1>
+          <h1 className="text-4xl font-bold mb-4">ระบบผู้ดูเเลหลังบ้าน</h1>
           <p className="text-lg">
             เว็บแอปพลิเคชันแนะนำการท่องเที่ยวและร้านค้าในบริเวณใกล้เคียง
             สถานที่ท่องเที่ยวในจังหวัดนครพนม

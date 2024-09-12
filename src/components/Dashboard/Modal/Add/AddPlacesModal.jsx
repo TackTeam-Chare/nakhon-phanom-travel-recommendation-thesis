@@ -55,7 +55,6 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
   const [uploadedFiles, setUploadedFiles] = useState([])
   const [selectedImage, setSelectedImage] = useState(null)
   const [submitting, setSubmitting] = useState(false)
-  const [rating, setRating] = useState(0)
   const [dropdownOpen, setDropdownOpen] = useState({
     district: false,
     category: false,
@@ -149,11 +148,6 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
     } finally {
       setSubmitting(false)
     }
-  }
-
-  const handleRatingClick = value => {
-    setRating(value)
-    setValue("rating", value)
   }
 
   const toggleDropdown = field => {
@@ -598,33 +592,6 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         </Dialog>
                       </Transition>
                     )}
-                    {/* ฟิลด์สำหรับให้ผู้ใช้เลือก Rating */}
-                    <div className="relative z-0 w-full mb-6 group">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        ให้คะแนนสถานที่ (สูงสุด 5 ดาว)
-                      </label>
-                      <div className="flex space-x-1">
-                        {[1, 2, 3, 4, 5].map(value => (
-                          <FontAwesomeIcon
-                            key={value}
-                            icon={value <= rating ? faStarSolid : faStarRegular}
-                            className="text-yellow-500 cursor-pointer"
-                            // กดเพื่อเปลี่ยนค่าคะแนน
-                            onClick={() => handleRatingClick(value)}
-                            size="2x"
-                          />
-                        ))}
-                      </div>
-                      <input
-                        type="hidden"
-                        {...register("rating", { required: "กรุณาให้คะแนน" })}
-                      />
-                      {errors.rating && (
-                        <p className="text-red-500 text-xs mt-1">
-                          {errors.rating.message}
-                        </p>
-                      )}
-                    </div>
 
                     <div className="relative z-0 w-full mb-6 group">
                       <div className="flex items-center mb-6">
