@@ -1,7 +1,6 @@
 import Carousel from "../components/Carousel"
 import NearbyPlaces from "../components/Places/NearbyPlaces"
 import RealTimeSeasonalAttractions from "../components/Places/RealTime"
-import TopRatedCarousel from "../components/Places/TopRatedCarousel"
 
 export const metadata = {
   title: "เว็บไซต์เเนะนำการท่องเที่ยวจังหวัดนครพนม",
@@ -19,9 +18,6 @@ export default function Home() {
       <div>
         {" "}
         <RealTimeSeasonalAttractions />
-      </div>
-      <div>
-        <TopRatedCarousel />
       </div>
       <div>
         <NearbyPlaces />

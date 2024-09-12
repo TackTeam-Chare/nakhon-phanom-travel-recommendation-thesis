@@ -130,11 +130,6 @@ export default function Header() {
                       text: "ฤดูกาลนี้"
                     },
                     {
-                      href: "/dashboard/table/top-rated-tourist-entities",
-                      icon: StarIcon,
-                      text: "ติดอันดับ"
-                    },
-                    {
                       href: "/places",
                       icon: BuildingOfficeIcon,
                       text: "สถานที่ทั้งหมด"
@@ -321,11 +316,6 @@ export default function Header() {
                       href: "/dashboard/table/season-real-time",
                       icon: SunIcon,
                       text: "ฤดูกาลนี้",
-                    },
-                    {
-                      href: "/dashboard/table/top-rated-tourist-entities",
-                      icon: StarIcon,
-                      text: "ติดอันดับ",
                     },
                     {
                       href: "/places",
