@@ -1,13 +1,13 @@
-import React, { useRef, useEffect, useState, useCallback } from "react"
+import React, { useRef, useEffect, useState, useCallback } from "react";
 import {
   GoogleMap,
   Marker,
   InfoWindow,
   DirectionsRenderer,
   Circle
-} from "@react-google-maps/api"
-import NextImage from "next/image"
-import Link from "next/link"
+} from "@react-google-maps/api";
+import NextImage from "next/image";
+import Link from "next/link";
 
 const MapSearch = ({
   isLoaded,
@@ -18,18 +18,17 @@ const MapSearch = ({
   selectedPlace,
   onSelectPlace
 }) => {
-  const mapRef = useRef(null)
-  const [directions, setDirections] = useState(null)
-  const [hoveredMarkerId, setHoveredMarkerId] = useState(null)
+  const mapRef = useRef(null);
+  const [directions, setDirections] = useState(null);
+  const [hoveredMarkerId, setHoveredMarkerId] = useState(null);
 
-  // Memoize the calculateRoutes function using useCallback
   const calculateRoutes = useCallback(
     (origin, searchResults, nearbyPlaces) => {
-      if (!isLoaded || !window.google || !window.google.maps) return
+      if (!isLoaded || !window.google || !window.google.maps) return;
 
-      const directionsService = new window.google.maps.DirectionsService()
+      const directionsService = new window.google.maps.DirectionsService();
 
-      const destinations = [...searchResults, ...nearbyPlaces]
+      const destinations = [...searchResults, ...nearbyPlaces];
 
       directionsService.route(
         {
@@ -41,7 +40,7 @@ const MapSearch = ({
               }
             : origin,
           travelMode: google.maps.TravelMode.DRIVING,
-          waypoints: destinations.slice(1).map(place => ({
+          waypoints: destinations.slice(1).map((place) => ({
             location: {
               lat: Number(place.latitude),
               lng: Number(place.longitude)
@@ -52,15 +51,15 @@ const MapSearch = ({
         },
         (result, status) => {
           if (status === google.maps.DirectionsStatus.OK) {
-            setDirections(result)
+            setDirections(result);
           } else {
-            console.error(`Error fetching directions: ${status}`)
+            console.error(`Error fetching directions: ${status}`);
           }
         }
-      )
+      );
     },
     [isLoaded]
-  )
+  );
 
   useEffect(() => {
     if (
@@ -68,27 +67,12 @@ const MapSearch = ({
       userLocation &&
       (searchResults.length > 0 || nearbyPlaces.length > 0)
     ) {
-      calculateRoutes(userLocation, searchResults, nearbyPlaces)
+      calculateRoutes(userLocation, searchResults, nearbyPlaces);
     }
-  }, [isLoaded, userLocation, searchResults, nearbyPlaces, calculateRoutes])
-
-  const getIconForPlaceType = type => {
-    switch (type) {
-      case "สถานที่ท่องเที่ยว":
-        return "/icons/pin.png"
-      case "ที่พัก":
-        return "/icons/hotel.png"
-      case "ร้านอาหาร":
-        return "/icons/restaurant.png"
-      case "ร้านค้าของฝาก":
-        return "/icons/shop.png"
-      default:
-        return "/icons/pin.png"
-    }
-  }
+  }, [isLoaded, userLocation, searchResults, nearbyPlaces, calculateRoutes]);
 
   if (!isLoaded) {
-    return null
+    return null;
   }
 
   const mapStyles = [
@@ -127,13 +111,13 @@ const MapSearch = ({
       elementType: "geometry.stroke",
       stylers: [{ color: "#f9a825" }, { lightness: 50 }]
     }
-  ]
+  ];
 
   return (
     <GoogleMap
       mapContainerStyle={{ width: "100%", height: "100%" }}
       center={mapCenter}
-      zoom={20}
+      zoom={14}
       options={{
         styles: mapStyles,
         zoomControl: true,
@@ -143,8 +127,8 @@ const MapSearch = ({
         disableDefaultUI: false,
         clickableIcons: false
       }}
-      onLoad={map => {
-        mapRef.current = map
+      onLoad={(map) => {
+        mapRef.current = map;
       }}
     >
       {userLocation && (
@@ -170,13 +154,13 @@ const MapSearch = ({
         </>
       )}
 
-      {searchResults.map(place => {
-        const lat = Number(place.latitude)
-        const lng = Number(place.longitude)
+      {searchResults.map((place) => {
+        const lat = Number(place.latitude);
+        const lng = Number(place.longitude);
 
         if (isNaN(lat) || isNaN(lng)) {
-          console.warn(`Invalid coordinates for place ID: ${place.id}`)
-          return null
+          console.warn(`Invalid coordinates for place ID: ${place.id}`);
+          return null;
         }
 
         return (
@@ -184,7 +168,10 @@ const MapSearch = ({
             key={place.id}
             position={{ lat, lng }}
             icon={{
-              url: getIconForPlaceType(place.category_name),
+              url:
+                place.images && place.images[0]?.image_url
+                  ? place.images[0].image_url
+                  : "/icons/user.png",
               scaledSize: new window.google.maps.Size(40, 40)
             }}
             animation={
@@ -196,16 +183,16 @@ const MapSearch = ({
             onMouseOut={() => setHoveredMarkerId(null)}
             onClick={() => onSelectPlace(place)}
           />
-        )
+        );
       })}
 
-      {nearbyPlaces.map(place => {
-        const lat = Number(place.latitude)
-        const lng = Number(place.longitude)
+      {nearbyPlaces.map((place) => {
+        const lat = Number(place.latitude);
+        const lng = Number(place.longitude);
 
         if (isNaN(lat) || isNaN(lng)) {
-          console.warn(`Invalid coordinates for place ID: ${place.id}`)
-          return null
+          console.warn(`Invalid coordinates for place ID: ${place.id}`);
+          return null;
         }
 
         return (
@@ -213,7 +200,10 @@ const MapSearch = ({
             key={place.id}
             position={{ lat, lng }}
             icon={{
-              url: getIconForPlaceType(place.category_name),
+              url:
+                place.images && place.images[0]?.image_url
+                  ? place.images[0].image_url
+                  : "/icons/user.png",
               scaledSize: new window.google.maps.Size(40, 40)
             }}
             animation={
@@ -225,7 +215,7 @@ const MapSearch = ({
             onMouseOut={() => setHoveredMarkerId(null)}
             onClick={() => onSelectPlace(place)}
           />
-        )
+        );
       })}
 
       {directions && (
@@ -254,12 +244,12 @@ const MapSearch = ({
               src={
                 selectedPlace.images && selectedPlace.images[0]?.image_url
                   ? selectedPlace.images[0].image_url
-                  : "/default-image.jpg"
+                  : "/user.png"
               }
               alt={selectedPlace.name}
               width={150}
               height={100}
-              className="object-cover rounded-l-lg"
+             className="object-cover rounded-full"
             />
             <div className="ml-4 flex-1">
               <h3 className="text-xl font-bold mb-2">{selectedPlace.name}</h3>
@@ -270,11 +260,9 @@ const MapSearch = ({
                 {selectedPlace.district_name}
               </p>
               <p className="text-orange-500 font-bold flex items-center">
-                {" "}
                 {selectedPlace.season_name}
               </p>
               <p className="text-orange-500 font-bold flex items-center">
-                {" "}
                 {selectedPlace.openingHours}
               </p>
               <p className="text-orange-500 font-bold flex items-center">
@@ -301,7 +289,7 @@ const MapSearch = ({
         </InfoWindow>
       )}
     </GoogleMap>
-  )
-}
+  );
+};
 
-export default MapSearch
+export default MapSearch;

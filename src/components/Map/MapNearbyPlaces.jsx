@@ -1,53 +1,37 @@
-"use client"
-import React, { useCallback, useRef, useState, useEffect } from "react"
+import React, { useCallback, useRef, useState, useEffect } from "react";
 import {
   GoogleMap,
   MarkerF,
   InfoWindowF,
   Circle,
   DirectionsRenderer
-} from "@react-google-maps/api"
-import Image from "next/image"
+} from "@react-google-maps/api";
+import Image from "next/image";
 import {
   FaMapMarkerAlt,
   FaInfoCircle,
   FaMapSigns,
   FaExternalLinkAlt
-} from "react-icons/fa"
+} from "react-icons/fa";
 
 const MapNearbyPlaces = ({ center, places, mainPlace, isLoaded }) => {
-  const mapRef = useRef(null)
-  const [selectedEntity, setSelectedEntity] = useState(null)
-  const [hoveredMarkerId, setHoveredMarkerId] = useState(null) // State for hover effect
-  const [directions, setDirections] = useState(null)
+  const mapRef = useRef(null);
+  const [selectedEntity, setSelectedEntity] = useState(null);
+  const [hoveredMarkerId, setHoveredMarkerId] = useState(null);
+  const [directions, setDirections] = useState(null);
 
-  const onMapLoad = useCallback(map => {
-    mapRef.current = map
-  }, [])
-
-  const getIconForPlaceType = type => {
-    switch (type) {
-      case "สถานที่ท่องเที่ยว":
-        return "/icons/pin.png"
-      case "ที่พัก":
-        return "/icons/hotel.png"
-      case "ร้านอาหาร":
-        return "/icons/restaurant.png"
-      case "ร้านค้าของฝาก":
-        return "/icons/shop.png"
-      default:
-        return "/icons/pin.png"
-    }
-  }
+  const onMapLoad = useCallback((map) => {
+    mapRef.current = map;
+  }, []);
 
   const calculateRoutes = useCallback(() => {
     if (!isLoaded || !window.google || !window.google.maps || !mapRef.current)
-      return
+      return;
 
-    const directionsService = new window.google.maps.DirectionsService()
-    const destinations = places
+    const directionsService = new window.google.maps.DirectionsService();
+    const destinations = places;
 
-    if (destinations.length === 0) return
+    if (destinations.length === 0) return;
 
     directionsService.route(
       {
@@ -59,7 +43,7 @@ const MapNearbyPlaces = ({ center, places, mainPlace, isLoaded }) => {
             }
           : center,
         travelMode: google.maps.TravelMode.DRIVING,
-        waypoints: destinations.slice(1).map(place => ({
+        waypoints: destinations.slice(1).map((place) => ({
           location: {
             lat: Number(place.latitude),
             lng: Number(place.longitude)
@@ -70,24 +54,24 @@ const MapNearbyPlaces = ({ center, places, mainPlace, isLoaded }) => {
       },
       (result, status) => {
         if (status === google.maps.DirectionsStatus.OK) {
-          setDirections(result)
+          setDirections(result);
         } else {
-          console.error(`Error fetching directions: ${status}`)
+          console.error(`Error fetching directions: ${status}`);
         }
       }
-    )
-  }, [isLoaded, center, places])
+    );
+  }, [isLoaded, center, places]);
 
   useEffect(() => {
-    calculateRoutes()
-  }, [calculateRoutes])
+    calculateRoutes();
+  }, [calculateRoutes]);
 
   if (!isLoaded) {
-    return <div>Loading Maps...</div>
+    return <div>Loading Maps...</div>;
   }
 
   return (
-<div className="w-full h-[300px] md:h-[400px] lg:h-[500px] xl:h-[600px] rounded-lg shadow-md overflow-hidden">
+    <div className="w-full h-[300px] md:h-[400px] lg:h-[500px] xl:h-[600px] rounded-lg shadow-md overflow-hidden">
       <GoogleMap
         mapContainerStyle={{ width: "100%", height: "100%" }}
         center={center}
@@ -140,14 +124,14 @@ const MapNearbyPlaces = ({ center, places, mainPlace, isLoaded }) => {
           position={center}
           title={mainPlace.name}
           icon={{
-            url: "/icons/pin.png",
+            url: mainPlace.images && mainPlace.images[0] ? mainPlace.images[0].image_url : "/icons/user.png",
             scaledSize: new window.google.maps.Size(50, 50)
           }}
           onClick={() => setSelectedEntity(mainPlace)}
         />
 
         {/* Markers for Nearby Places */}
-        {places.map(entity => (
+        {places.map((entity) => (
           <MarkerF
             key={entity.id}
             position={{
@@ -156,7 +140,7 @@ const MapNearbyPlaces = ({ center, places, mainPlace, isLoaded }) => {
             }}
             title={entity.name}
             icon={{
-              url: getIconForPlaceType(entity.category_name),
+              url: entity.images && entity.images[0] ? entity.images[0].image_url : "/icons/user.png",
               scaledSize: new window.google.maps.Size(40, 40)
             }}
             onMouseOver={() => setHoveredMarkerId(entity.id)}
@@ -274,7 +258,7 @@ const MapNearbyPlaces = ({ center, places, mainPlace, isLoaded }) => {
         />
       </GoogleMap>
     </div>
-  )
-}
+  );
+};
 
-export default MapNearbyPlaces
+export default MapNearbyPlaces;
