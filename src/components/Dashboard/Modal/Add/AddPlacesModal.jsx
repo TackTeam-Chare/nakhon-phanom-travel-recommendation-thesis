@@ -20,8 +20,6 @@ import {
   faChevronDown,
   faChevronUp 
 } from "@fortawesome/free-solid-svg-icons"
-import { faStar as faStarSolid } from "@fortawesome/free-solid-svg-icons"
-import { faStar as faStarRegular } from "@fortawesome/free-regular-svg-icons"
 import { faImage } from "@fortawesome/free-regular-svg-icons"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
@@ -207,12 +205,12 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         {...register("name", {
                           required: "ชื่อสถานที่จำเป็นต้องระบุ"
                         })}
-                        className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+                        className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
                         placeholder=" "
                       />
                       <label
                         htmlFor="name"
-                        className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
                       >
                         ชื่อสถานที่
                       </label>
@@ -234,12 +232,12 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                           required: "จำเป็นต้องระบุ"
                         })}
                         rows={3}
-                        className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+                        className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
                         placeholder=" "
                       />
                       <label
                         htmlFor="description"
-                        className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
                       >
                         คำอธิบายเกี่ยวกับสถานที่
                       </label>
@@ -261,7 +259,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                       />
                       <label
                         htmlFor="location"
-                        className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
                       >
                         ตำแหน่งที่ตั้ง
                       </label>
@@ -275,12 +273,12 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                           {...register("latitude", {
                             required: "จำเป็นต้องระบุละติจูด"
                           })}
-                          className="block py-2.5 px-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+                          className="block py-2.5 px-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
                           placeholder=" "
                         />
                         <label
                           htmlFor="latitude"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-3 -z-10 origin-[0] peer-focus:left-3 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-3 -z-10 origin-[0] peer-focus:left-3 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
                         >
                           ละติจูด
                         </label>
@@ -292,12 +290,12 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                           {...register("longitude", {
                             required: "จำเป็นต้องระบุลองจิจูด"
                           })}
-                          className="block py-2.5 px-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+                          className="block py-2.5 px-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
                           placeholder=" "
                         />
                         <label
                           htmlFor="longitude"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-3 -z-10 origin-[0] peer-focus:left-3 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-3 -z-10 origin-[0] peer-focus:left-3 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
                         >
                           ลองจิจูด
                         </label>
@@ -315,7 +313,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                           {...register("district_name", {
                             required: "จำเป็นต้องระบุอำเภอ"
                           })}
-                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
                           onClick={() => toggleDropdown("district")}
                         >
                           <option value="">เลือกอำเภอ</option>
@@ -333,7 +331,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         />
                         <label
                           htmlFor="district_name"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
                         >
                           อำเภอ
                         </label>
@@ -348,7 +346,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                           {...register("category_name", {
                             required: "จำเป็นต้องระบุประเภทสถานที่"
                           })}
-                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
                           onClick={() => toggleDropdown("category")}
                         >
                           <option value="">เลือกหมวดหมู่</option>
@@ -366,7 +364,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         />
                         <label
                           htmlFor="category_name"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
                         >
                           หมวดหมู่
                         </label>
@@ -379,7 +377,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         <select
                           id="season_id"
                           {...register("season_id")}
-                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
                           onClick={() => toggleDropdown("season")}
                         >
                           <option value="">เลือกฤดู</option>
@@ -397,7 +395,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         />
                         <label
                           htmlFor="season_id"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shwn:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shwn:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
                         >
                           ฤดู
                         </label>
@@ -417,7 +415,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
         <select
           {...register(`operating_hours.${index}.day_of_week`)}
           onClick={() => toggleDropdown("operatingHours")}
-          className="block py-2 px-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+          className="block py-2 px-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
         >
           <option value="">วันในสัปดาห์</option>
           <option value="Sunday">วันอาทิตย์</option>
@@ -443,11 +441,11 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
         <input
           type="time"
           {...register(`operating_hours.${index}.opening_time`)}
-          className="block py-2 pl-10 pr-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+          className="block py-2 pl-10 pr-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
         />
         <label
           htmlFor={`operating_hours.${index}.opening_time`}
-          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
         >
           เวลาเปิด
         </label>
@@ -460,11 +458,11 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
         <input
           type="time"
           {...register(`operating_hours.${index}.closing_time`)}
-          className="block py-2 pl-10 pr-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+          className="block py-2 pl-10 pr-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
         />
         <label
           htmlFor={`operating_hours.${index}.closing_time`}
-          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
         >
           เวลาปิด
         </label>
@@ -487,7 +485,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
         closing_time: ""
       })
     }
-    className="col-span-3 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+    className="col-span-3 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 flex items-center justify-center"
   >
     <FontAwesomeIcon icon={faPlus} className="mr-2" />
     เพิ่มเวลาทำการ
@@ -510,7 +508,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                           <div className="mt-4 flex text-sm leading-6 text-gray-600">
                             <label
                               htmlFor="file-upload"
-                              className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                              className="relative cursor-pointer rounded-md bg-white font-semibold text-orange-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-orange-600 focus-within:ring-offset-2 hover:text-orange-500"
                             >
                               <span>อัปโหลดไฟล์</span>
                               <input
@@ -620,7 +618,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                           {...register("published", {
                             required: "จำเป็นต้องกำหนดสถานะเผยเเพร่"
                           })}
-                          className="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
+                          className="form-checkbox h-4 w-4 text-orange-600 transition duration-150 ease-in-out"
                         />
                         <label
                           htmlFor="published"
@@ -643,7 +641,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                       </button>
                       <button
                         type="submit"
-                        className="flex items-center bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+                        className="flex items-center bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700"
                         disabled={submitting}
                       >
                         <FontAwesomeIcon icon={faPlus} className="mr-2" />

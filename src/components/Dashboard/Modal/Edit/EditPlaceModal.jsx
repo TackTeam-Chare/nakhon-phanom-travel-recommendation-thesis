@@ -37,7 +37,6 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
   const [uploadedImagesModalOpen, setUploadedImagesModalOpen] = useState(false)
   const [selectedExistingImage, setSelectedExistingImage] = useState(null)
   const [selectedUploadedImage, setSelectedUploadedImage] = useState(null)
-  const [rating, setRating] = useState(0)
   const {
     register,
     handleSubmit,
@@ -48,7 +47,6 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
     defaultValues: {
       operating_hours: [],
       published: 0,
-      rating: 0
     }
   })
   const { fields, append, remove } = useFieldArray({
@@ -98,8 +96,6 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
         setValue("season_id", placeData.season_id || "")
         setValue("operating_hours", placeData.operating_hours || [])
         setValue("published", placeData.published === 1 ? 1 : 0)
-        setValue("rating", placeData.rating || 0)
-        setRating(placeData.rating || 0)
         setExistingImages(placeData.images || [])
       } catch (error) {
         console.error("ไม่สามารถดึงข้อมูลได้", error)
@@ -115,11 +111,6 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
       fetchData()
     }
   }, [id, setValue])
-
-  const handleRatingClick = value => {
-    setRating(value)
-    setValue("rating", value)
-  }
 
   const handleFileChange = event => {
     const files = Array.from(event.target.files || [])
@@ -256,12 +247,12 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                         type="text"
                         id="name"
                         {...register("name")}
-                        className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+                        className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
                         placeholder=" "
                       />
                       <label
                         htmlFor="name"
-                        className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
                       >
                         ชื่อ
                       </label>
@@ -275,12 +266,12 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                         id="description"
                         {...register("description")}
                         rows={3}
-                        className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+                        className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
                         placeholder=" "
                       />
                       <label
                         htmlFor="description"
-                        className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
                       >
                         คำอธิบาย
                       </label>
@@ -294,12 +285,12 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                         type="text"
                         id="location"
                         {...register("location")}
-                        className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+                        className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
                         placeholder=" "
                       />
                       <label
                         htmlFor="location"
-                        className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
                       >
                         ตำแหน่ง
                       </label>
@@ -314,12 +305,12 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                           type="text"
                           id="latitude"
                           {...register("latitude")}
-                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
                           placeholder=" "
                         />
                         <label
                           htmlFor="latitude"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
                         >
                           ละติจูด
                         </label>
@@ -333,12 +324,12 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                           type="text"
                           id="longitude"
                           {...register("longitude")}
-                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
                           placeholder=" "
                         />
                         <label
                           htmlFor="longitude"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
                         >
                           ลองจิจูด
                         </label>
@@ -354,7 +345,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                           id="district_name"
                           {...register("district_name")}
                           onClick={() => toggleDropdown("district")}
-                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
                         >
                           <option value="">เลือกอำเภอ</option>
                           {districts.map(district => (
@@ -371,7 +362,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                         />
                         <label
                           htmlFor="district_name"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
                         >
                           อำเภอ
                         </label>
@@ -385,7 +376,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                           id="category_name"
                           {...register("category_name")}
                           onClick={() => toggleDropdown("category")}
-                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
                         >
                           <option value="">เลือกหมวดหมู่</option>
                           {categories.map(category => (
@@ -402,7 +393,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                         />
                         <label
                           htmlFor="category_name"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
                         >
                           หมวดหมู่
                         </label>
@@ -416,7 +407,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                           id="season_id"
                           {...register("season_id")}
                           onClick={() => toggleDropdown("season")}
-                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
+                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
                         >
                           <option value="">เลือกฤดู</option>
                           {seasons.map(season => (
@@ -433,7 +424,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                         />
                         <label
                           htmlFor="season_id"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
                         >
                           ฤดู
                         </label>
@@ -459,7 +450,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
           <select
             {...register(`operating_hours.${index}.day_of_week`)}
             onClick={() => toggleDropdown("operatingHours")}
-            className="block py-2 pl-4 pr-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600"
+            className="block py-2 pl-4 pr-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600"
           >
             <option value="">วันในสัปดาห์</option>
             <option value="Sunday">วันอาทิตย์</option>
@@ -485,11 +476,11 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
           <input
             type="time"
             {...register(`operating_hours.${index}.opening_time`)}
-            className="block py-2 pl-10 pr-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600"
+            className="block py-2 pl-10 pr-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600"
           />
           <label
             htmlFor={`operating_hours.${index}.opening_time`}
-            className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+            className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
           >
             เวลาเปิด
           </label>
@@ -504,11 +495,11 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
           <input
             type="time"
             {...register(`operating_hours.${index}.closing_time`)}
-            className="block py-2 pl-10 pr-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600"
+            className="block py-2 pl-10 pr-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600"
           />
           <label
             htmlFor={`operating_hours.${index}.closing_time`}
-            className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-indigo-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+            className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
           >
             เวลาปิด
           </label>
@@ -533,7 +524,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
           closing_time: ""
         })
       }
-      className="col-span-3 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 flex items-center justify-center"
+      className="col-span-3 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 flex items-center justify-center"
     >
       <FontAwesomeIcon icon={faPlus} className="mr-2" />
       เพิ่มเวลาทำการ
@@ -582,7 +573,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                           <div className="mt-4 flex text-sm leading-6 text-gray-600">
                             <label
                               htmlFor="file-upload"
-                              className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                              className="relative cursor-pointer rounded-md bg-white font-semibold text-orange-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-orange-600 focus-within:ring-offset-2 hover:text-orange-500"
                             >
                               <span>อัปโหลดไฟล์</span>
                               <input
@@ -635,32 +626,11 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                       )}
                     </div>
                     <div className="relative z-0 w-full mb-6 group">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        ให้คะแนนสถานที่ (สูงสุด 5 ดาว)
-                      </label>
-                      <div className="flex space-x-1">
-                        {[1, 2, 3, 4, 5].map(value => (
-                          <FontAwesomeIcon
-                            key={value}
-                            icon={value <= rating ? faStarSolid : faStarRegular}
-                            className="text-yellow-500 cursor-pointer"
-                            // กดเพื่อเปลี่ยนค่าคะแนน
-                            onClick={() => handleRatingClick(value)}
-                            size="2x"
-                          />
-                        ))}
-                      </div>
-                      <input
-                        type="hidden"
-                        {...register("rating", { required: "กรุณาให้คะแนน" })}
-                      />
-                    </div>
-                    <div className="relative z-0 w-full mb-6 group">
                       <input
                         type="checkbox"
                         id="published"
                         {...register("published")}
-                        className="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
+                        className="form-checkbox h-4 w-4 text-orange-600 transition duration-150 ease-in-out"
                       />
                       <label
                         htmlFor="published"
@@ -683,10 +653,10 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                       </button>
                       <button
                         type="submit"
-                        className={`bg-indigo-600 text-white px-4 py-2 rounded-md ${
+                        className={`bg-orange-600 text-white px-4 py-2 rounded-md ${
                           submitting
                             ? "bg-opacity-60 cursor-not-allowed"
-                            : "hover:bg-indigo-700"
+                            : "hover:bg-orange-700"
                         }`}
                         disabled={submitting}
                       >

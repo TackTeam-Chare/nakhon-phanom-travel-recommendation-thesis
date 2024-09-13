@@ -1,18 +1,14 @@
 import React, { useCallback, useRef, useState, useEffect } from "react";
+import { FaMapMarkerAlt, FaInfoCircle, FaDirections, FaRoute, FaTag } from "react-icons/fa"; 
 import {
   GoogleMap,
   MarkerF,
-  InfoWindowF,
+  InfoWindow,
   Circle,
   DirectionsRenderer
 } from "@react-google-maps/api";
-import Image from "next/image";
-import {
-  FaMapMarkerAlt,
-  FaInfoCircle,
-  FaMapSigns,
-  FaExternalLinkAlt
-} from "react-icons/fa";
+import NextImage from "next/image";
+import Link from "next/link";
 
 const MapNearbyPlaces = ({ center, places, mainPlace, isLoaded }) => {
   const mapRef = useRef(null);
@@ -69,6 +65,11 @@ const MapNearbyPlaces = ({ center, places, mainPlace, isLoaded }) => {
   if (!isLoaded) {
     return <div>Loading Maps...</div>;
   }
+
+  const convertMetersToKilometers = (meters) => {
+    return (meters / 1000).toFixed(2);
+  };
+
 
   return (
     <div className="w-full h-[300px] md:h-[400px] lg:h-[500px] xl:h-[600px] rounded-lg shadow-md overflow-hidden">
@@ -168,81 +169,68 @@ const MapNearbyPlaces = ({ center, places, mainPlace, isLoaded }) => {
           />
         )}
 
-        {/* InfoWindow for Selected Place */}
-        {selectedEntity && (
-          <InfoWindowF
-            position={{
-              lat: Number(selectedEntity.latitude),
-              lng: Number(selectedEntity.longitude)
-            }}
-            onCloseClick={() => setSelectedEntity(null)}
-            options={{ maxWidth: 350 }}
+{selectedEntity && (
+  <InfoWindow
+    position={{
+      lat: Number(selectedEntity.latitude),
+      lng: Number(selectedEntity.longitude)
+    }}
+    onCloseClick={() => setSelectedEntity(null)}
+  >
+    <div className="flex flex-col md:flex-row items-center max-w-md p-4 bg-white rounded-lg shadow-lg text-gray-800 space-y-4 md:space-y-0 md:space-x-4">
+      {/* รูปภาพสถานที่ */}
+      <NextImage
+        src={
+          selectedEntity.images && selectedEntity.images[0]?.image_url
+            ? selectedEntity.images[0].image_url
+            : "/default-image.jpg"
+        }
+        alt={selectedEntity.name}
+        width={150}
+        height={100}
+        className="object-cover rounded-md shadow"
+      />
+
+      {/* ข้อมูลสถานที่ */}
+      <div className="flex-1">
+        <h3 className="text-xl font-bold text-gray-900 mb-2 flex items-center">
+          <FaMapMarkerAlt className="mr-2 text-orange-500" />
+          {selectedEntity.name}
+        </h3>
+
+        <p className="text-sm text-orange-500 font-semibold flex items-center mb-2">
+          <FaTag className="mr-2" />
+          {selectedEntity.category_name}
+        </p>
+        <p className="text-orange-500 font-bold flex items-center">
+          <FaRoute className="mr-2" />
+          ระยะห่าง {convertMetersToKilometers(selectedEntity.distance)} กิโลเมตร
+        </p>
+
+        <div className="flex space-x-2 mt-4">
+          {/* ปุ่มนำทางไปยัง Google Maps */}
+          <a
+            href={`https://www.google.com/maps/dir/?api=1&destination=${selectedEntity.latitude},${selectedEntity.longitude}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600 transition duration-300 flex items-center space-x-2"
           >
-            <div className="max-w-md w-full bg-white rounded-lg shadow-lg flex flex-col">
-              <div className="flex flex-col items-start">
-                {selectedEntity.images && selectedEntity.images[0] ? (
-                  <Image
-                    src={selectedEntity.images[0].image_url}
-                    alt={selectedEntity.name}
-                    width={350}
-                    height={150}
-                    className="rounded-t-lg mb-2 object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-24 bg-gray-200 flex items-center justify-center rounded-t-lg">
-                    <span className="text-gray-500">ไม่มีรูปภาพ</span>
-                  </div>
-                )}
-                <div className="p-3 w-full flex flex-col">
-                  <h3 className="text-orange-500 font-bold mt-2">
-                    {selectedEntity.name}
-                  </h3>
-                  <p className="text-gray-700 text-sm flex items-center mb-1">
-                    <FaInfoCircle className="text-blue-500 mr-2" />
-                    {selectedEntity.description || "ไม่มีคำอธิบาย"}
-                  </p>
-                  <div className="flex items-center mb-1">
-                    <FaMapMarkerAlt className="text-green-500 w-4 h-4 mr-2" />
-                    <div className="text-xs">
-                      <p className="text-gray-900 leading-none">
-                        {selectedEntity.district_name}
-                      </p>
-                      <p className="text-gray-600">
-                        {selectedEntity.distance?.toFixed(2) || 0} กม. จากคุณ
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center mb-1">
-                    <FaMapSigns className="text-blue-500 w-4 h-4 mr-2" />
-                    <a
-                      href={`https://www.google.com/maps/dir/?api=1&destination=${selectedEntity.latitude},${selectedEntity.longitude}&travelmode=driving`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 text-xs underline"
-                    >
-                      นำทางไปยังสถานที่นี้
-                    </a>
-                  </div>
-                  <div className="flex items-center">
-                    <FaExternalLinkAlt className="text-blue-500 w-4 h-4 mr-2" />
-                    <a
-                      href={`https://www.google.com/maps/place/${encodeURIComponent(
-                        selectedEntity.name
-                      )}/@${selectedEntity.latitude},${
-                        selectedEntity.longitude
-                      },17z`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 text-xs underline"
-                    >
-                      ดูบน Google Maps
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </InfoWindowF>
-        )}
+            <FaDirections className="inline-block" />
+            <span>นำทาง</span>
+          </a>
+
+          <Link
+            href={`/place/${selectedEntity.id}`}
+            className="bg-green-500 text-white px-3 py-2 rounded-lg hover:bg-green-600 transition duration-300 flex items-center space-x-2"
+          >
+            <FaInfoCircle className="inline-block" />
+            <span>ดูข้อมูลเพิ่มเติม</span>
+          </Link>
+        </div>
+      </div>
+    </div>
+  </InfoWindow>
+)}
 
         {/* User Location Circle */}
         <Circle
