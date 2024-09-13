@@ -7,7 +7,7 @@ import "react-multi-carousel/lib/styles.css";
 import Image from "next/image";
 import Link from "next/link";
 import { useLoadScript } from "@react-google-maps/api";
-import { FaMapMarkerAlt, FaInfoCircle, FaHome, FaClock,FaTimesCircle , FaLayerGroup,FaMapSigns ,FaChevronDown ,FaCalendarDay ,FaChevronUp ,FaRegClock ,FaArrowRight , FaTag, FaRoute, FaChevronLeft, FaChevronRight } from "react-icons/fa"; 
+import { FaSun, FaCloudRain, FaSnowflake, FaGlobe ,FaMapMarkerAlt, FaInfoCircle, FaHome, FaClock,FaTimesCircle , FaLayerGroup,FaMapSigns ,FaChevronDown ,FaCalendarDay ,FaChevronUp ,FaRegClock ,FaArrowRight , FaTag, FaRoute, FaChevronLeft, FaChevronRight } from "react-icons/fa"; 
 import { getNearbyFetchTourismData } from "@/services/user/api";
 import Swal from "sweetalert2";
 import { ClipLoader } from "react-spinners";
@@ -34,7 +34,22 @@ const responsive = {
   },
 };
 
-// Custom Arrows
+const getSeasonIcon = (seasonName) => {
+  switch (seasonName) {
+    case "ฤดูร้อน":
+      return <FaSun className="text-orange-500 mr-2" />;
+    case "ฤดูฝน":
+      return <FaCloudRain className="text-blue-500 mr-2" />;
+    case "ฤดูหนาว":
+      return <FaSnowflake className="text-teal-500 mr-2" />;
+    case "ตลอดทั้งปี":
+      return <FaGlobe className="text-green-500 mr-2" />;
+    default:
+      return <FaLayerGroup className="text-gray-500 mr-2" />; // Default icon
+  }
+};
+
+
 const CustomLeftArrow = ({ onClick }) => {
   return (
     <button
@@ -243,6 +258,10 @@ const PlaceNearbyPage = ({ params }) => {
       <FaLayerGroup className="text-orange-500 mr-2" />
       <strong className="text-gray-700">{tourismData.category_name}</strong>
     </div>
+    <div className="flex items-center text-lg">
+    {getSeasonIcon(tourismData.season_name)}
+    <strong className="text-gray-700">{tourismData.season_name}</strong>
+  </div>
   </div>
 
   {/* Description */}

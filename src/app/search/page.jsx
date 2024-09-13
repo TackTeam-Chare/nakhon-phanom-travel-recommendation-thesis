@@ -17,6 +17,7 @@ import {
   FaCalendarAlt,
   FaLayerGroup,
   FaLeaf,
+  FaRoute,
   FaSun,
   FaCloudRain,
   FaSnowflake,
@@ -251,6 +252,10 @@ const GeocodingSearchPage = () => {
     return nearbyPlaces.filter((place) => place.category_id === categoryId);
   };
 
+  const convertMetersToKilometers = (meters) => {
+    return (meters / 1000).toFixed(2);
+  };
+  
   return (
     <div className="container mx-auto p-4 relative">
       {/* Search Bar and Buttons */}
@@ -534,12 +539,11 @@ const GeocodingSearchPage = () => {
                         <h3 className="text-xl font-semibold mb-2">
                           {place.name}
                         </h3>
-                        <p className="text-gray-600 mb-2">
-                          {place.description}
-                        </p>
-                        <p className="text-orange-500 font-bold">
-                          {place.district_name}
-                        </p>
+                        <p className="text-orange-500 font-bold flex items-center">
+                      <FaRoute className="mr-2" />
+                      ระยะห่าง {convertMetersToKilometers(place.distance)} กิโลเมตร
+                    </p>
+            
                       </div>
                     </div>
                   </div>
@@ -578,12 +582,10 @@ const GeocodingSearchPage = () => {
                         <h3 className="text-xl font-semibold mb-2">
                           {place.name}
                         </h3>
-                        <p className="text-gray-600 mb-2">
-                          {place.description}
-                        </p>
-                        <p className="text-orange-500 font-bold">
-                          {place.district_name}
-                        </p>
+                        <p className="text-orange-500 font-bold flex items-center">
+                      <FaRoute className="mr-2" />
+                      ระยะห่าง {convertMetersToKilometers(place.distance)} กิโลเมตร
+                    </p>
                       </div>
                     </div>
                   </div>

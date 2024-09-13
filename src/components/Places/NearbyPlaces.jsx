@@ -118,7 +118,7 @@ const NearbyPlaces = () => {
   }
 
   return (
-    <div className="container mx-auto mt-10 px-4">
+    <div className="container mx-auto mt-10 mb-10 px-4">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-4xl md:text-4xl lg:text-5xl font-bold text-orange-500 mt-10 mb-5">
           สถานที่ใกล้เคียง
