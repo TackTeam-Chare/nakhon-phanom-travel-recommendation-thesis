@@ -230,7 +230,9 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                       />
                       <textarea
                         id="description"
-                        {...register("description")}
+                        {...register("description", {
+                          required: "จำเป็นต้องระบุ"
+                        })}
                         rows={3}
                         className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
                         placeholder=" "
@@ -251,7 +253,9 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                       <input
                         type="text"
                         id="location"
-                        {...register("location")}
+                        {...register("location", {
+                          required: "จำเป็นต้องระบุตั้ง"
+                        })}
                         className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-black-600 peer"
                         placeholder=" "
                       />
@@ -268,7 +272,9 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         <input
                           type="text"
                           id="latitude"
-                          {...register("latitude")}
+                          {...register("latitude", {
+                            required: "จำเป็นต้องระบุละติจูด"
+                          })}
                           className="block py-2.5 px-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
                           placeholder=" "
                         />
@@ -283,7 +289,9 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         <input
                           type="text"
                           id="longitude"
-                          {...register("longitude")}
+                          {...register("longitude", {
+                            required: "จำเป็นต้องระบุลองจิจูด"
+                          })}
                           className="block py-2.5 px-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
                           placeholder=" "
                         />
@@ -304,7 +312,9 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         />
                         <select
                           id="district_name"
-                          {...register("district_name")}
+                          {...register("district_name", {
+                            required: "จำเป็นต้องระบุอำเภอ"
+                          })}
                           className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
                           onClick={() => toggleDropdown("district")}
                         >
@@ -335,7 +345,9 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         />
                         <select
                           id="category_name"
-                          {...register("category_name")}
+                          {...register("category_name", {
+                            required: "จำเป็นต้องระบุประเภทสถานที่"
+                          })}
                           className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
                           onClick={() => toggleDropdown("category")}
                         >
@@ -605,7 +617,9 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         <input
                           type="checkbox"
                           id="published"
-                          {...register("published")}
+                          {...register("published", {
+                            required: "จำเป็นต้องกำหนดสถานะเผยเเพร่"
+                          })}
                           className="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
                         />
                         <label
