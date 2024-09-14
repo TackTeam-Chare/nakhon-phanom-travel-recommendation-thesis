@@ -7,7 +7,7 @@ import "react-multi-carousel/lib/styles.css";
 import Image from "next/image";
 import Link from "next/link";
 import { useLoadScript } from "@react-google-maps/api";
-import { FaSun, FaCloudRain, FaSnowflake, FaGlobe ,FaMapMarkerAlt, FaInfoCircle, FaHome, FaClock,FaTimesCircle , FaLayerGroup,FaMapSigns ,FaChevronDown ,FaCalendarDay ,FaChevronUp ,FaRegClock ,FaArrowRight , FaTag, FaRoute, FaChevronLeft, FaChevronRight } from "react-icons/fa"; 
+import { FaSun, FaCloudRain, FaSnowflake, FaGlobe ,FaUtensils , FaStore ,FaMapMarkerAlt ,FaInfoCircle ,FaLandmark, FaHome, FaClock,FaTimesCircle , FaLayerGroup,FaMapSigns ,FaChevronDown ,FaCalendarDay ,FaChevronUp ,FaRegClock ,FaArrowRight , FaTag, FaRoute, FaChevronLeft, FaChevronRight } from "react-icons/fa"; 
 import { getNearbyFetchTourismData } from "@/services/user/api";
 import Swal from "sweetalert2";
 import { ClipLoader } from "react-spinners";
@@ -45,10 +45,24 @@ const getSeasonIcon = (seasonName) => {
     case "ตลอดทั้งปี":
       return <FaGlobe className="text-green-500 mr-2" />;
     default:
-      return <FaLayerGroup className="text-gray-500 mr-2" />; // Default icon
+      return <FaLayerGroup className="text-gray-500 mr-2" />;
   }
 };
 
+const getSeasonColor = (seasonName) => {
+  switch (seasonName) {
+    case "ฤดูร้อน":
+      return "text-orange-500";
+    case "ฤดูฝน":
+      return "text-blue-500";
+    case "ฤดูหนาว":
+      return "text-teal-500";
+    case "ตลอดทั้งปี":
+      return "text-green-500";
+    default:
+      return "text-gray-500";
+  }
+};
 
 const CustomLeftArrow = ({ onClick }) => {
   return (
@@ -94,27 +108,6 @@ const convertMetersToKilometers = (meters) => {
   const utcTime = now.getTime() + now.getTimezoneOffset() * 60000;
   const thailandTime = new Date(utcTime + 7 * 60 * 60 * 1000);
   return thailandTime;
-};
-
-// Check if the place is currently open
-const checkOpenStatus = (operatingHours) => {
-  if (!operatingHours || operatingHours.length === 0) return false;
-
-  const now = getCurrentTimeInThailand();
-  const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
-  const currentTime = now.getHours() * 100 + now.getMinutes(); // Convert to HHMM
-
-  const todayOperatingHours = operatingHours.find((hours) => {
-    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    return hours.day_of_week === days[currentDay];
-  });
-
-  if (todayOperatingHours) {
-    const openingTime = parseInt(todayOperatingHours.opening_time.replace(":", ""));
-    const closingTime = parseInt(todayOperatingHours.closing_time.replace(":", ""));
-    return currentTime >= openingTime && currentTime <= closingTime;
-  }
-  return false;
 };
 
 // Function to check if a place is currently open
@@ -214,6 +207,17 @@ const PlaceNearbyPage = ({ params }) => {
   const isValidCoordinates =
     !isNaN(Number(tourismData.latitude)) && !isNaN(Number(tourismData.longitude));
 
+    const categoryIcons = {
+      "สถานที่ท่องเที่ยว": { icon: <FaLandmark />, color: "text-blue-500" },
+      "ที่พัก": { icon: <FaHome />, color: "text-purple-500" },
+      "ร้านอาหาร": { icon: <FaUtensils />, color: "text-red-500" },
+      "ร้านค้าของฝาก": { icon: <FaStore />, color: "text-green-500" },
+    };
+    
+    const getCategoryDetails = (categoryName) => {
+      return categoryIcons[categoryName] || { icon: <FaLayerGroup />, color: "text-gray-500" };
+    };
+
   return (
     <div className="container mx-auto mt-12 mb-12 px-4">
       <div className="flex flex-col lg:flex-row gap-8">
@@ -254,14 +258,18 @@ const PlaceNearbyPage = ({ params }) => {
       <FaMapMarkerAlt className="text-orange-500 mr-2" />
       <strong className="text-gray-700">{tourismData.district_name}</strong>
     </div>
-    <div className="flex items-center text-lg">
-      <FaLayerGroup className="text-orange-500 mr-2" />
-      <strong className="text-gray-700">{tourismData.category_name}</strong>
-    </div>
-    <div className="flex items-center text-lg">
-    {getSeasonIcon(tourismData.season_name)}
-    <strong className="text-gray-700">{tourismData.season_name}</strong>
-  </div>
+    <div  className={`flex items-center text-lg ${getCategoryDetails(tourismData.category_name).color}`}>
+              {getCategoryDetails(tourismData.category_name).icon}
+              <strong className={`ml-2 ${getCategoryDetails(tourismData.category_name).color}`}>
+                {tourismData.category_name}
+              </strong>
+            </div>
+            <div className={`flex items-center text-lg ${getSeasonColor(tourismData.season_name)}`}>
+  {getSeasonIcon(tourismData.season_name)}
+  <strong className={`ml-2 ${getSeasonColor(tourismData.season_name)}`}>
+    {tourismData.season_name}
+  </strong>
+</div>
   </div>
 
   {/* Description */}
@@ -415,9 +423,11 @@ const PlaceNearbyPage = ({ params }) => {
     <h3 className="text-lg font-semibold mb-2 flex items-center">
       {entity.name}
     </h3>
-    <p className="text-orange-500 font-bold flex items-center mb-2">
-      <FaTag className="mr-2" /> {entity.category_name}
-    </p>
+    <p className={`font-bold flex items-center mb-2 ${getCategoryDetails(entity.category_name).color}`}>
+  {getCategoryDetails(entity.category_name).icon}
+  <span className="ml-2">{entity.category_name}</span>
+</p>
+
     <p className="text-orange-500 font-bold flex items-center">
       <FaRoute className="mr-2" />
       ระยะห่าง {convertMetersToKilometers(entity.distance)} กิโลเมตร
