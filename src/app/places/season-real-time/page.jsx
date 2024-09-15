@@ -75,6 +75,10 @@ const RealTimeSeasonalAttractions = () => {
     currentPage * itemsPerPage
   )
 
+  const convertMetersToKilometers = (meters) => {
+    return (meters / 1000).toFixed(2);
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-4xl md:text-4xl lg:text-5xl font-bold text-orange-500 text-center mt-10 mb-5">
@@ -135,15 +139,8 @@ const RealTimeSeasonalAttractions = () => {
                 )}
                   <div className="p-4 flex-grow flex flex-col">
                     <h3 className="text-xl font-semibold">{attraction.name}</h3>
-                    {/* Display highlighted season name */}
-                    <p className="text-gray-600 flex-grow overflow-hidden text-ellipsis">
-                      {attraction.description}
-                    </p>
                     <p className="text-orange-500 font-bold mb-2">
                       {attraction.district_name}
-                    </p>
-                    <p className="text-gray-600">
-                      <strong>ที่ตั้ง:</strong> {attraction.location}
                     </p>
                   </div>
                 </div>

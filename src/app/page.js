@@ -1,6 +1,7 @@
 import Carousel from "../components/Carousel"
 import NearbyPlaces from "../components/Places/NearbyPlaces"
 import RealTimeSeasonalAttractions from "../components/Places/RealTime"
+import Chatbot from '../components/Chatbot';
 
 export const metadata = {
   title: "เว็บไซต์เเนะนำการท่องเที่ยวจังหวัดนครพนม",
@@ -22,6 +23,7 @@ export default function Home() {
       <div>
         <NearbyPlaces />
       </div>
+      <Chatbot />
     </>
   )
 }

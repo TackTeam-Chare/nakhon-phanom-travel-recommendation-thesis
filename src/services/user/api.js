@@ -191,8 +191,9 @@ export const searchBySeason = async seasonId => {
             image_path: image.image_path,
             image_url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/${image.image_path}`
           }))
-        : [] // Default to an empty array if no images
+        : []
     }))
+
   } catch (error) {
     console.error("Error searching by season:", error)
     throw error
@@ -278,9 +279,12 @@ export const getAllFetchTouristEntities = async () => {
 
     return data.map(place => ({
       ...place,
-      image_path: place.image_path
-        ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/${place.image_path}`
-        : null
+      images: place.images
+        ? place.images.map(image => ({
+            image_path: image.image_path,
+            image_url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/${image.image_path}`
+          }))
+        : []
     }))
   } catch (error) {
     console.error("Error fetching tourism data:", error)
