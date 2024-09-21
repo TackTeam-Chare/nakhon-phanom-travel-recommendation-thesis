@@ -22,7 +22,7 @@ const AdminStatus = () => {
     <div className="flex items-center space-x-2 p-1 bg-orange-500 rounded-md md:space-x-3 md:p-2 lg:p-3">
       <FaUser className="text-white h-5 w-5 lg:h-6 lg:w-6" />
       <div>
-        <p className="text-white font-bold text-xs md:text-sm lg:text-base">
+        <p className="text-white font-bold text-4xl md:text-xl lg:text-lg ">
           {adminName}
         </p>
         <div className="flex items-center">
@@ -31,7 +31,7 @@ const AdminStatus = () => {
               onlineStatus ? "text-green-500" : "text-red-500"
             }`}
           />
-          <span className="text-xs text-gray-300">
+          <span className="text-xl text-gray-300">
             {onlineStatus ? "ออนไลน์" : "ออฟไลน์"}
           </span>
         </div>

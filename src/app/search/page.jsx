@@ -87,33 +87,41 @@ const GeocodingSearchPage = () => {
   
   useEffect(() => {
     if (!isClient) return;
-
+  
     const updateLocation = () => {
       setLoading(true);
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
+  
+          // Log the user's location to the console
+          console.log(`User's location: Latitude ${latitude}, Longitude ${longitude}`);
+  
+          // Set the user's location in state
           setUserLocation({ lat: latitude, lng: longitude });
+  
+          // Fetch nearby places based on user's location
           fetchNearbyPlaces(latitude, longitude);
           setLoading(false);
         },
         (error) => {
           console.error("Error getting user's location:", error);
-
+  
           Swal.fire({
             title: "ข้อผิดพลาด!",
             text: "ไม่สามารถดึงข้อมูลตำแหน่งของคุณได้ กรุณาเปิดใช้งานบริการตำแหน่ง",
             icon: "error",
             confirmButtonText: "ตกลง"
           });
-
+  
           setLoading(false);
         }
       );
     };
-
+  
     updateLocation();
   }, [isClient]);
+  
 
   const fetchNearbyPlaces = async (lat, lng) => {
     try {
@@ -253,9 +261,16 @@ const GeocodingSearchPage = () => {
   };
 
   const convertMetersToKilometers = (meters) => {
-    return (meters / 1000).toFixed(2);
-  };
+    if (!meters && meters !== 0) {
+      return "ไม่ทราบระยะทาง";  // ในกรณีที่ meters เป็น null หรือ undefined
+    }
   
+    if (meters >= 1000) {
+      return (meters / 1000).toFixed(2) + ' กิโลเมตร';
+    }
+    return meters.toFixed(0) + ' เมตร';
+  };
+
   return (
     <div className="container mx-auto p-4 relative">
       {/* Search Bar and Buttons */}
@@ -539,11 +554,6 @@ const GeocodingSearchPage = () => {
                         <h3 className="text-xl font-semibold mb-2">
                           {place.name}
                         </h3>
-                        <p className="text-orange-500 font-bold flex items-center">
-                      <FaRoute className="mr-2" />
-                      ระยะห่าง {convertMetersToKilometers(place.distance)} กิโลเมตร
-                    </p>
-            
                       </div>
                     </div>
                   </div>
@@ -584,7 +594,7 @@ const GeocodingSearchPage = () => {
                         </h3>
                         <p className="text-orange-500 font-bold flex items-center">
                       <FaRoute className="mr-2" />
-                      ระยะห่าง {convertMetersToKilometers(place.distance)} กิโลเมตร
+                      ระยะห่าง {convertMetersToKilometers(place.distance)}
                     </p>
                       </div>
                     </div>

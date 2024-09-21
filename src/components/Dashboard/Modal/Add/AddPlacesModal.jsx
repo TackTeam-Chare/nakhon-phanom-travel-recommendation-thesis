@@ -192,8 +192,39 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                   </Dialog.Title>
                   <form
                     onSubmit={handleSubmit(onSubmit)}
-                    className="mt-4 space-y-6"
+                    className="mt-8 space-y-6"
                   >
+         <div className="relative z-0 w-full mb-6 group">
+              <FontAwesomeIcon
+                icon={faTags}
+                className="absolute left-3 top-3 text-gray-400"
+              />
+              <select
+                id="category_name"
+                {...register("category_name", {
+                  required: "จำเป็นต้องระบุประเภทสถานที่"
+                })}
+                className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
+                onClick={() => toggleDropdown("category")}
+              >
+                <option value="">เลือกหมวดหมู่</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.name}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+              <FontAwesomeIcon
+                icon={dropdownOpen.category ? faChevronUp : faChevronDown}
+                className="absolute right-3 top-3 text-gray-400"
+              />
+              <label
+                htmlFor="category_name"
+                className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+              >
+                หมวดหมู่
+              </label>
+            </div>
                     <div className="relative z-0 w-full mb-6 group">
                       <FontAwesomeIcon
                         icon={faGlobe}
@@ -303,7 +334,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                     </div>
           {/* Dropdowns with icons for indicating expansion */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                      <div className="relative z-0 w-full group">
+                      <div className="relative z-0 w-full group mt-3">
                         <FontAwesomeIcon
                           icon={faMapMarkerAlt}
                           className="absolute left-3 top-3 text-gray-400"
@@ -336,40 +367,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                           อำเภอ
                         </label>
                       </div>
-                      <div className="relative z-0 w-full group">
-                        <FontAwesomeIcon
-                          icon={faTags}
-                          className="absolute left-3 top-3 text-gray-400"
-                        />
-                        <select
-                          id="category_name"
-                          {...register("category_name", {
-                            required: "จำเป็นต้องระบุประเภทสถานที่"
-                          })}
-                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
-                          onClick={() => toggleDropdown("category")}
-                        >
-                          <option value="">เลือกหมวดหมู่</option>
-                          {categories.map(category => (
-                            <option key={category.id} value={category.name}>
-                              {category.name}
-                            </option>
-                          ))}
-                        </select>
-                        <FontAwesomeIcon
-                          icon={
-                            dropdownOpen.category ? faChevronUp : faChevronDown
-                          }
-                          className="absolute right-3 top-3 text-gray-400"
-                        />
-                        <label
-                          htmlFor="category_name"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
-                        >
-                          หมวดหมู่
-                        </label>
-                      </div>
-                      <div className="relative z-0 w-full group">
+                      <div className="relative z-0 w-full group mt-3">
                         <FontAwesomeIcon
                           icon={faSnowflake}
                           className="absolute left-3 top-3 text-gray-400"
@@ -400,9 +398,31 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                           ฤดู
                         </label>
                       </div>
+                      <div className="relative z-0 w-full  group mt-5 ">
+                      <div className="flex items-center ">
+                        <FontAwesomeIcon
+                          icon={faUpload}
+                          className="mr-2 text-gray-500"
+                        />
+                        <input
+                          type="checkbox"
+                          id="published"
+                          {...register("published", {
+                            required: "จำเป็นต้องกำหนดสถานะเผยเเพร่"
+                          })}
+                          className="form-checkbox h-4 w-4 text-orange-600 transition duration-150 ease-in-out"
+                        />
+                        <label
+                          htmlFor="published"
+                          className="ml-2 block text-sm leading-5 text-gray-900"
+                        >
+                          เผยแพร่
+                        </label>
+                      </div>
+                    </div>
                     </div>
 
-                    <div className="relative z-0 w-full mb-6 group">
+                    <div className="relative z-0 w-full mb-3 group">
   <label
     htmlFor="operating_hours"
     className="block text-sm font-medium text-gray-700"
@@ -433,7 +453,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
           className="absolute right-3 top-3 text-gray-400 pointer-events-none"
         />
       </div>
-      <div className="relative mt-2">
+      <div className="relative ">
         <FontAwesomeIcon
           icon={faClock}
           className="absolute left-3 top-3 text-gray-400"
@@ -450,7 +470,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
           เวลาเปิด
         </label>
       </div>
-      <div className="relative mt-2">
+      <div className="relative ">
         <FontAwesomeIcon
           icon={faClock}
           className="absolute left-3 top-3 text-gray-400"
@@ -605,30 +625,6 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         </Dialog>
                       </Transition>
                     )}
-    
-                    <div className="relative z-0 w-full mb-6 group">
-                      <div className="flex items-center mb-6">
-                        <FontAwesomeIcon
-                          icon={faUpload}
-                          className="mr-2 text-gray-500"
-                        />
-                        <input
-                          type="checkbox"
-                          id="published"
-                          {...register("published", {
-                            required: "จำเป็นต้องกำหนดสถานะเผยเเพร่"
-                          })}
-                          className="form-checkbox h-4 w-4 text-orange-600 transition duration-150 ease-in-out"
-                        />
-                        <label
-                          htmlFor="published"
-                          className="ml-2 block text-sm leading-5 text-gray-900"
-                        >
-                          เผยแพร่
-                        </label>
-                      </div>
-                    </div>
-
                     <div className="flex justify-end gap-2">
                       <button
                         type="button"

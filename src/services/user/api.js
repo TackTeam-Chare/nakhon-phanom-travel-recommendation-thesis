@@ -4,6 +4,17 @@ const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL
 })
 
+// Function to fetch suggestions (for chatbot)
+export const fetchSuggestions = async () => {
+  try {
+    const response = await api.get("/suggestions"); // Assumes /suggestions route is available
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching suggestions:", error);
+    throw error;
+  }
+};
+
 // Function to fetch categories
 export const fetchCategories = async () => {
   try {

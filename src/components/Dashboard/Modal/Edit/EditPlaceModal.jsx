@@ -15,6 +15,7 @@ import { updateTouristEntity } from "@/services/admin/edit"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faTrash,
+  faUpload,
   faPlus,
   faMapMarkerAlt,
   faTags,
@@ -25,8 +26,7 @@ import {
   faChevronUp 
 } from "@fortawesome/free-solid-svg-icons"
 import { faImage } from "@fortawesome/free-regular-svg-icons"
-import { faStar as faStarSolid } from "@fortawesome/free-solid-svg-icons"
-import { faStar as faStarRegular } from "@fortawesome/free-regular-svg-icons"
+
 
 const MySwal = withReactContent(Swal)
 
@@ -236,9 +236,40 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                   </Dialog.Title>
                   <form
                     onSubmit={handleSubmit(onSubmit)}
-                    className="space-y-6 mt-4"
+                    className="space-y-6 mt-8"
                   >
-                    <div className="relative z-0 w-full mb-6 group">
+                                          <div className="relative z-0 w-full group mb-8">
+                        <FontAwesomeIcon
+                          icon={faTags}
+                          className="absolute left-3 top-3 text-gray-400"
+                        />
+                        <select
+                          id="category_name"
+                          {...register("category_name")}
+                          onClick={() => toggleDropdown("category")}
+                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
+                        >
+                          <option value="">เลือกหมวดหมู่</option>
+                          {categories.map(category => (
+                            <option key={category.id} value={category.name}>
+                              {category.name}
+                            </option>
+                          ))}
+                        </select>
+                        <FontAwesomeIcon
+                          icon={
+                            dropdownOpen.category ? faChevronUp : faChevronDown
+                          }
+                          className="absolute right-3 top-3 text-gray-400"
+                        />
+                        <label
+                          htmlFor="category_name"
+                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >
+                          หมวดหมู่
+                        </label>
+                      </div>
+                    <div className="relative z-0 w-full  group mb-8">
                       <FontAwesomeIcon
                         icon={faGlobe}
                         className="absolute left-3 top-3 text-gray-400"
@@ -257,7 +288,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                         ชื่อ
                       </label>
                     </div>
-                    <div className="relative z-0 w-full mb-6 group">
+                    <div className="relative z-0 w-full group mb-10">
                       <FontAwesomeIcon
                         icon={faTags}
                         className="absolute left-3 top-3 text-gray-400"
@@ -276,7 +307,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                         คำอธิบาย
                       </label>
                     </div>
-                    <div className="relative z-0 w-full mb-6 group">
+                    <div className="relative z-0 w-full mb-10 group">
                       <FontAwesomeIcon
                         icon={faMapMarkerAlt}
                         className="absolute left-3 top-3 text-gray-400"
@@ -295,7 +326,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                         ตำแหน่ง
                       </label>
                     </div>
-                    <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div className="grid grid-cols-2 gap-4 mb-10">
                       <div className="relative z-0 w-full group">
                         <FontAwesomeIcon
                           icon={faGlobe}
@@ -335,7 +366,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                         </label>
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
                       <div className="relative z-0 w-full group">
                         <FontAwesomeIcon
                           icon={faMapMarkerAlt}
@@ -369,37 +400,6 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                       </div>
                       <div className="relative z-0 w-full group">
                         <FontAwesomeIcon
-                          icon={faTags}
-                          className="absolute left-3 top-3 text-gray-400"
-                        />
-                        <select
-                          id="category_name"
-                          {...register("category_name")}
-                          onClick={() => toggleDropdown("category")}
-                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
-                        >
-                          <option value="">เลือกหมวดหมู่</option>
-                          {categories.map(category => (
-                            <option key={category.id} value={category.name}>
-                              {category.name}
-                            </option>
-                          ))}
-                        </select>
-                        <FontAwesomeIcon
-                          icon={
-                            dropdownOpen.category ? faChevronUp : faChevronDown
-                          }
-                          className="absolute right-3 top-3 text-gray-400"
-                        />
-                        <label
-                          htmlFor="category_name"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
-                        >
-                          หมวดหมู่
-                        </label>
-                      </div>
-                      <div className="relative z-0 w-full group">
-                        <FontAwesomeIcon
                           icon={faSnowflake}
                           className="absolute left-3 top-3 text-gray-400"
                         />
@@ -429,6 +429,26 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                           ฤดู
                         </label>
                       </div>
+                      <div className="relative z-0 w-full mb-6 group">
+                      <div className="flex items-center ">
+                      <FontAwesomeIcon
+                          icon={faUpload}
+                          className="mr-2 text-gray-500"
+                        />
+                      <input
+                        type="checkbox"
+                        id="published"
+                        {...register("published")}
+                        className="form-checkbox h-4 w-4 text-orange-600 transition duration-150 ease-in-out"
+                      />
+                      <label
+                        htmlFor="published"
+                        className="ml-2 block text-sm leading-5 text-gray-900"
+                      >
+                        เผยแพร่
+                      </label>
+                    </div>
+                    </div>
                     </div>
 
                {/* Operating Hours Section */}
@@ -625,21 +645,6 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                         </div>
                       )}
                     </div>
-                    <div className="relative z-0 w-full mb-6 group">
-                      <input
-                        type="checkbox"
-                        id="published"
-                        {...register("published")}
-                        className="form-checkbox h-4 w-4 text-orange-600 transition duration-150 ease-in-out"
-                      />
-                      <label
-                        htmlFor="published"
-                        className="ml-2 block text-sm leading-5 text-gray-900"
-                      >
-                        เผยแพร่
-                      </label>
-                    </div>
-
                     {error && (
                       <p className="text-red-500 text-center">{error}</p>
                     )}

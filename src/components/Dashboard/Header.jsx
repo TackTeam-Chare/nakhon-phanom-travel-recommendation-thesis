@@ -26,7 +26,7 @@ import {
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import { logout } from "@/services/admin/auth"
-import ProfileAccount from "@/components/Dashboard/Modal/Profile/ProfileAccount" // Import the ProfileAccount modal
+import ProfileAccount from "@/components/Dashboard/Modal/Profile/ProfileAccount"
 import { FaUser } from "react-icons/fa"
 import AdminStatus from "@/components/Dashboard/AdminStatus";
 
@@ -34,7 +34,7 @@ const MySwal = withReactContent(Swal)
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [isProfileOpen, setIsProfileOpen] = useState(false) // State to control the profile modal visibility
+  const [isProfileOpen, setIsProfileOpen] = useState(false)
   const router = useRouter()
   const [loading, setLoading] = useState(false)
 
@@ -79,12 +79,12 @@ export default function Header() {
         <div className="container mx-auto flex flex-wrap items-center justify-between px-4 md:px-6 lg:px-8 xl:px-12">
           <div className="flex flex-1 items-center space-x-3 sm:space-x-4 md:space-x-6 lg:space-x-8">
             {/* Logo */}
-            <div
+            {/* <div
               className="text-2xl md:text-4xl font-bold cursor-pointer whitespace-nowrap"
               onClick={() => router.push("/dashboard")}
             >
               ผู้ดูเเลระบบ
-            </div>
+            </div> */}
             {/* Admin Status */}
             <AdminStatus />
           </div>

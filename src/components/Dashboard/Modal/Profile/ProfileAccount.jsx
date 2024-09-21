@@ -3,7 +3,7 @@ import { Dialog, Transition } from "@headlessui/react"
 import { FaUser, FaLock, FaEye, FaEyeSlash, FaKey } from "react-icons/fa"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
-import Cookies from "js-cookie" // ใช้ cookie
+import Cookies from "js-cookie"
 import { getProfile, updateProfile, verifyPassword } from "@/services/admin/auth"
 
 const MySwal = withReactContent(Swal)

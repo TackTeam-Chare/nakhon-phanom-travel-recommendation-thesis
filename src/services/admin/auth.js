@@ -71,48 +71,18 @@ export const verifyPassword = async data => {
   }
 }
 
-export const getAllAdmins = async () => {
-  try {
-    const token = getToken()
-    const response = await auth.get("/auth/admin", {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    return response.data
-  } catch (error) {
-    console.error("Error fetching admins:", error)
-    throw error
-  }
-}
-
-export const getAdminById = async id => {
-  try {
-    const token = getToken()
-    const response = await auth.get(`/auth/admin/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    return response.data
-  } catch (error) {
-    console.error("Error fetching admin:", error)
-    throw error
-  }
-}
-
 export const getProfile = async () => {
   try {
-    const token = getToken()
+    const token = getToken();  // ตรวจสอบว่า token นี้ถูกเก็บใน Cookies หรือไม่
     const response = await auth.get("/auth/profile", {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    return response.data
+      headers: { Authorization: `Bearer ${token}` }  // ตรวจสอบว่ามีการส่ง token ใน headers ถูกต้องหรือไม่
+    });
+    return response.data;  // ตรวจสอบว่ามี response กลับมาและ data ถูกต้องหรือไม่
   } catch (error) {
-    console.error("Error fetching profile:", error)
-    throw error
+    console.error("Error fetching profile:", error);
+    throw error;
   }
-}
+};
 
 export const updateProfile = async data => {
   try {
@@ -123,51 +93,6 @@ export const updateProfile = async data => {
     return response.data
   } catch (error) {
     console.error("Error updating profile:", error)
-    throw error
-  }
-}
-
-export const addAdmin = async data => {
-  try {
-    const token = getToken()
-    const response = await auth.post("/auth/register", data, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    return response.data
-  } catch (error) {
-    console.error("Error adding admin:", error)
-    throw error
-  }
-}
-
-export const updateAdmin = async (id, data) => {
-  try {
-    const token = getToken()
-    const response = await auth.put(`/auth/admin/${id}`, data, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    return response.data
-  } catch (error) {
-    console.error("Error updating admin profile:", error)
-    throw error
-  }
-}
-
-export const deleteAdmin = async id => {
-  try {
-    const token = getToken()
-    const response = await auth.delete(`/auth/admin/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    return response.data
-  } catch (error) {
-    console.error("Error deleting admin:", error)
     throw error
   }
 }

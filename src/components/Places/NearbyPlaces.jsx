@@ -40,8 +40,14 @@ const responsive = {
 };
 
 const convertMetersToKilometers = (meters) => {
-  return (meters / 1000).toFixed(2);
+  if (meters >= 1000) {
+    return (meters / 1000).toFixed(2) + ' กิโลเมตร';
+  }
+  return meters.toFixed(0) + ' เมตร';
 };
+
+
+
 
 const NearbyPlaces = () => {
   const [places, setPlaces] = useState([]);
@@ -71,8 +77,15 @@ const NearbyPlaces = () => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
-            setLatitude(position.coords.latitude);
-            setLongitude(position.coords.longitude);
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            
+            // Set state with the fetched coordinates
+            setLatitude(latitude);
+            setLongitude(longitude);
+            
+            // Log the user's location to the console
+            console.log(`User's location: Latitude ${latitude}, Longitude ${longitude}`);
           },
           (error) => {
             console.error("Error fetching user location:", error);
@@ -89,9 +102,11 @@ const NearbyPlaces = () => {
         );
       }
     };
-
+  
     getUserLocation();
   }, []);
+  
+  
 
   useEffect(() => {
     const getNearbyPlaces = async () => {
@@ -171,7 +186,6 @@ const NearbyPlaces = () => {
                       <p className="text-orange-500 font-bold flex items-center">
                         <FaRoute className="mr-2" />
                         ระยะห่าง {convertMetersToKilometers(place.distance)}{" "}
-                        กิโลเมตร
                       </p>
                     </div>
                   </div>
