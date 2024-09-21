@@ -480,6 +480,8 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
             <option value="Thursday">วันพฤหัสบดี</option>
             <option value="Friday">วันศุกร์</option>
             <option value="Saturday">วันเสาร์</option>
+            <option value="Everyday">ทุกวัน</option>
+            <option value="ExceptHolidays">ยกเว้นวันหยุดนักขัตฤกษ์</option>
           </select>
           <FontAwesomeIcon
             icon={dropdownOpen.operatingHours ? faChevronUp : faChevronDown}
