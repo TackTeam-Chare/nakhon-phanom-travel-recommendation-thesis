@@ -5,8 +5,6 @@ import { useForm, useFieldArray } from "react-hook-form"
 import { Dialog, Transition } from "@headlessui/react"
 import { createTouristEntity } from "@/services/admin/insert"
 import { getDistricts, getCategories, getSeasons } from "@/services/admin/get"
-import { ToastContainer } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faTrash,
@@ -224,6 +222,11 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
               >
                 หมวดหมู่
               </label>
+              {errors.name && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.category_name.message}
+                        </p>
+                      )}
             </div>
                     <div className="relative z-0 w-full mb-6 group">
                       <FontAwesomeIcon
@@ -260,7 +263,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                       <textarea
                         id="description"
                         {...register("description", {
-                          required: "จำเป็นต้องระบุ"
+                          required: "จำเป็นต้องระบุคำอธิบายเกี่ยวกับสถานที่"
                         })}
                         rows={3}
                         className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
@@ -272,6 +275,11 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                       >
                         คำอธิบายเกี่ยวกับสถานที่
                       </label>
+                      {errors.name && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.description.message}
+                        </p>
+                      )}
                     </div>
 
                     <div className="relative z-0 w-full mb-6 group">
@@ -283,7 +291,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         type="text"
                         id="location"
                         {...register("location", {
-                          required: "จำเป็นต้องระบุตั้ง"
+                          required: "จำเป็นต้องระบุตั้งของสถานที่"
                         })}
                         className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-black-600 peer"
                         placeholder=" "
@@ -294,6 +302,11 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                       >
                         ตำแหน่งที่ตั้ง
                       </label>
+                      {errors.name && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.location.message}
+                        </p>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 mb-6">
@@ -301,9 +314,13 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         <input
                           type="text"
                           id="latitude"
-                          {...register("latitude", {
-                            required: "จำเป็นต้องระบุละติจูด"
-                          })}
+              {...register("latitude", {
+                required: "จำเป็นต้องระบุละติจูด",
+                pattern: {
+                  value: /^-?\d+(\.\d+)?$/,
+                  message: "ละติจูดไม่ถูกต้อง",
+                },
+              })}
                           className="block py-2.5 px-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
                           placeholder=" "
                         />
@@ -313,13 +330,22 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         >
                           ละติจูด
                         </label>
+                        {errors.name && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.latitude.message}
+                        </p>
+                      )}
                       </div>
                       <div className="relative z-0 w-full group">
                         <input
                           type="text"
                           id="longitude"
                           {...register("longitude", {
-                            required: "จำเป็นต้องระบุลองจิจูด"
+                            required: "จำเป็นต้องระบุลองจิจูด",
+                            pattern: {
+                              value: /^-?\d+(\.\d+)?$/,
+                              message: "ลองจิจูดไม่ถูกต้อง", // Error message for invalid longitude
+                            },
                           })}
                           className="block py-2.5 px-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
                           placeholder=" "
@@ -330,6 +356,11 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         >
                           ลองจิจูด
                         </label>
+                        {errors.name && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.longitude.message}
+                        </p>
+                      )}
                       </div>
                     </div>
           {/* Dropdowns with icons for indicating expansion */}
@@ -366,6 +397,12 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         >
                           อำเภอ
                         </label>
+
+                        {errors.name && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.district_name.message}
+                        </p>
+                      )}
                       </div>
                       <div className="relative z-0 w-full group mt-3">
                         <FontAwesomeIcon
@@ -651,7 +688,6 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
           </div>
         </Dialog>
       </Transition>
-      <ToastContainer />
     </>
   )
 }
