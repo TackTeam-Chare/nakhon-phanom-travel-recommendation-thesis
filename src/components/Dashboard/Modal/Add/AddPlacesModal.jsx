@@ -444,9 +444,6 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         <input
                           type="checkbox"
                           id="published"
-                          {...register("published", {
-                            required: "จำเป็นต้องกำหนดสถานะเผยเเพร่"
-                          })}
                           className="form-checkbox h-4 w-4 text-orange-600 transition duration-150 ease-in-out"
                         />
                         <label

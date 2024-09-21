@@ -5,7 +5,7 @@ import { AiOutlineRobot } from 'react-icons/ai';
 import { BiMessageRoundedDots } from 'react-icons/bi';
 import { FaUser } from 'react-icons/fa';
 import ReactTooltip from 'react-tooltip';
-import { fetchSuggestions } from '@/services/user/api'; // API for fetching chatbot suggestions
+import { fetchSuggestions } from '@/services/user/api';
 
 const socket = io(process.env.NEXT_PUBLIC_SOCKET_IO_URL);
 
@@ -16,12 +16,11 @@ const Chatbot = () => {
   });
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isChatbotOpen, setIsChatbotOpen] = useState(false); // Initially closed
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [suggestions, setSuggestions] = useState([]);
-  const [userLocation, setUserLocation] = useState(null); // Store user's current location
+  const [userLocation, setUserLocation] = useState(null);
 
-  // Fetch suggestions from backend when the component mounts
   useEffect(() => {
     const fetchSuggestionsData = async () => {
       try {
@@ -34,22 +33,14 @@ const Chatbot = () => {
     fetchSuggestionsData();
   }, []);
 
-  // Get user's geolocation when the component mounts
-  useEffect(() => { 
+  useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
-  
-          // Set state with the fetched coordinates
           setUserLocation({
-            latitude: latitude,
-            longitude: longitude,
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
           });
-  
-          // Log the user's location to the console
-          console.log(`User's location: Latitude ${latitude}, Longitude ${longitude}`);
         },
         (error) => {
           console.error('Error getting location:', error);
@@ -59,9 +50,7 @@ const Chatbot = () => {
       console.error('Geolocation is not supported by this browser.');
     }
   }, []);
-  
 
-  // Listen for bot responses
   useEffect(() => {
     socket.on('botMessage', (botMessage) => {
       const newMessage = { user: 'bot', text: botMessage };
@@ -212,8 +201,7 @@ const Chatbot = () => {
           )}
         </button>
       )}
-     <ReactTooltip place="top" type="dark" effect="solid" />
-
+      <ReactTooltip />
     </div>
   );
 };
