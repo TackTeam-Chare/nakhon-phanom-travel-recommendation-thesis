@@ -29,39 +29,43 @@ const EditOperatingHoursModal = ({ id, isOpen, onClose }) => {
   useEffect(() => {
     const fetchOperatingHour = async () => {
       try {
-        const operatingHour = await getOperatingHoursById(numericId)
-        setValue("place_id", operatingHour.place_id)
-        setValue("day_of_week", operatingHour.day_of_week)
-        setValue("opening_time", operatingHour.opening_time)
-        setValue("closing_time", operatingHour.closing_time)
-
-        const placesData = await getPlaces()
-        setPlaces(placesData)
-
-        const place = placesData.find(
-          p => p.id.toString() === operatingHour.place_id
-        )
+        // ดึงข้อมูลเวลาทำการจาก backend
+        const operatingHour = await getOperatingHoursById(numericId);
+        
+        // ตั้งค่าฟิลด์เวลาทำการ
+        setValue("place_id", operatingHour.place_id);
+        setValue("day_of_week", operatingHour.day_of_week);
+        setValue("opening_time", operatingHour.opening_time);
+        setValue("closing_time", operatingHour.closing_time);
+  
+        // ดึงข้อมูลสถานที่ทั้งหมด
+        const placesData = await getPlaces();
+        setPlaces(placesData);
+  
+        // หาสถานที่ที่ตรงกับ place_id
+        const place = placesData.find(p => p.id === operatingHour.place_id);
+        
+        // ตั้งค่าชื่อสถานที่หากพบข้อมูล
         if (place) {
-          setPlaceName(`ID: ${place.id} - ${place.name}`)
+          setPlaceName(`ID: ${place.id} - ${place.name}`);
         }
       } catch (error) {
-        console.error("เกิดข้อผิดพลาดในการดึงข้อมูลเวลาทำการ:", error)
-
-        const err = error
+        console.error("เกิดข้อผิดพลาดในการดึงข้อมูลเวลาทำการ:", error);
         MySwal.fire({
           icon: "error",
           title: "เกิดข้อผิดพลาดในการดึงข้อมูลเวลาทำการ",
-          text: err.message || "An unknown error occurred"
-        })
+          text: error.message || "An unknown error occurred",
+        });
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
-
+    };
+  
     if (numericId) {
-      fetchOperatingHour()
+      fetchOperatingHour();
     }
-  }, [numericId, setValue])
+  }, [numericId, setValue]);
+  
 
   const onSubmit = async data => {
     setIsSubmitting(true)
