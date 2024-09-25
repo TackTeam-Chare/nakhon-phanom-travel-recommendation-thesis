@@ -1,8 +1,8 @@
-"use client"
+"use client"; // บังคับให้รันในฝั่งไคลเอนต์
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Dialog, Disclosure, Popover } from "@headlessui/react"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Dialog, Disclosure, Popover } from "@headlessui/react";
 import {
   Bars3Icon,
   ChevronDownIcon,
@@ -21,22 +21,23 @@ import {
   CalendarIcon,
   CubeIcon,
   UserIcon
-} from "@heroicons/react/20/solid"
+} from "@heroicons/react/20/solid";
 
-import Swal from "sweetalert2"
-import withReactContent from "sweetalert2-react-content"
-import { logout } from "@/services/admin/auth"
-import ProfileAccount from "@/components/Dashboard/Modal/Profile/ProfileAccount"
-import { FaUser } from "react-icons/fa"
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import { logout } from "@/services/admin/auth";
+import ProfileAccount from "@/components/Dashboard/Modal/Profile/ProfileAccount";
+import { FaUser } from "react-icons/fa";
 import AdminStatus from "@/components/Dashboard/AdminStatus";
+import Cookies from "js-cookie"; // นำเข้า js-cookie
 
-const MySwal = withReactContent(Swal)
+const MySwal = withReactContent(Swal);
 
 export default function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [isProfileOpen, setIsProfileOpen] = useState(false)
-  const router = useRouter()
-  const [loading, setLoading] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const handleLogout = async () => {
     const result = await MySwal.fire({
@@ -54,11 +55,9 @@ export default function Header() {
       setLoading(true);
       try {
         await logout();
-        // ลบ token, session และ cookies
-        localStorage.removeItem("token");
-        sessionStorage.clear();
-        document.cookie =
-          "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"; // ลบ cookies (token)
+        // ลบ token และ cookies
+        Cookies.remove("token"); // ลบ cookies ที่เก็บ token
+        sessionStorage.clear(); // ลบ session
         MySwal.fire("ออกจากระบบแล้ว!", "คุณออกจากระบบสำเร็จ", "success");
         router.push("/auth/login");
       } catch (error) {

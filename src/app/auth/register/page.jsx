@@ -3,18 +3,18 @@ import React, { useState } from "react"
 import { useForm } from "react-hook-form"
 import { useRouter } from "next/navigation"
 import { register } from "@/services/admin/auth"
+import Cookies from "js-cookie" // นำเข้า js-cookie
 
 const AdminRegister = () => {
   const {
     register: formRegister,
     handleSubmit,
-    watch,
     formState: { errors }
   } = useForm()
   const [alert, setAlert] = useState({ type: "", message: "" })
   const router = useRouter()
 
-  const handleRegister = async data => {
+  const handleRegister = async (data) => {
     if (data.password !== data.confirmPassword) {
       setAlert({ type: "error", message: "Passwords do not match!" })
       return
@@ -23,7 +23,8 @@ const AdminRegister = () => {
     try {
       const response = await register(data)
       console.log("Register successful:", response)
-      localStorage.setItem("token", response.token)
+ 
+      Cookies.set("token", response.token, { expires: 7 }) // เก็บ token ไว้ใน Cookies เป็นเวลา 7 วัน
       setAlert({ type: "success", message: "Register successful!" })
       setTimeout(() => {
         router.push("/auth/login")

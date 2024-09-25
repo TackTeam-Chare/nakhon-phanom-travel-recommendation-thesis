@@ -8,7 +8,7 @@ const auth = axios.create({
 
 // Add token to headers of every request
 auth.interceptors.request.use(config => {
-  const token = getToken()
+  const token = Cookies.get("token") 
   if (token) {
     config.headers = config.headers || {}
     config.headers.Authorization = `Bearer ${token}`
@@ -16,7 +16,6 @@ auth.interceptors.request.use(config => {
   return config
 })
 
-// Function to get token from localStorage
 const getToken = () => Cookies.get("token")
 
 // Function to create a tourist entity

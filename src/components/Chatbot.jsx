@@ -5,15 +5,21 @@ import { AiOutlineRobot } from 'react-icons/ai';
 import { BiMessageRoundedDots } from 'react-icons/bi';
 import { FaUser } from 'react-icons/fa';
 import ReactTooltip from 'react-tooltip';
+import Cookies from 'js-cookie'; // Import js-cookie
 import { fetchSuggestions } from '@/services/user/api';
 
 const socket = io(process.env.NEXT_PUBLIC_SOCKET_IO_URL);
 
 const Chatbot = () => {
   const [messages, setMessages] = useState(() => {
-    const savedMessages = localStorage.getItem('chatbotMessages');
-    return savedMessages ? JSON.parse(savedMessages) : [];
+    // ตรวจสอบว่ากำลังรันบนไคลเอนต์ (browser) ก่อนใช้งาน Cookies
+    if (typeof window !== 'undefined') {
+      const savedMessages = Cookies.get('chatbotMessages');
+      return savedMessages ? JSON.parse(savedMessages) : [];
+    }
+    return [];
   });
+  
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
@@ -56,7 +62,11 @@ const Chatbot = () => {
       const newMessage = { user: 'bot', text: botMessage };
       setMessages((prevMessages) => {
         const updatedMessages = [...prevMessages, newMessage];
-        localStorage.setItem('chatbotMessages', JSON.stringify(updatedMessages));
+        
+        if (typeof window !== 'undefined') {
+          Cookies.set('chatbotMessages', JSON.stringify(updatedMessages), { expires: 7 });
+        }
+        
         return updatedMessages;
       });
       setIsLoading(false);
@@ -71,17 +81,19 @@ const Chatbot = () => {
     };
   }, [isChatbotOpen]);
 
-  // Send a message to the chatbot with location data if available
   const sendMessage = (text) => {
     if (text.trim()) {
       const userMessage = { user: 'user', text };
       setMessages((prevMessages) => {
         const updatedMessages = [...prevMessages, userMessage];
-        localStorage.setItem('chatbotMessages', JSON.stringify(updatedMessages));
+
+        if (typeof window !== 'undefined') {
+          Cookies.set('chatbotMessages', JSON.stringify(updatedMessages), { expires: 7 });
+        }
+
         return updatedMessages;
       });
 
-      // Attach user's location (latitude, longitude) to the message
       const messageData = { text, location: userLocation || null };
       socket.emit('userMessage', messageData);
 
@@ -91,7 +103,10 @@ const Chatbot = () => {
   };
 
   const clearChatHistory = () => {
-    localStorage.removeItem('chatbotMessages');
+    // ลบประวัติการแชทจาก Cookies
+    if (typeof window !== 'undefined') {
+      Cookies.remove('chatbotMessages');
+    }
     setMessages([]);
   };
 
@@ -123,9 +138,9 @@ const Chatbot = () => {
   };
 
   return (
-    <div className="fixed bottom-5 right-5 z-[10000]"> {/* Increase z-index */}
+    <div className="fixed bottom-5 right-5 z-[10000]">
       {isChatbotOpen ? (
-        <div className="w-full max-w-xs h-96 border rounded-lg shadow-lg bg-white flex flex-col justify-between z-[10000]"> {/* z-index adjustment */}
+        <div className="w-full max-w-xs h-96 border rounded-lg shadow-lg bg-white flex flex-col justify-between z-[10000]">
           <div className="bg-orange-600 text-white p-3 rounded-t-lg flex justify-between items-center">
             <div className="flex items-center space-x-2">
               <AiOutlineRobot className="text-2xl" />
@@ -155,7 +170,6 @@ const Chatbot = () => {
               </div>
             )}
 
-            {/* Display chatbot suggestions */}
             <div className="mt-4 flex flex-wrap">
               {suggestions.map((suggestion, index) => (
                 <button
@@ -190,7 +204,7 @@ const Chatbot = () => {
         <button
           data-tip="เปิดแชทบอท"
           onClick={handleChatbotOpen}
-          className="bg-orange-600 p-3 rounded-full shadow-lg flex items-center justify-center fixed bottom-5 right-5 md:bottom-5 md:right-5 z-[10000]" // Increase z-index and ensure fixed positioning
+          className="bg-orange-600 p-3 rounded-full shadow-lg flex items-center justify-center fixed bottom-5 right-5 md:bottom-5 md:right-5 z-[10000]"
           aria-label="Open chatbot"
         >
           <BiMessageRoundedDots className="text-white text-3xl" />

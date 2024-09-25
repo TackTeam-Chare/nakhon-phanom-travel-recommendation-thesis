@@ -97,10 +97,13 @@ export const updateProfile = async data => {
   }
 }
 
-export const register = async data => {
+export const register = async (data) => {
   try {
     const response = await auth.post("/auth/register", data)
-    localStorage.setItem("token", response.data.token)
+    
+    // ตั้งค่า token ใน Cookies
+    Cookies.set("token", response.data.token, { expires: 7 }) // เก็บ token เป็นเวลา 7 วัน (หรือกำหนดตามต้องการ)
+
     return response.data
   } catch (error) {
     console.error("Error registering:", error)
