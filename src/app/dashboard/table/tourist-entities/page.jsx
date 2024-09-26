@@ -228,7 +228,7 @@ const PlaceIndexPage = () => {
       <div className="container mx-auto bg-white p-8 rounded-lg shadow-md">
         <h1 className="text-3xl font-bold mb-8 text-center text-orange-600">
           <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
-          สถานที่ท่องเที่ยว
+          สถานที่
         </h1>
 
         {/* Dropdown for category selection */}

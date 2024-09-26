@@ -37,6 +37,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
   const [uploadedImagesModalOpen, setUploadedImagesModalOpen] = useState(false)
   const [selectedExistingImage, setSelectedExistingImage] = useState(null)
   const [selectedUploadedImage, setSelectedUploadedImage] = useState(null)
+  const [selectedCategory, setSelectedCategory] = useState("");
   const {
     register,
     handleSubmit,
@@ -66,7 +67,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
     season: false,
     operatingHours: false
   })
-
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -97,6 +98,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
         setValue("operating_hours", placeData.operating_hours || [])
         setValue("published", placeData.published === 1 ? 1 : 0)
         setExistingImages(placeData.images || [])
+        setSelectedCategory(placeData.category_name || "")
       } catch (error) {
         console.error("ไม่สามารถดึงข้อมูลได้", error)
         MySwal.fire({
@@ -398,6 +400,8 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                           อำเภอ
                         </label>
                       </div>
+                    {/* Conditionally render the season input */}
+                    {selectedCategory === "สถานที่ท่องเที่ยว" && (
                       <div className="relative z-0 w-full group">
                         <FontAwesomeIcon
                           icon={faSnowflake}
@@ -417,9 +421,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                           ))}
                         </select>
                         <FontAwesomeIcon
-                          icon={
-                            dropdownOpen.season ? faChevronUp : faChevronDown
-                          }
+                          icon={dropdownOpen.season ? faChevronUp : faChevronDown}
                           className="absolute right-3 top-3 text-gray-400"
                         />
                         <label
@@ -429,6 +431,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                           ฤดู
                         </label>
                       </div>
+                    )}
                       <div className="relative z-0 w-full mb-6 group">
                       <div className="flex items-center ">
                       <FontAwesomeIcon
