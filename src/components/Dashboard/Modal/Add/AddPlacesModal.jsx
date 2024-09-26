@@ -336,7 +336,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                       )}
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 mb-6">
+                   <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="relative z-0 w-full group">
           <input
             type="text"

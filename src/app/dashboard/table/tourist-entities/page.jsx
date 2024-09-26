@@ -29,7 +29,16 @@ import {
   faTrash,
   faSearch,
   faArrowLeft,
-  faArrowRight
+  faArrowRight,
+  faMapMarkerAlt,
+  faUtensils,
+  faSnowflake,
+  faCheckCircle ,
+  faTimesCircle,
+  faUmbrellaBeach,
+  faBed,
+  faShoppingBag,
+  faQuestionCircle
 } from "@fortawesome/free-solid-svg-icons"
 
 const PlaceIndexPage = () => {
@@ -89,37 +98,75 @@ const PlaceIndexPage = () => {
     setSelectedCategory(categoryId)
   }
 
+  const getCategoryIcon = (categoryName) => {
+    switch (categoryName) {
+      case "สถานที่ท่องเที่ยว":
+        return faUmbrellaBeach;
+      case "ร้านอาหาร":
+        return faUtensils;
+      case "ที่พัก":
+        return faBed;
+      case "ร้านค้าของฝาก":
+        return faShoppingBag;
+      default:
+        return faQuestionCircle;
+    }
+  };
+
   const columns = useMemo(
     () => [
       {
         Header: "รหัส",
-        accessor: "id"
+        accessor: "id",
+        Cell: ({ cell: { value } }) => (
+          <span>
+            <FontAwesomeIcon icon={faArrowRight} className="mr-2" />
+            {value}
+          </span>
+        )
       },
       {
         Header: "ชื่อ",
         accessor: "name",
-        Cell: ({ cell: { value } }) => (
-          <span className="font-medium text-lg text-gray-700">{value}</span>
-        )
+        Cell: ({ row, cell: { value } }) => {
+          const icon = getCategoryIcon(row.original.category_name);
+          return (
+            <span className="font-medium text-lg text-gray-700">
+              <FontAwesomeIcon icon={icon} className="mr-2" />
+              {value}
+            </span>
+          );
+        },
       },
       {
         Header: "ฤดูกาล",
         accessor: "season_name",
         Cell: ({ cell: { value } }) => (
           <span>
+            <FontAwesomeIcon icon={faSnowflake} className="mr-2" />
             {Array.isArray(value) ? value.join(", ") : "ไม่มีข้อมูลฤดูกาล"}
           </span>
         )
       },
       {
         Header: "อำเภอ",
-        accessor: "district_name"
+        accessor: "district_name",
+        Cell: ({ cell: { value } }) => (
+          <span>
+            <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
+            {value}
+          </span>
+        )
       },
       {
         Header: "สถานะ",
         accessor: "published",
         Cell: ({ cell: { value } }) => (
           <span className={value ? "text-green-600" : "text-red-600"}>
+            <FontAwesomeIcon
+              icon={value ? faCheckCircle : faTimesCircle}
+              className="mr-2"
+            />
             {value ? "เผยแพร่" : "ไม่เผยแพร่"}
           </span>
         )
@@ -180,6 +227,7 @@ const PlaceIndexPage = () => {
     <div className="min-h-screen bg-gray-100 p-4">
       <div className="container mx-auto bg-white p-8 rounded-lg shadow-md">
         <h1 className="text-3xl font-bold mb-8 text-center text-orange-600">
+          <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
           สถานที่ท่องเที่ยว
         </h1>
 
