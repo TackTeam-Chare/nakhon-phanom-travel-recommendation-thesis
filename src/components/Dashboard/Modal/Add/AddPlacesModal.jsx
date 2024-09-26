@@ -36,7 +36,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
       operating_hours: [
         { day_of_week: "", opening_time: "", closing_time: "" }
       ],
-      published: false,
+      published: true,
       rating: 0
     }
   })
@@ -468,7 +468,9 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         <input
                           type="checkbox"
                           id="published"
+                          {...register("published")}
                           className="form-checkbox h-4 w-4 text-orange-600 transition duration-150 ease-in-out"
+                          defaultChecked={true}
                         />
                         <label
                           htmlFor="published"
