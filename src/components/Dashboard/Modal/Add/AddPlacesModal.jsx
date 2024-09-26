@@ -57,7 +57,9 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
     season: false,
     operatingHours: false
   })
-  const [selectedCategory, setSelectedCategory] = useState('') 
+  const [selectedCategory, setSelectedCategory] = useState('')
+  const [latitudeError, setLatitudeError] = useState('');
+  const [longitudeError, setLongitudeError] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,7 +87,27 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value)
   }
-  
+
+  const handleLatitudeChange = (event) => {
+    const value = event.target.value;
+    const isValid = /^-?\d+(\.\d+)?$/.test(value); // Validate if it's a valid number
+    if (isValid || value === '') {
+      setLatitudeError('');
+    } else {
+      setLatitudeError('ละติจูดต้องเป็นตัวเลขเท่านั้น');
+    }
+  };
+
+  const handleLongitudeChange = (event) => {
+    const value = event.target.value;
+    const isValid = /^-?\d+(\.\d+)?$/.test(value); // Validate if it's a valid number
+    if (isValid || value === '') {
+      setLongitudeError('');
+    } else {
+      setLongitudeError('ลองจิจูดต้องเป็นตัวเลขเท่านั้น');
+    }
+  };
+
   const handleFileChange = event => {
     const files = Array.from(event.target.files || [])
     if (files.length > 10) {
@@ -315,59 +337,55 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 mb-6">
-                      <div className="relative z-0 w-full group">
-                        <input
-                          type="text"
-                          id="latitude"
-              {...register("latitude", {
-                required: "จำเป็นต้องระบุละติจูด",
-                pattern: {
-                  value: /^-?\d+(\.\d+)?$/,
-                  message: "ละติจูดไม่ถูกต้อง",
-                },
-              })}
-                          className="block py-2.5 px-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
-                          placeholder=" "
-                        />
-                        <label
-                          htmlFor="latitude"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-3 -z-10 origin-[0] peer-focus:left-3 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
-                        >
-                          ละติจูด
-                        </label>
-                        {errors.name && (
-                        <p className="text-red-500 text-xs mt-1">
-                          {errors.latitude.message}
-                        </p>
-                      )}
-                      </div>
-                      <div className="relative z-0 w-full group">
-                        <input
-                          type="text"
-                          id="longitude"
-                          {...register("longitude", {
-                            required: "จำเป็นต้องระบุลองจิจูด",
-                            pattern: {
-                              value: /^-?\d+(\.\d+)?$/,
-                              message: "ลองจิจูดไม่ถูกต้อง", // Error message for invalid longitude
-                            },
-                          })}
-                          className="block py-2.5 px-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
-                          placeholder=" "
-                        />
-                        <label
-                          htmlFor="longitude"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-3 -z-10 origin-[0] peer-focus:left-3 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
-                        >
-                          ลองจิจูด
-                        </label>
-                        {errors.name && (
-                        <p className="text-red-500 text-xs mt-1">
-                          {errors.longitude.message}
-                        </p>
-                      )}
-                      </div>
-                    </div>
+        <div className="relative z-0 w-full group">
+          <input
+            type="text"
+            id="latitude"
+            {...register("latitude", {
+              required: "จำเป็นต้องระบุละติจูด",
+            })}
+            className="block py-2.5 px-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
+            placeholder=" "
+            onChange={(e) => {
+              handleLatitudeChange(e);
+              setValue("latitude", e.target.value);
+            }}
+          />
+          <label
+            htmlFor="latitude"
+            className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-3 -z-10 origin-[0] peer-focus:left-3 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+          >
+            ละติจูด
+          </label>
+          {latitudeError && (
+            <p className="text-red-500 text-xs mt-1">{latitudeError}</p>
+          )}
+        </div>
+        <div className="relative z-0 w-full group">
+          <input
+            type="text"
+            id="longitude"
+            {...register("longitude", {
+              required: "จำเป็นต้องระบุลองจิจูด",
+            })}
+            className="block py-2.5 px-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
+            placeholder=" "
+            onChange={(e) => {
+              handleLongitudeChange(e);
+              setValue("longitude", e.target.value);
+            }}
+          />
+          <label
+            htmlFor="longitude"
+            className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-3 -z-10 origin-[0] peer-focus:left-3 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+          >
+            ลองจิจูด
+          </label>
+          {longitudeError && (
+            <p className="text-red-500 text-xs mt-1">{longitudeError}</p>
+          )}
+        </div>
+      </div>
           {/* Dropdowns with icons for indicating expansion */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                       <div className="relative z-0 w-full group mt-3">
