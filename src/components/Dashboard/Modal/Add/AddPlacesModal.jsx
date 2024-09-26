@@ -57,6 +57,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
     season: false,
     operatingHours: false
   })
+  const [selectedCategory, setSelectedCategory] = useState('') 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,6 +82,9 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
     fetchData()
   }, [])
 
+  const handleCategoryChange = (event) => {
+    setSelectedCategory(event.target.value)
+  }
   
   const handleFileChange = event => {
     const files = Array.from(event.target.files || [])
@@ -204,8 +208,9 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                 })}
                 className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
                 onClick={() => toggleDropdown("category")}
+                onChange={handleCategoryChange}
               >
-                <option value="">เลือกหมวดหมู่</option>
+                <option value="">เลือกหมวดหมู่สถานที่</option>
                 {categories.map((category) => (
                   <option key={category.id} value={category.name}>
                     {category.name}
@@ -404,6 +409,8 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         </p>
                       )}
                       </div>
+                   {/* Conditional rendering for Season input */}
+                   {selectedCategory === "สถานที่ท่องเที่ยว" && (
                       <div className="relative z-0 w-full group mt-3">
                         <FontAwesomeIcon
                           icon={faSnowflake}
@@ -423,18 +430,17 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                           ))}
                         </select>
                         <FontAwesomeIcon
-                          icon={
-                            dropdownOpen.season ? faChevronUp : faChevronDown
-                          }
+                          icon={dropdownOpen.season ? faChevronUp : faChevronDown}
                           className="absolute right-3 top-3 text-gray-400"
                         />
                         <label
                           htmlFor="season_id"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shwn:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
                         >
                           ฤดู
                         </label>
                       </div>
+                    )}
                       <div className="relative z-0 w-full  group mt-5 ">
                       <div className="flex items-center ">
                         <FontAwesomeIcon
