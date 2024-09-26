@@ -104,7 +104,7 @@ export default function CreateCategory() {
                         </p>
                       )}
                     </div>
-                    <div className="mt-4 flex justify-end gap-2">
+                     <div className="flex justify-end space-x-2">
                       <button
                         type="button"
                         className="py-2 px-4 bg-gray-300 text-gray-700 rounded-md shadow-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 flex items-center gap-1"

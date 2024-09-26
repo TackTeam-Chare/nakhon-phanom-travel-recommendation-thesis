@@ -11,7 +11,14 @@ module.exports = {
       'tailwindui.com', 
       'www.thaitravelcenter.com'
     ],
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '5000',
+        pathname: '/public/uploads/**',
+      },
+    ],
     unoptimized: true,
   },
 };
-

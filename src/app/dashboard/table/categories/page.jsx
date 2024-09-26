@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { getCategories } from "@/services/admin/get";
 import { deleteCategory } from "@/services/admin/delete";
 import { useTable, useSortBy, usePagination, useGlobalFilter } from "react-table";
-import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import { FaPlus, FaEdit, FaTrash, FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
 import CreateCategory from "@/components/Dashboard/Modal/Add/AddCategoryModal";
 import EditCategoryModal from "@/components/Dashboard/Modal/Edit/EditCategoryModal";
 import Swal from "sweetalert2";
@@ -148,12 +148,15 @@ const CategoriesPage = () => {
             <FaPlus className="mr-1" />
             เพิ่มหมวดหมู่ใหม่
           </button>
-          <input
-            value={globalFilter || ""}
-            onChange={(e) => setGlobalFilter(e.target.value)}
-            placeholder="ค้นหา..."
-            className="p-2 border border-gray-300 rounded-md"
-          />
+          <div className="flex items-center border border-gray-300 rounded-md p-2">
+            <FaSearch className="mr-2 text-gray-500" />
+            <input
+              value={globalFilter || ""}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+              placeholder="ค้นหา..."
+              className="outline-none"
+            />
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table
@@ -214,9 +217,9 @@ const CategoriesPage = () => {
           <button
             onClick={() => previousPage()}
             disabled={!canPreviousPage}
-            className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400"
+            className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400 flex items-center"
           >
-            ก่อนหน้า
+            <FaArrowLeft className="mr-2" /> ก่อนหน้า
           </button>
           <span>
             หน้า{" "}
@@ -227,9 +230,9 @@ const CategoriesPage = () => {
           <button
             onClick={() => nextPage()}
             disabled={!canNextPage}
-            className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400"
+            className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400 flex items-center"
           >
-            ถัดไป
+            ถัดไป <FaArrowRight className="ml-2" />
           </button>
         </div>
         {/* Modals */}

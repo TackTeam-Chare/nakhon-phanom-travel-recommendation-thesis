@@ -165,6 +165,8 @@ const AddOperatingHoursModal = ({ isOpen, onClose }) => {
                           <option value="Thursday">วันพฤหัสบดี</option>
                           <option value="Friday">วันศุกร์</option>
                           <option value="Saturday">วันเสาร์</option>
+                          <option value="Everyday">ทุกวัน</option>
+                          <option value="Except Holidays">ยกเว้นวันหยุด</option>
                         </select>
                       </div>
                       {errors.day_of_week && (

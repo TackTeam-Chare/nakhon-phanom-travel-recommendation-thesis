@@ -1,100 +1,97 @@
-"use client"
+"use client";
 
-import React, { useEffect, useState, useMemo } from "react"
-import { useRouter } from "next/navigation"
-import { getDistricts } from "@/services/admin/get"
-import { deleteDistrict } from "@/services/admin/delete"
+import React, { useEffect, useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { getDistricts } from "@/services/admin/get";
+import { deleteDistrict } from "@/services/admin/delete";
 import {
   useTable,
   useSortBy,
   usePagination,
   useGlobalFilter
-} from "react-table"
-import Swal from "sweetalert2"
-import withReactContent from "sweetalert2-react-content"
-import AddDistrictModal from "@/components/Dashboard/Modal/Add/AddDistrictModal"
-import EditDistrictModal from "@/components/Dashboard/Modal/Edit/EditDistrictModal"
+} from "react-table";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import { FaPlus, FaEdit, FaTrash, FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
+import AddDistrictModal from "@/components/Dashboard/Modal/Add/AddDistrictModal";
+import EditDistrictModal from "@/components/Dashboard/Modal/Edit/EditDistrictModal";
 
-const MySwal = withReactContent(Swal)
+const MySwal = withReactContent(Swal);
 
 const DistrictsPage = () => {
-  const [districts, setDistricts] = useState([])
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [selectedDistrict, setSelectedDistrict] = useState(null)
-  const router = useRouter()
+  const [districts, setDistricts] = useState([]);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchDistricts = async () => {
       try {
-        const result = await getDistricts()
-        setDistricts(result)
+        const result = await getDistricts();
+        setDistricts(result);
       } catch (err) {
         MySwal.fire({
-          icon: 'error',
-          title: 'เกิดข้อผิดพลาด',
-          text: 'ไม่สามารถดึงข้อมูลอำเภอได้'
-        })
+          icon: "error",
+          title: "เกิดข้อผิดพลาด",
+          text: "ไม่สามารถดึงข้อมูลอำเภอได้"
+        });
       }
-    }
+    };
 
-    fetchDistricts()
-  }, [])
+    fetchDistricts();
+  }, []);
 
-  const handleDelete = async id => {
+  const handleDelete = async (id) => {
     MySwal.fire({
-      title: 'คุณแน่ใจหรือไม่?',
-      text: 'คุณต้องการลบอำเภอนี้ใช่ไหม?',
-      icon: 'warning',
+      title: "คุณแน่ใจหรือไม่?",
+      text: "คุณต้องการลบอำเภอนี้ใช่ไหม?",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: 'ใช่, ลบเลย!',
-      cancelButtonText: 'ยกเลิก'
+      confirmButtonText: "ใช่, ลบเลย!",
+      cancelButtonText: "ยกเลิก",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await deleteDistrict(id)
-          setDistricts(prevDistricts =>
-            prevDistricts.filter(district => district.id !== id)
-          )
-          MySwal.fire(
-            'ลบสำเร็จ!',
-            'อำเภอได้ถูกลบออกแล้ว.',
-            'success'
-          )
+          await deleteDistrict(id);
+          setDistricts((prevDistricts) =>
+            prevDistricts.filter((district) => district.id !== id)
+          );
+          MySwal.fire("ลบสำเร็จ!", "อำเภอได้ถูกลบออกแล้ว.", "success");
         } catch (error) {
-          console.error(`เกิดข้อผิดพลาดในการลบอำเภอที่มี ID ${id}:`, error)
+          console.error(`เกิดข้อผิดพลาดในการลบอำเภอที่มี ID ${id}:`, error);
           MySwal.fire({
-            icon: 'error',
-            title: 'เกิดข้อผิดพลาด',
-            text: 'ไม่สามารถลบอำเภอได้ กรุณาลองอีกครั้ง'
-          })
+            icon: "error",
+            title: "เกิดข้อผิดพลาด",
+            text: "ไม่สามารถลบอำเภอได้ กรุณาลองอีกครั้ง",
+          });
         }
       }
-    })
-  }
+    });
+  };
 
-  const openAddModal = () => setIsAddModalOpen(true)
-  const closeAddModal = () => setIsAddModalOpen(false)
+  const openAddModal = () => setIsAddModalOpen(true);
+  const closeAddModal = () => setIsAddModalOpen(false);
 
-  const openEditModal = district => {
-    setSelectedDistrict(district)
-    setIsEditModalOpen(true)
-  }
+  const openEditModal = (district) => {
+    setSelectedDistrict(district);
+    setIsEditModalOpen(true);
+  };
 
   const closeEditModal = () => {
-    setIsEditModalOpen(false)
-    setSelectedDistrict(null)
-  }
+    setIsEditModalOpen(false);
+    setSelectedDistrict(null);
+  };
 
   const columns = useMemo(
     () => [
       {
         Header: "รหัส",
-        accessor: "id"
+        accessor: "id",
       },
       {
         Header: "ชื่อ",
-        accessor: "name"
+        accessor: "name",
       },
       {
         Header: "การกระทำ",
@@ -102,22 +99,24 @@ const DistrictsPage = () => {
           <div className="flex space-x-2">
             <button
               onClick={() => openEditModal(row.original)}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300 ease-in-out"
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300 ease-in-out flex items-center"
             >
+              <FaEdit className="mr-1" />
               แก้ไข
             </button>
             <button
               onClick={() => handleDelete(row.original.id)}
-              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-300 ease-in-out"
+              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-300 ease-in-out flex items-center"
             >
+              <FaTrash className="mr-1" />
               ลบ
             </button>
           </div>
-        )
-      }
+        ),
+      },
     ],
     []
-  )
+  );
 
   const {
     getTableProps,
@@ -131,18 +130,18 @@ const DistrictsPage = () => {
     pageOptions,
     prepareRow,
     state,
-    setGlobalFilter
+    setGlobalFilter,
   } = useTable(
     {
       columns,
-      data: districts
+      data: districts,
     },
     useGlobalFilter,
     useSortBy,
     usePagination
-  )
+  );
 
-  const { globalFilter, pageIndex } = state
+  const { globalFilter, pageIndex } = state;
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
@@ -153,16 +152,19 @@ const DistrictsPage = () => {
         <div className="flex justify-between items-center mb-4">
           <button
             onClick={openAddModal}
-            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-300 ease-in-out"
+            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-300 ease-in-out flex items-center"
           >
-            เพิ่มอำเภอใหม่
+            <FaPlus className="mr-2" /> เพิ่มอำเภอใหม่
           </button>
-          <input
-            value={globalFilter || ""}
-            onChange={e => setGlobalFilter(e.target.value)}
-            placeholder="ค้นหา..."
-            className="p-2 border border-gray-300 rounded-md"
-          />
+          <div className="flex items-center border border-gray-300 rounded-md p-2">
+            <FaSearch className="mr-2 text-gray-500" />
+            <input
+              value={globalFilter || ""}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+              placeholder="ค้นหา..."
+              className="outline-none"
+            />
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table
@@ -170,9 +172,9 @@ const DistrictsPage = () => {
             className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md"
           >
             <thead className="bg-gray-100">
-              {headerGroups.map(headerGroup => (
+              {headerGroups.map((headerGroup) => (
                 <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
-                  {headerGroup.headers.map(column => (
+                  {headerGroup.headers.map((column) => (
                     <th
                       {...column.getHeaderProps(column.getSortByToggleProps())}
                       key={column.id}
@@ -192,15 +194,15 @@ const DistrictsPage = () => {
               ))}
             </thead>
             <tbody {...getTableBodyProps()}>
-              {page.map(row => {
-                prepareRow(row)
+              {page.map((row) => {
+                prepareRow(row);
                 return (
                   <tr
                     {...row.getRowProps()}
                     key={row.id}
                     className="hover:bg-gray-100 transition duration-300 ease-in-out"
                   >
-                    {row.cells.map(cell => (
+                    {row.cells.map((cell) => (
                       <td
                         {...cell.getCellProps()}
                         key={cell.column.id}
@@ -210,7 +212,7 @@ const DistrictsPage = () => {
                       </td>
                     ))}
                   </tr>
-                )
+                );
               })}
             </tbody>
           </table>
@@ -219,9 +221,9 @@ const DistrictsPage = () => {
           <button
             onClick={() => previousPage()}
             disabled={!canPreviousPage}
-            className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400"
+            className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400 flex items-center"
           >
-            ก่อนหน้า
+            <FaArrowLeft className="mr-2" /> ก่อนหน้า
           </button>
           <span>
             หน้า{" "}
@@ -232,9 +234,9 @@ const DistrictsPage = () => {
           <button
             onClick={() => nextPage()}
             disabled={!canNextPage}
-            className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400"
+            className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400 flex items-center"
           >
-            ถัดไป
+            ถัดไป <FaArrowRight className="ml-2" />
           </button>
         </div>
 
@@ -248,13 +250,12 @@ const DistrictsPage = () => {
           <EditDistrictModal
             isOpen={isEditModalOpen}
             onClose={closeEditModal}
-            // ตรวจสอบให้แน่ใจว่ามีการส่ง prop เขตอย่างถูกต้อง
             district={selectedDistrict}
           />
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DistrictsPage
+export default DistrictsPage;

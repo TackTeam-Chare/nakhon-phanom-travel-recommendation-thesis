@@ -13,6 +13,7 @@ import {
 } from "react-table"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
+import { FaPlus, FaEdit, FaTrash, FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa"
 import AddImagesModal from "@/components/Dashboard/Modal/Add/UploadImagesModal"
 import EditImagesModal from "@/components/Dashboard/Modal/Edit/EditImagesModal"
 
@@ -99,10 +100,10 @@ const ImagesIndexPage = () => {
         )
       },
       {
-        Header: "หน่วยงานท่องเที่ยว",
+        Header: "สถานที่",
         accessor: "tourism_entities_id",
         Cell: ({ cell: { value }, row }) => (
-          <span>{`ID: ${value}, ชื่อ: ${row.original.tourism_entity_name}`}</span>
+          <span>{`${row.original.tourism_entity_name}`}</span>
         )
       },
       {
@@ -111,15 +112,15 @@ const ImagesIndexPage = () => {
           <div className="flex space-x-2">
             <button
               onClick={() => openEditModal(row.original.id)}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300 ease-in-out"
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300 ease-in-out flex items-center"
             >
-              แก้ไข
+              <FaEdit className="mr-2" /> แก้ไข
             </button>
             <button
               onClick={() => handleDelete(row.original.id)}
-              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-300 ease-in-out"
+              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-300 ease-in-out flex items-center"
             >
-              ลบ
+              <FaTrash className="mr-2" /> ลบ
             </button>
           </div>
         )
@@ -160,16 +161,19 @@ const ImagesIndexPage = () => {
         <div className="flex justify-between items-center mb-4">
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-300 ease-in-out"
+            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-300 ease-in-out flex items-center"
           >
-            เพิ่มรูปภาพใหม่
+            <FaPlus className="mr-2" /> เพิ่มรูปภาพใหม่
           </button>
-          <input
-            value={globalFilter || ""}
-            onChange={e => setGlobalFilter(e.target.value)}
-            placeholder="ค้นหา..."
-            className="p-2 border border-gray-300 rounded-md"
-          />
+          <div className="flex items-center border border-gray-300 rounded-md p-2">
+            <FaSearch className="mr-2 text-gray-500" />
+            <input
+              value={globalFilter || ""}
+              onChange={e => setGlobalFilter(e.target.value)}
+              placeholder="ค้นหา..."
+              className="outline-none"
+            />
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table
@@ -177,12 +181,12 @@ const ImagesIndexPage = () => {
             className="min-w-full bg-white border border-gray-200"
           >
             <thead className="bg-gray-100">
-              {headerGroups.map(headerGroup => (
-                <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
-                  {headerGroup.headers.map(column => (
+              {headerGroups.map((headerGroup, headerGroupIndex) => (
+                <tr {...headerGroup.getHeaderGroupProps()} key={headerGroupIndex}>
+                  {headerGroup.headers.map((column, columnIndex) => (
                     <th
                       {...column.getHeaderProps(column.getSortByToggleProps())}
-                      key={column.id}
+                      key={columnIndex}
                       className="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider"
                     >
                       {column.render("Header")}
@@ -199,7 +203,7 @@ const ImagesIndexPage = () => {
               ))}
             </thead>
             <tbody {...getTableBodyProps()}>
-              {page.map(row => {
+              {page.map((row, rowIndex) => {
                 prepareRow(row)
                 return (
                   <tr
@@ -207,10 +211,10 @@ const ImagesIndexPage = () => {
                     key={row.original.id}
                     className="hover:bg-gray-100 transition duration-300 ease-in-out"
                   >
-                    {row.cells.map(cell => (
+                    {row.cells.map((cell, cellIndex) => (
                       <td
                         {...cell.getCellProps()}
-                        key={cell.column.id}
+                        key={cellIndex}
                         className="px-6 py-4 whitespace-no-wrap border-b border-gray-200"
                       >
                         {cell.render("Cell")}
@@ -226,9 +230,9 @@ const ImagesIndexPage = () => {
           <button
             onClick={() => previousPage()}
             disabled={!canPreviousPage}
-            className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400"
+            className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400 flex items-center"
           >
-            ก่อนหน้า
+            <FaArrowLeft className="mr-2" /> ก่อนหน้า
           </button>
           <span>
             หน้า{" "}
@@ -239,9 +243,9 @@ const ImagesIndexPage = () => {
           <button
             onClick={() => nextPage()}
             disabled={!canNextPage}
-            className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400"
+            className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400 flex items-center"
           >
-            ถัดไป
+            ถัดไป <FaArrowRight className="ml-2" />
           </button>
         </div>
       </div>

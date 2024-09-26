@@ -1,27 +1,26 @@
 "use client"
-import React, { useEffect, useState, useMemo, useCallback } from "react"
-import dynamic from "next/dynamic"
-import { useRouter } from "next/navigation"
-import { getPlaces, getFetchTourismDataByCategory } from "@/services/admin/get"
-import { deletePlace } from "@/services/admin/delete"
+import React, { useEffect, useState, useMemo, useCallback } from "react";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
+import { getPlaces, getFetchTourismDataByCategory } from "@/services/admin/get";
+import { deletePlace } from "@/services/admin/delete";
 import {
   useTable,
   useSortBy,
   usePagination,
-  useGlobalFilter
-} from "react-table"
-import Swal from "sweetalert2"
-import withReactContent from "sweetalert2-react-content"
-import AddPlacesModal from "@/components/Dashboard/Modal/Add/AddPlacesModal"
-import EditPlaceModal from "@/components/Dashboard/Modal/Edit/EditPlaceModal"
+  useGlobalFilter,
+} from "react-table";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import AddPlacesModal from "@/components/Dashboard/Modal/Add/AddPlacesModal";
+import EditPlaceModal from "@/components/Dashboard/Modal/Edit/EditPlaceModal";
 
-const MySwal = withReactContent(Swal)
+const MySwal = withReactContent(Swal);
 
-const FontAwesomeIcon = dynamic(
-  () =>
-    import("@fortawesome/react-fontawesome").then(mod => mod.FontAwesomeIcon),
+const FontAwesomeIcon = dynamic(() =>
+  import("@fortawesome/react-fontawesome").then((mod) => mod.FontAwesomeIcon),
   { ssr: false }
-)
+);
 
 import {
   faPlus,
@@ -33,41 +32,44 @@ import {
   faMapMarkerAlt,
   faUtensils,
   faSnowflake,
-  faCheckCircle ,
+  faCheckCircle,
   faTimesCircle,
   faUmbrellaBeach,
   faBed,
   faShoppingBag,
-  faQuestionCircle
-} from "@fortawesome/free-solid-svg-icons"
+  faChevronUp,
+  faChevronDown,
+  faQuestionCircle,
+} from "@fortawesome/free-solid-svg-icons";
 
 const PlaceIndexPage = () => {
-  const [places, setPlaces] = useState([])
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [editPlaceId, setEditPlaceId] = useState(null)
-  const [selectedCategory, setSelectedCategory] = useState(null)
-  const router = useRouter()
+  const [places, setPlaces] = useState([]);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editPlaceId, setEditPlaceId] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to track if the dropdown is open
+  const router = useRouter();
 
   useEffect(() => {
     const fetchPlaces = async () => {
       try {
         if (selectedCategory !== null) {
-          const result = await getFetchTourismDataByCategory(selectedCategory)
-          setPlaces(result)
+          const result = await getFetchTourismDataByCategory(selectedCategory);
+          setPlaces(result);
         } else {
-          const result = await getPlaces()
-          setPlaces(result)
+          const result = await getPlaces();
+          setPlaces(result);
         }
       } catch (err) {
-        MySwal.fire("Error", "เกิดข้อผิดพลาดในการดึงข้อมูลสถานที่", "error")
+        MySwal.fire("Error", "เกิดข้อผิดพลาดในการดึงข้อมูลสถานที่", "error");
       }
-    }
+    };
 
-    fetchPlaces()
-  }, [selectedCategory])
+    fetchPlaces();
+  }, [selectedCategory]);
 
-  const handleDelete = useCallback(async id => {
+  const handleDelete = useCallback(async (id) => {
     const result = await MySwal.fire({
       title: "คุณแน่ใจหรือไม่?",
       text: "คุณต้องการลบสถานที่นี้ใช่ไหม?",
@@ -76,27 +78,25 @@ const PlaceIndexPage = () => {
       confirmButtonText: "ใช่, ลบเลย!",
       cancelButtonText: "ยกเลิก",
       confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6"
-    })
+      cancelButtonColor: "#3085d6",
+    });
 
     if (result.isConfirmed) {
       try {
-        await deletePlace(id)
-        setPlaces(prevPlaces =>
-          prevPlaces.filter(place => place.id !== id)
-        )
-        MySwal.fire("ลบสำเร็จ!", "สถานที่ถูกลบแล้ว.", "success")
+        await deletePlace(id);
+        setPlaces((prevPlaces) => prevPlaces.filter((place) => place.id !== id));
+        MySwal.fire("ลบสำเร็จ!", "สถานที่ถูกลบแล้ว.", "success");
       } catch (error) {
-        console.error(`Error deleting place with ID ${id}:`, error)
-        MySwal.fire("Error", "เกิดข้อผิดพลาดในการลบสถานที่ กรุณาลองใหม่อีกครั้ง", "error")
+        console.error(`Error deleting place with ID ${id}:`, error);
+        MySwal.fire("Error", "เกิดข้อผิดพลาดในการลบสถานที่ กรุณาลองใหม่อีกครั้ง", "error");
       }
     }
-  }, [])
+  }, []);
 
-  const handleCategoryChange = event => {
-    const categoryId = parseInt(event.target.value, 10)
-    setSelectedCategory(categoryId)
-  }
+  const handleCategoryChange = (event) => {
+    const categoryId = parseInt(event.target.value, 10);
+    setSelectedCategory(categoryId);
+  };
 
   const getCategoryIcon = (categoryName) => {
     switch (categoryName) {
@@ -123,7 +123,7 @@ const PlaceIndexPage = () => {
             <FontAwesomeIcon icon={faArrowRight} className="mr-2" />
             {value}
           </span>
-        )
+        ),
       },
       {
         Header: "ชื่อ",
@@ -146,7 +146,7 @@ const PlaceIndexPage = () => {
             <FontAwesomeIcon icon={faSnowflake} className="mr-2" />
             {Array.isArray(value) ? value.join(", ") : "ไม่มีข้อมูลฤดูกาล"}
           </span>
-        )
+        ),
       },
       {
         Header: "อำเภอ",
@@ -156,7 +156,7 @@ const PlaceIndexPage = () => {
             <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
             {value}
           </span>
-        )
+        ),
       },
       {
         Header: "สถานะ",
@@ -169,7 +169,7 @@ const PlaceIndexPage = () => {
             />
             {value ? "เผยแพร่" : "ไม่เผยแพร่"}
           </span>
-        )
+        ),
       },
       {
         Header: "การดำเนินการ",
@@ -177,8 +177,8 @@ const PlaceIndexPage = () => {
           <div className="flex space-x-2">
             <button
               onClick={() => {
-                setEditPlaceId(row.original.id.toString())
-                setIsEditModalOpen(true)
+                setEditPlaceId(row.original.id.toString());
+                setIsEditModalOpen(true);
               }}
               className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300 ease-in-out flex items-center"
             >
@@ -193,11 +193,11 @@ const PlaceIndexPage = () => {
               ลบ
             </button>
           </div>
-        )
-      }
+        ),
+      },
     ],
     [router, handleDelete]
-  )
+  );
 
   const {
     getTableProps,
@@ -211,17 +211,17 @@ const PlaceIndexPage = () => {
     pageOptions,
     prepareRow,
     state: { pageIndex, globalFilter },
-    setGlobalFilter
+    setGlobalFilter,
   } = useTable(
     {
       columns,
       data: places,
-      initialState: { pageIndex: 0 }
+      initialState: { pageIndex: 0 },
     },
     useGlobalFilter,
     useSortBy,
     usePagination
-  )
+  );
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
@@ -231,7 +231,7 @@ const PlaceIndexPage = () => {
           สถานที่
         </h1>
 
-        {/* Dropdown for category selection */}
+        {/* Dropdown and search aligned properly */}
         <div className="flex justify-between items-center mb-4">
           <button
             onClick={() => setIsAddModalOpen(true)}
@@ -241,27 +241,35 @@ const PlaceIndexPage = () => {
             เพิ่มสถานที่ใหม่
           </button>
 
-          <div className="flex items-center">
-            <select
-              value={selectedCategory || ""}
-              onChange={handleCategoryChange}
-              className="p-2 border border-gray-300 rounded-md"
-            >
-              <option value="">-- เลือกประเภทสถานที่ --</option>
-              <option value="1">สถานที่ท่องเที่ยว</option>
-              <option value="2">ที่พัก</option>
-              <option value="3">ร้านอาหาร</option>
-              <option value="4">ร้านค้าของฝาก</option>
-            </select>
+          {/* Dropdown and search input in the same line */}
+          <div className="flex items-center space-x-6">
+            <div className="relative">
+              <select
+                value={selectedCategory || ""}
+                onChange={handleCategoryChange}
+                className="p-2 border border-gray-300 rounded-md appearance-none cursor-pointer"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              >
+                <option value="">-- เลือกประเภทสถานที่ --     </option>
+                <option value="1">สถานที่ท่องเที่ยว</option>
+                <option value="2">ที่พัก</option>
+                <option value="3">ร้านอาหาร</option>
+                <option value="4">ร้านค้าของฝาก</option>
+              </select>
+              <FontAwesomeIcon
+                icon={isDropdownOpen ? faChevronUp : faChevronDown}
+                className="absolute right-2 top-3 text-gray-600"
+              />
+            </div>
 
-            <div className="relative ml-4">
+            <div className="relative">
               <FontAwesomeIcon
                 icon={faSearch}
                 className="absolute left-3 top-3 text-gray-400"
               />
               <input
                 value={globalFilter || ""}
-                onChange={e => setGlobalFilter(e.target.value)}
+                onChange={(e) => setGlobalFilter(e.target.value)}
                 placeholder="ค้นหา..."
                 className="p-2 pl-10 border border-gray-300 rounded-md"
               />
@@ -275,9 +283,9 @@ const PlaceIndexPage = () => {
             className="min-w-full bg-white border border-gray-200"
           >
             <thead className="bg-gray-100">
-              {headerGroups.map(headerGroup => (
+              {headerGroups.map((headerGroup) => (
                 <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
-                  {headerGroup.headers.map(column => (
+                  {headerGroup.headers.map((column) => (
                     <th
                       {...column.getHeaderProps(column.getSortByToggleProps())}
                       key={column.id}
@@ -297,15 +305,15 @@ const PlaceIndexPage = () => {
               ))}
             </thead>
             <tbody {...getTableBodyProps()}>
-              {page.map(row => {
-                prepareRow(row)
+              {page.map((row) => {
+                prepareRow(row);
                 return (
                   <tr
                     {...row.getRowProps()}
                     key={row.id}
                     className="hover:bg-gray-100 transition duration-300 ease-in-out"
                   >
-                    {row.cells.map(cell => (
+                    {row.cells.map((cell) => (
                       <td
                         {...cell.getCellProps()}
                         key={cell.column.id}
@@ -315,7 +323,7 @@ const PlaceIndexPage = () => {
                       </td>
                     ))}
                   </tr>
-                )
+                );
               })}
             </tbody>
           </table>
@@ -364,7 +372,7 @@ const PlaceIndexPage = () => {
         />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default PlaceIndexPage
+export default PlaceIndexPage;

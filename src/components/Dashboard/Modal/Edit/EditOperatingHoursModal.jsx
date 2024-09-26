@@ -1,50 +1,51 @@
-"use client"
-import React, { useEffect, useState, Fragment } from "react"
-import { useForm } from "react-hook-form"
-import { Dialog, Transition } from "@headlessui/react"
-import { useRouter } from "next/navigation"
-import { getOperatingHoursById, getPlaces } from "@/services/admin/get"
-import { updateOperatingHours } from "@/services/admin/edit"
-import Swal from "sweetalert2"
-import withReactContent from "sweetalert2-react-content"
-import { FaSave, FaSpinner } from "react-icons/fa"
+"use client";
 
-const MySwal = withReactContent(Swal)
+import React, { useEffect, useState, Fragment } from "react";
+import { useForm } from "react-hook-form";
+import { Dialog, Transition } from "@headlessui/react";
+import { useRouter } from "next/navigation";
+import { getOperatingHoursById, getPlaces } from "@/services/admin/get";
+import { updateOperatingHours } from "@/services/admin/edit";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import { FaSave, FaSpinner } from "react-icons/fa";
+
+const MySwal = withReactContent(Swal);
 
 const EditOperatingHoursModal = ({ id, isOpen, onClose }) => {
   const {
     register,
     handleSubmit,
     setValue,
-    formState: { errors }
-  } = useForm()
-  const router = useRouter()
-  const [places, setPlaces] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [placeName, setPlaceName] = useState("")
+    formState: { errors },
+  } = useForm();
+  const router = useRouter();
+  const [places, setPlaces] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [placeName, setPlaceName] = useState("");
 
-  const numericId = Number(id)
+  const numericId = Number(id);
 
   useEffect(() => {
     const fetchOperatingHour = async () => {
       try {
         // ดึงข้อมูลเวลาทำการจาก backend
         const operatingHour = await getOperatingHoursById(numericId);
-        
+
         // ตั้งค่าฟิลด์เวลาทำการ
         setValue("place_id", operatingHour.place_id);
         setValue("day_of_week", operatingHour.day_of_week);
         setValue("opening_time", operatingHour.opening_time);
         setValue("closing_time", operatingHour.closing_time);
-  
+
         // ดึงข้อมูลสถานที่ทั้งหมด
         const placesData = await getPlaces();
         setPlaces(placesData);
-  
+
         // หาสถานที่ที่ตรงกับ place_id
-        const place = placesData.find(p => p.id === operatingHour.place_id);
-        
+        const place = placesData.find((p) => p.id === operatingHour.place_id);
+
         // ตั้งค่าชื่อสถานที่หากพบข้อมูล
         if (place) {
           setPlaceName(`ID: ${place.id} - ${place.name}`);
@@ -60,40 +61,39 @@ const EditOperatingHoursModal = ({ id, isOpen, onClose }) => {
         setIsLoading(false);
       }
     };
-  
+
     if (numericId) {
       fetchOperatingHour();
     }
   }, [numericId, setValue]);
-  
 
-  const onSubmit = async data => {
-    setIsSubmitting(true)
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
     try {
-      await updateOperatingHours(numericId, data)
+      await updateOperatingHours(numericId, data);
       MySwal.fire({
         icon: "success",
         title: "อัปเดตเวลาทำการสำเร็จ",
         showConfirmButton: false,
-        timer: 1500
-      })
+        timer: 1500,
+      });
       setTimeout(() => {
-        onClose()
-        router.push("/dashboard/table/operating-hours")
-      }, 2000)
+        onClose();
+        router.push("/dashboard/table/operating-hours");
+      }, 2000);
     } catch (error) {
-      console.error("เกิดข้อผิดพลาดในการอัปเดตเวลาทำการ:", error)
+      console.error("เกิดข้อผิดพลาดในการอัปเดตเวลาทำการ:", error);
 
-      const err = error
+      const err = error;
       MySwal.fire({
         icon: "error",
         title: "เกิดข้อผิดพลาดในการอัปเดตเวลาทำการ",
-        text: err.message || "An unknown error occurred"
-      })
+        text: err.message || "An unknown error occurred",
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <>
@@ -155,7 +155,7 @@ const EditOperatingHoursModal = ({ id, isOpen, onClose }) => {
                           <input
                             type="hidden"
                             {...register("place_id", {
-                              required: "กรุณาเลือกสถานที่"
+                              required: "กรุณาเลือกสถานที่",
                             })}
                           />
                           {errors.place_id && (
@@ -164,6 +164,8 @@ const EditOperatingHoursModal = ({ id, isOpen, onClose }) => {
                             </p>
                           )}
                         </div>
+
+                        {/* Day of the Week Select */}
                         <div className="relative z-0 w-full mb-6 group">
                           <label
                             htmlFor="day_of_week"
@@ -174,7 +176,7 @@ const EditOperatingHoursModal = ({ id, isOpen, onClose }) => {
                           <select
                             id="day_of_week"
                             {...register("day_of_week", {
-                              required: "กรุณาเลือกวันในสัปดาห์"
+                              required: "กรุณาเลือกวันในสัปดาห์",
                             })}
                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-Orange-500 focus:border-Orange-500 sm:text-sm"
                           >
@@ -185,6 +187,8 @@ const EditOperatingHoursModal = ({ id, isOpen, onClose }) => {
                             <option value="Thursday">วันพฤหัสบดี</option>
                             <option value="Friday">วันศุกร์</option>
                             <option value="Saturday">วันเสาร์</option>
+                            <option value="Everyday">ทุกวัน</option>
+                            <option value="Except Holidays">ยกเว้นวันหยุด</option>
                           </select>
                           {errors.day_of_week && (
                             <p className="text-red-500 text-xs mt-1">
@@ -192,6 +196,7 @@ const EditOperatingHoursModal = ({ id, isOpen, onClose }) => {
                             </p>
                           )}
                         </div>
+
                         <div className="relative z-0 w-full mb-6 group">
                           <label
                             htmlFor="opening_time"
@@ -203,7 +208,7 @@ const EditOperatingHoursModal = ({ id, isOpen, onClose }) => {
                             id="opening_time"
                             type="time"
                             {...register("opening_time", {
-                              required: "กรุณาเลือกเวลาเปิด"
+                              required: "กรุณาเลือกเวลาเปิด",
                             })}
                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-Orange-500 focus:border-Orange-500 sm:text-sm"
                           />
@@ -224,7 +229,7 @@ const EditOperatingHoursModal = ({ id, isOpen, onClose }) => {
                             id="closing_time"
                             type="time"
                             {...register("closing_time", {
-                              required: "กรุณาเลือกเวลาปิด"
+                              required: "กรุณาเลือกเวลาปิด",
                             })}
                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-Orange-500 focus:border-Orange-500 sm:text-sm"
                           />
@@ -269,7 +274,7 @@ const EditOperatingHoursModal = ({ id, isOpen, onClose }) => {
         </Dialog>
       </Transition>
     </>
-  )
-}
+  );
+};
 
-export default EditOperatingHoursModal
+export default EditOperatingHoursModal;

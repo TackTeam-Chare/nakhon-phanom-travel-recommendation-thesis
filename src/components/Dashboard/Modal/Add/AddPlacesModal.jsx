@@ -16,7 +16,8 @@ import {
   faUpload,
   faClock,
   faChevronDown,
-  faChevronUp 
+  faChevronUp,
+  faCheckCircle, faTimesCircle
 } from "@fortawesome/free-solid-svg-icons"
 import { faImage } from "@fortawesome/free-regular-svg-icons"
 import Swal from "sweetalert2"
@@ -60,6 +61,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
   const [selectedCategory, setSelectedCategory] = useState('')
   const [latitudeError, setLatitudeError] = useState('');
   const [longitudeError, setLongitudeError] = useState('');
+  const [isPublished, setIsPublished] = useState(true); 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -87,6 +89,10 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value)
   }
+
+  const togglePublishStatus = () => {
+    setIsPublished(!isPublished); // สลับสถานะ
+  };
 
   const handleLatitudeChange = (event) => {
     const value = event.target.value;
@@ -459,26 +465,22 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         </label>
                       </div>
                     )}
-                      <div className="relative z-0 w-full  group mt-5 ">
+                      <div className="relative z-0 w-full group mt-3">
                       <div className="flex items-center ">
-                        <FontAwesomeIcon
-                          icon={faUpload}
-                          className="mr-2 text-gray-500"
-                        />
-                        <input
-                          type="checkbox"
-                          id="published"
-                          {...register("published")}
-                          className="form-checkbox h-4 w-4 text-orange-600 transition duration-150 ease-in-out"
-                          defaultChecked={true}
-                        />
-                        <label
-                          htmlFor="published"
-                          className="ml-2 block text-sm leading-5 text-gray-900"
-                        >
-                          เผยแพร่
-                        </label>
-                      </div>
+
+      <button
+        onClick={togglePublishStatus}
+        className={`flex items-center px-4 py-2 rounded-md ${
+          isPublished ? "bg-green-500" : "bg-red-500"
+        } text-white`}
+      >
+        <FontAwesomeIcon
+          icon={isPublished ? faCheckCircle : faTimesCircle} // เปลี่ยนไอคอนตามสถานะ
+          className="mr-2"
+        />
+        {isPublished ? "เผยแพร่แล้ว" : "ยังไม่เผยแพร่"}
+      </button>
+    </div>
                     </div>
                     </div>
 

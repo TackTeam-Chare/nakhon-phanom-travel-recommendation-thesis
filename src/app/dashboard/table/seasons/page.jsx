@@ -1,100 +1,92 @@
-"use client"
+"use client";
 
-import React, { useEffect, useState, useMemo } from "react"
-import { useRouter } from "next/navigation"
-import { getSeasons } from "@/services/admin/get"
-import { deleteSeason } from "@/services/admin/delete"
-import {
-  useTable,
-  useSortBy,
-  usePagination,
-  useGlobalFilter
-} from "react-table"
-import Swal from "sweetalert2"
-import withReactContent from "sweetalert2-react-content"
-import AddSeasonForm from "@/components/Dashboard/Modal/Add/AddSeasonModal"
-import EditSeasonModal from "@/components/Dashboard/Modal/Edit/EditSeasonModal"
+import React, { useEffect, useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { getSeasons } from "@/services/admin/get";
+import { deleteSeason } from "@/services/admin/delete";
+import { useTable, useSortBy, usePagination, useGlobalFilter } from "react-table";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import AddSeasonForm from "@/components/Dashboard/Modal/Add/AddSeasonModal";
+import EditSeasonModal from "@/components/Dashboard/Modal/Edit/EditSeasonModal";
+import { FaPlus, FaEdit, FaTrash, FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
 
-const MySwal = withReactContent(Swal)
+const MySwal = withReactContent(Swal);
 
 const SeasonsPage = () => {
-  const [seasons, setSeasons] = useState([])
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [selectedSeasonId, setSelectedSeasonId] = useState(null)
-  const router = useRouter()
+  const [seasons, setSeasons] = useState([]);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedSeasonId, setSelectedSeasonId] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchSeasons = async () => {
       try {
-        const result = await getSeasons()
-        setSeasons(result)
+        const result = await getSeasons();
+        setSeasons(result);
       } catch (err) {
         MySwal.fire({
-          icon: 'error',
-          title: 'เกิดข้อผิดพลาด',
-          text: 'ไม่สามารถดึงข้อมูลฤดูกาลได้'
-        })
+          icon: "error",
+          title: "เกิดข้อผิดพลาด",
+          text: "ไม่สามารถดึงข้อมูลฤดูกาลได้",
+        });
       }
-    }
+    };
 
-    fetchSeasons()
-  }, [])
+    fetchSeasons();
+  }, []);
 
-  const handleDelete = async id => {
+  const handleDelete = async (id) => {
     MySwal.fire({
-      title: 'คุณแน่ใจหรือไม่?',
-      text: 'คุณต้องการลบฤดูกาลนี้ใช่ไหม?',
-      icon: 'warning',
+      title: "คุณแน่ใจหรือไม่?",
+      text: "คุณต้องการลบฤดูกาลนี้ใช่ไหม?",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: 'ใช่, ลบเลย!',
-      cancelButtonText: 'ยกเลิก'
+      confirmButtonText: "ใช่, ลบเลย!",
+      cancelButtonText: "ยกเลิก",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await deleteSeason(id)
-          setSeasons(prevSeasons =>
-            prevSeasons.filter(season => season.id !== id)
-          )
-          MySwal.fire(
-            'ลบสำเร็จ!',
-            'ฤดูกาลได้ถูกลบออกแล้ว.',
-            'success'
-          )
+          await deleteSeason(id);
+          setSeasons((prevSeasons) =>
+            prevSeasons.filter((season) => season.id !== id)
+          );
+          MySwal.fire("ลบสำเร็จ!", "ฤดูกาลได้ถูกลบออกแล้ว.", "success");
         } catch (error) {
-          console.error(`เกิดข้อผิดพลาดในการลบฤดูกาล ID ${id}:`, error)
+          console.error(`เกิดข้อผิดพลาดในการลบฤดูกาล ID ${id}:`, error);
           MySwal.fire({
-            icon: 'error',
-            title: 'เกิดข้อผิดพลาด',
-            text: 'ไม่สามารถลบฤดูกาลได้ กรุณาลองอีกครั้ง'
-          })
+            icon: "error",
+            title: "เกิดข้อผิดพลาด",
+            text: "ไม่สามารถลบฤดูกาลได้ กรุณาลองอีกครั้ง",
+          });
         }
       }
-    })
-  }
+    });
+  };
 
-  const handleEdit = id => {
-    setSelectedSeasonId(id)
-    setIsEditModalOpen(true)
-  }
+  const handleEdit = (id) => {
+    setSelectedSeasonId(id);
+    setIsEditModalOpen(true);
+  };
 
   const columns = useMemo(
     () => [
       {
         Header: "ID",
-        accessor: "id"
+        accessor: "id",
       },
       {
         Header: "ชื่อฤดูกาล",
-        accessor: "name"
+        accessor: "name",
       },
       {
         Header: "วันที่เริ่มต้น",
-        accessor: "date_start"
+        accessor: "date_start",
       },
       {
         Header: "วันที่สิ้นสุด",
-        accessor: "date_end"
+        accessor: "date_end",
       },
       {
         Header: "การกระทำ",
@@ -102,22 +94,22 @@ const SeasonsPage = () => {
           <div className="flex space-x-2">
             <button
               onClick={() => handleEdit(row.original.id)}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300 ease-in-out"
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300 ease-in-out flex items-center gap-1"
             >
-              แก้ไข
+              <FaEdit /> แก้ไข
             </button>
             <button
               onClick={() => handleDelete(row.original.id)}
-              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-300 ease-in-out"
+              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-300 ease-in-out flex items-center gap-1"
             >
-              ลบ
+              <FaTrash /> ลบ
             </button>
           </div>
-        )
-      }
+        ),
+      },
     ],
     []
-  )
+  );
 
   const {
     getTableProps,
@@ -131,18 +123,18 @@ const SeasonsPage = () => {
     pageOptions,
     prepareRow,
     state,
-    setGlobalFilter
+    setGlobalFilter,
   } = useTable(
     {
       columns,
-      data: seasons
+      data: seasons,
     },
     useGlobalFilter,
     useSortBy,
     usePagination
-  )
+  );
 
-  const { globalFilter, pageIndex } = state
+  const { globalFilter, pageIndex } = state;
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
@@ -153,16 +145,20 @@ const SeasonsPage = () => {
         <div className="flex justify-between items-center mb-4">
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-300 ease-in-out"
+            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-300 ease-in-out flex items-center gap-1"
           >
-            เพิ่มฤดูกาลใหม่
+            <FaPlus /> เพิ่มฤดูกาลใหม่
           </button>
-          <input
-            value={globalFilter || ""}
-            onChange={e => setGlobalFilter(e.target.value)}
-            placeholder="ค้นหา..."
-            className="p-2 border border-gray-300 rounded-md"
-          />
+          <div className="flex items-center bg-white border border-gray-300 rounded-md p-2">
+      <FaSearch className="text-gray-500 mr-2" />
+      <input
+        type="text"
+        value={globalFilter || ""}
+        onChange={(e) => setGlobalFilter(e.target.value)}
+        placeholder="ค้นหา..."
+        className="outline-none w-full placeholder-gray-400"
+      />
+    </div>
         </div>
         <div className="overflow-x-auto">
           <table
@@ -170,9 +166,9 @@ const SeasonsPage = () => {
             className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md"
           >
             <thead className="bg-gray-100">
-              {headerGroups.map(headerGroup => (
+              {headerGroups.map((headerGroup) => (
                 <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
-                  {headerGroup.headers.map(column => (
+                  {headerGroup.headers.map((column) => (
                     <th
                       {...column.getHeaderProps(column.getSortByToggleProps())}
                       key={column.id}
@@ -192,15 +188,15 @@ const SeasonsPage = () => {
               ))}
             </thead>
             <tbody {...getTableBodyProps()}>
-              {page.map(row => {
-                prepareRow(row)
+              {page.map((row) => {
+                prepareRow(row);
                 return (
                   <tr
                     {...row.getRowProps()}
                     key={row.id}
                     className="hover:bg-gray-100 transition duration-300 ease-in-out"
                   >
-                    {row.cells.map(cell => (
+                    {row.cells.map((cell) => (
                       <td
                         {...cell.getCellProps()}
                         key={cell.column.id}
@@ -210,7 +206,7 @@ const SeasonsPage = () => {
                       </td>
                     ))}
                   </tr>
-                )
+                );
               })}
             </tbody>
           </table>
@@ -219,9 +215,9 @@ const SeasonsPage = () => {
           <button
             onClick={() => previousPage()}
             disabled={!canPreviousPage}
-            className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400"
+            className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400 flex items-center gap-1"
           >
-            ก่อนหน้า
+            <FaArrowLeft /> ก่อนหน้า
           </button>
           <span>
             หน้า{" "}
@@ -232,18 +228,15 @@ const SeasonsPage = () => {
           <button
             onClick={() => nextPage()}
             disabled={!canNextPage}
-            className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400"
+            className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400 flex items-center gap-1"
           >
-            ถัดไป
+            ถัดไป <FaArrowRight />
           </button>
         </div>
       </div>
 
       {/* Modals */}
-      <AddSeasonForm
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-      />
+      <AddSeasonForm isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />
       {selectedSeasonId && (
         <EditSeasonModal
           id={selectedSeasonId}
@@ -252,7 +245,7 @@ const SeasonsPage = () => {
         />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default SeasonsPage
+export default SeasonsPage;
