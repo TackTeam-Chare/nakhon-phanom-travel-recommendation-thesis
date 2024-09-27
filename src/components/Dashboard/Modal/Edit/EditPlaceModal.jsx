@@ -201,6 +201,10 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
     }))
   }
 
+  const handleCategoryChange = (event) => {
+    const selectedValue = event.target.value;
+    setSelectedCategory(selectedValue);
+  };
 
   return (
     <>
@@ -249,6 +253,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                           id="category_name"
                           {...register("category_name")}
                           onClick={() => toggleDropdown("category")}
+                          onChange={handleCategoryChange}  
                           className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
                         >
                           <option value="">เลือกหมวดหมู่</option>
