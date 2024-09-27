@@ -1,5 +1,4 @@
-"use client";
-
+"use client"
 import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { getSeasons } from "@/services/admin/get";
@@ -7,9 +6,10 @@ import { deleteSeason } from "@/services/admin/delete";
 import { useTable, useSortBy, usePagination, useGlobalFilter } from "react-table";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { format } from "date-fns"; // Import date-fns format function
+import { FaPlus, FaEdit, FaTrash, FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
 import AddSeasonForm from "@/components/Dashboard/Modal/Add/AddSeasonModal";
 import EditSeasonModal from "@/components/Dashboard/Modal/Edit/EditSeasonModal";
-import { FaPlus, FaEdit, FaTrash, FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
 
 const MySwal = withReactContent(Swal);
 
@@ -83,10 +83,12 @@ const SeasonsPage = () => {
       {
         Header: "วันที่เริ่มต้น",
         accessor: "date_start",
+        Cell: ({ value }) => format(new Date(value), "dd MMMM yyyy"), // Format date
       },
       {
         Header: "วันที่สิ้นสุด",
         accessor: "date_end",
+        Cell: ({ value }) => format(new Date(value), "dd MMMM yyyy"), // Format date
       },
       {
         Header: "การกระทำ",
@@ -150,15 +152,15 @@ const SeasonsPage = () => {
             <FaPlus /> เพิ่มฤดูกาลใหม่
           </button>
           <div className="flex items-center bg-white border border-gray-300 rounded-md p-2">
-      <FaSearch className="text-gray-500 mr-2" />
-      <input
-        type="text"
-        value={globalFilter || ""}
-        onChange={(e) => setGlobalFilter(e.target.value)}
-        placeholder="ค้นหา..."
-        className="outline-none w-full placeholder-gray-400"
-      />
-    </div>
+            <FaSearch className="text-gray-500 mr-2" />
+            <input
+              type="text"
+              value={globalFilter || ""}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+              placeholder="ค้นหา..."
+              className="outline-none w-full placeholder-gray-400"
+            />
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table
@@ -248,4 +250,4 @@ const SeasonsPage = () => {
   );
 };
 
-export default SeasonsPage;
+export default SeasonsPage

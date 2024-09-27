@@ -25,6 +25,7 @@
     "@tanstack/react-query-devtools": "^5.56.2",
     "antd": "^5.20.4",
     "axios": "^1.7.4",
+    "date-fns": "^2.30.0",
     "dayjs": "^1.11.13",
     "downshift": "^9.0.8",
     "geolib": "^3.3.4",
