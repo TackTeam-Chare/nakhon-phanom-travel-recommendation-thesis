@@ -17,6 +17,22 @@ auth.interceptors.request.use(config => {
 
 const getToken = () => Cookies.get("token")
 
+// Function to fetch all districts
+export const checkDuplicateName = async (name) => {
+  try {
+    const token = getToken()
+    const response = await auth.get("/admin/check-duplicate-name", {
+      params: { name },
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    return response.data
+  } catch (error) {
+    console.error("Error fetching districts:", error)
+    throw error
+  }
+}
 // Function to fetch all places
 export const getPlaces = async () => {
   try {

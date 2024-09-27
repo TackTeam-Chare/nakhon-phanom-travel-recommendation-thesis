@@ -4,7 +4,7 @@ import Image from "next/image"
 import { useForm, useFieldArray } from "react-hook-form"
 import { Dialog, Transition } from "@headlessui/react"
 import { createTouristEntity } from "@/services/admin/insert"
-import { getDistricts, getCategories, getSeasons } from "@/services/admin/get"
+import { getDistricts, getCategories, getSeasons,checkDuplicateName  } from "@/services/admin/get"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faTrash,
@@ -31,6 +31,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
     handleSubmit,
     control,
     setValue,
+    getValues, 
     formState: { errors }
   } = useForm({
     defaultValues: {
@@ -61,7 +62,8 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
   const [selectedCategory, setSelectedCategory] = useState('')
   const [latitudeError, setLatitudeError] = useState('');
   const [longitudeError, setLongitudeError] = useState('');
-  const [isPublished, setIsPublished] = useState(true); 
+  const [isPublished, setIsPublished] = useState(true);
+  const [isDuplicate, setIsDuplicate] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,6 +88,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
     fetchData()
   }, [])
 
+  
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value)
   }
@@ -136,8 +139,37 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
     setSelectedImage(url)
   }
 
-  const onSubmit = async data => {
+   useEffect(() => {
+    const checkName = async (name) => {
+      if (name) {
+        try {
+          const result = await checkDuplicateName(name)
+          setIsDuplicate(result.isDuplicate)
+        } catch (error) {
+          console.error("Error checking duplicate name:", error)
+        }
+      }
+    }
+
+    const delayDebounceFn = setTimeout(() => {
+      checkName(getValues('name'))
+    }, 500)
+
+    return () => clearTimeout(delayDebounceFn)
+  }, [getValues('name')])
+
+  const onSubmit = async (data) => {
+    if (isDuplicate) {
+      MySwal.fire({
+        icon: "error",
+        title: "ชื่อสถานที่ซ้ำ!",
+        text: "กรุณาใช้ชื่ออื่น"
+      })
+      return
+    }
+
     setSubmitting(true)
+    
     try {
       const formData = new FormData()
       for (const key of Object.keys(data)) {
@@ -281,6 +313,11 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                       >
                         ชื่อสถานที่
                       </label>
+                      {isDuplicate && (
+                        <p className="text-red-500 text-xs mt-1">
+                          ชื่อนี้มีอยู่แล้ว กรุณาใช้ชื่ออื่น
+                        </p>
+                      )}
                       {errors.name && (
                         <p className="text-red-500 text-xs mt-1">
                           {errors.name.message}
