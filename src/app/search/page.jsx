@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
-import Swal from "sweetalert2";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -43,7 +42,6 @@ const MapComponent = dynamic(() => import("@/components/Map/MapSearch"), {
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const Tooltip = dynamic(() => import("react-tooltip"), { ssr: false });
 
-
 const GeocodingSearchPage = () => {
   const [userLocation, setUserLocation] = useState(null);
   const [nearbyPlaces, setNearbyPlaces] = useState([]);
@@ -84,44 +82,28 @@ const GeocodingSearchPage = () => {
     loadFilters();
   }, []);
 
-  
   useEffect(() => {
     if (!isClient) return;
-  
+
     const updateLocation = () => {
       setLoading(true);
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-  
-          // Log the user's location to the console
           console.log(`User's location: Latitude ${latitude}, Longitude ${longitude}`);
-  
-          // Set the user's location in state
           setUserLocation({ lat: latitude, lng: longitude });
-  
-          // Fetch nearby places based on user's location
           fetchNearbyPlaces(latitude, longitude);
           setLoading(false);
         },
         (error) => {
           console.error("Error getting user's location:", error);
-  
-          Swal.fire({
-            title: "ข้อผิดพลาด!",
-            text: "ไม่สามารถดึงข้อมูลตำแหน่งของคุณได้ กรุณาเปิดใช้งานบริการตำแหน่ง",
-            icon: "error",
-            confirmButtonText: "ตกลง"
-          });
-  
           setLoading(false);
         }
       );
     };
-  
+
     updateLocation();
   }, [isClient]);
-  
 
   const fetchNearbyPlaces = async (lat, lng) => {
     try {
@@ -169,21 +151,17 @@ const GeocodingSearchPage = () => {
         (cat) => cat.id === value
       );
       setSelectedCategory(selectedCategory?.name || null);
-      setIsSeasonEnabled(value === 1); 
+      setIsSeasonEnabled(value === 1);
     }
 
     if (field === "season") {
-      const seasonName =
-        filters.seasons.find((season) => season.id === value)?.name || null;
+      const seasonName = filters.seasons.find((season) => season.id === value)?.name || null;
       setSelectedSeason(seasonName);
     }
 
     if (field === "district") {
-      const districtName =
-        filters.districts.find((district) => district.id === value)?.name ||
-        null;
+      const districtName = filters.districts.find((district) => district.id === value)?.name || null;
       setSelectedDistrict(districtName);
-      // setSelectedDistrict(false); 
       setIsDistrictDropdownOpen(false);
     }
 
@@ -200,29 +178,17 @@ const GeocodingSearchPage = () => {
   };
 
   const clearSearch = () => {
-    Swal.fire({
-      title: "ยืนยันการล้างการค้นหา?",
-      text: "คุณต้องการล้างผลการค้นหาทั้งหมดใช่หรือไม่?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "ใช่, ล้างการค้นหา!",
-      cancelButtonText: "ยกเลิก"
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setSearchParams({});
-        setSearchResults([]);
-        setNearbyPlaces([]);
-        setSelectedCategory(null);
-        setSelectedSeason(null);
-        setSelectedDistrict(null);
-        setSelectedDay(null);
-        setIsTimeFilterVisible(false);
-        if (userLocation) {
-          setMapCenter(userLocation);
-        }
-        Swal.fire("ล้างข้อมูลแล้ว!", "การค้นหาของคุณถูกล้างแล้ว", "success");
-      }
-    });
+    setSearchParams({});
+    setSearchResults([]);
+    setNearbyPlaces([]);
+    setSelectedCategory(null);
+    setSelectedSeason(null);
+    setSelectedDistrict(null);
+    setSelectedDay(null);
+    setIsTimeFilterVisible(false);
+    if (userLocation) {
+      setMapCenter(userLocation);
+    }
   };
 
   const resetTogglesAndSearch = () => {
@@ -256,21 +222,15 @@ const GeocodingSearchPage = () => {
     ]
   };
 
-  const categorizePlaces = (categoryId) => {
-    return nearbyPlaces.filter((place) => place.category_id === categoryId);
-  };
+  const categorizePlaces = (categoryId) => nearbyPlaces.filter((place) => place.category_id === categoryId);
 
   const convertMetersToKilometers = (meters) => {
     if (!meters && meters !== 0) {
-      return "ไม่ทราบระยะทาง";  // ในกรณีที่ meters เป็น null หรือ undefined
+      return "ไม่ทราบระยะทาง";
     }
-  
-    if (meters >= 1000) {
-      return (meters / 1000).toFixed(2) + ' กิโลเมตร';
-    }
-    return meters.toFixed(0) + ' เมตร';
+    return meters >= 1000 ? `${(meters / 1000).toFixed(2)} กิโลเมตร` : `${meters.toFixed(0)} เมตร`;
   };
-
+  
   return (
     <div className="container mx-auto p-4 relative">
       {/* Search Bar and Buttons */}

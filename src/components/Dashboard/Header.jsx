@@ -180,37 +180,37 @@ export default function Header() {
                     {
                       href: "/dashboard/table/categories",
                       icon: ClockIcon,
-                      text: "ตารางหมวดหมู่สถานที่"
+                      text: "หมวดหมู่สถานที่"
                     },
                     {
                       href: "/dashboard/table/districts",
                       icon: SunIcon,
-                      text: "ตารางอำเภอ"
+                      text: "อำเภอ"
                     },
                     {
                       href: "/dashboard/table/operating-hours",
                       icon: CubeIcon,
-                      text: "ตารางเวลาทำการสถานที่"
+                      text: "เวลาทำการสถานที่"
                     },
                     {
                       href: "/dashboard/table/seasons",
                       icon: StarIcon,
-                      text: "ตารางฤดูกาล"
+                      text: "ฤดูกาล"
                     },
                     {
                       href: "/dashboard/table/seasons-relation",
                       icon: MapIcon,
-                      text: "ตารางความสัมพันธ์ฤดูกาล"
+                      text: "ความสัมพันธ์ฤดูกาล"
                     },
                     {
                       href: "/dashboard/table/tourism-entities-images",
                       icon: CalendarIcon,
-                      text: "ตารางรูปภาพของสถานที่"
+                      text: "รูปภาพของสถานที่"
                     },
                     {
                       href: "/dashboard/table/tourist-entities",
                       icon: BuildingOfficeIcon,
-                      text: "ตารางสถานที่"
+                      text: "สถานที่"
                     }
                   ].map((item, index) => (
                     <a
@@ -366,37 +366,37 @@ export default function Header() {
                     {
                       href: "/dashboard/table/categories",
                       icon: ClockIcon,
-                      text: "ตารางหมวดหมู่สถานที่",
+                      text: "หมวดหมู่สถานที่",
                     },
                     {
                       href: "/dashboard/table/districts",
                       icon: SunIcon,
-                      text: "ตารางอำเภอ",
+                      text: "อำเภอ",
                     },
                     {
                       href: "/dashboard/table/operating-hours",
                       icon: CubeIcon,
-                      text: "ตารางเวลาทำการสถานที่",
+                      text: "เวลาทำการสถานที่",
                     },
                     {
                       href: "/dashboard/table/seasons",
                       icon: StarIcon,
-                      text: "ตารางฤดูกาล",
+                      text: "ฤดูกาล",
                     },
                     {
                       href: "/dashboard/table/seasons-relation",
                       icon: MapIcon,
-                      text: "ตารางความสัมพันธ์ฤดูกาล",
+                      text: "ความสัมพันธ์ฤดูกาล",
                     },
                     {
                       href: "/dashboard/table/tourism-entities-images",
                       icon: CalendarIcon,
-                      text: "ตารางรูปภาพของสถานที่",
+                      text: "รูปภาพของสถานที่",
                     },
                     {
                       href: "/dashboard/table/tourist-entities",
                       icon: BuildingOfficeIcon,
-                      text: "ตารางสถานที่",
+                      text: "สถานที่",
                     },
                   ].map((item, index) => (
                     <a

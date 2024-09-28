@@ -94,7 +94,7 @@ const DistrictsPage = () => {
         accessor: "name",
       },
       {
-        Header: "การกระทำ",
+        Header: "การจัดการข้อมูล",
         Cell: ({ row }) => (
           <div className="flex space-x-2">
             <button

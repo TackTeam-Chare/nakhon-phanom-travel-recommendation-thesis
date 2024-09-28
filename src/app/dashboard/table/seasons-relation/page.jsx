@@ -92,14 +92,14 @@ const SeasonsRelationIndexPage = () => {
         Cell: ({ row }) => <span>{row.original.season_name}</span>,
       },
       {
-        Header: "หน่วยงานท่องเที่ยว",
+        Header: "สถานที่ท่องเที่ยว",
         accessor: "tourism_entity_name",
         Cell: ({ row }) => (
           <span>{`ID: ${row.original.tourism_entities_id}, ชื่อ: ${row.original.tourism_entity_name}`}</span>
         ),
       },
       {
-        Header: "การกระทำ",
+        Header: "การจัดการข้อมูล",
         Cell: ({ row }) => (
           <div className="flex space-x-2">
             <button
