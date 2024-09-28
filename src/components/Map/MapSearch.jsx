@@ -61,6 +61,17 @@ const MapSearch = ({
     [isLoaded]
   );
 
+  
+  useEffect(() => {
+    if (mapRef.current && userLocation) {
+      mapRef.current.panTo(userLocation);
+    }
+  }, [userLocation]);
+
+  if (!isLoaded) {
+    return null;
+  }
+  
   useEffect(() => {
     if (
       isLoaded &&
@@ -173,7 +184,7 @@ const MapSearch = ({
   key={place.id}
   position={{ lat: Number(place.latitude), lng: Number(place.longitude) }}
   icon={{
-    url: place.images[0]?.image_url || "/icons/default.png",
+    url: place.images[0]?.image_url || "/icons/user.png",
     scaledSize: new window.google.maps.Size(40, 40),
   }}
   animation={hoveredMarkerId === place.id ? google.maps.Animation.BOUNCE : null}
@@ -244,7 +255,7 @@ const MapSearch = ({
         src={
           selectedPlace.images && selectedPlace.images[0]?.image_url
             ? selectedPlace.images[0].image_url
-            : "/default-image.jpg"
+            : "/icons/user.png"
         }
         alt={selectedPlace.name}
         width={150}

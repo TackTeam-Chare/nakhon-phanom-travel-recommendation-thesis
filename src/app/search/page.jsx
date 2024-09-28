@@ -193,11 +193,40 @@ const GeocodingSearchPage = () => {
   };
 
   const handleCurrentLocationClick = () => {
-    if (userLocation) {
-      fetchNearbyPlaces(userLocation.lat, userLocation.lng);
-      setMapCenter(userLocation);
+    if (!navigator.geolocation) {
+        console.error("Geolocation is not supported by this browser.");
+        return;
     }
-  };
+
+    setLoading(true);
+
+    // Request permission to access location and update in real-time
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            const { latitude, longitude } = position.coords;
+            console.log(`User's updated location: Latitude ${latitude}, Longitude ${longitude}`);
+
+            // Update the user's location state and map center
+            setUserLocation({ lat: latitude, lng: longitude });
+            setMapCenter({ lat: latitude, lng: longitude });
+
+            // Fetch nearby places based on the updated location
+            fetchNearbyPlaces(latitude, longitude);
+
+            setLoading(false);
+        },
+        (error) => {
+            console.error("Error getting user's location:", error);
+            setLoading(false);
+        },
+        {
+            enableHighAccuracy: true, // Request high accuracy for GPS
+            timeout: 5000, // Wait no more than 5 seconds for location
+            maximumAge: 0 // Do not use a cached position
+        }
+    );
+};
+
 
   const clearSearch = () => {
     setSearchParams({});
