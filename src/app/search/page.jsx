@@ -159,7 +159,19 @@ const GeocodingSearchPage = () => {
         (cat) => cat.id === value
       );
       setSelectedCategory(selectedCategory?.name || null);
-      setIsSeasonEnabled(value === 1); 
+
+      // Enable season input only if the category is "สถานที่ท่องเที่ยว"
+      const isTouristCategory = selectedCategory?.name === "สถานที่ท่องเที่ยว";
+      setIsSeasonEnabled(isTouristCategory);
+
+      // Clear season if it's not a tourist category
+      if (!isTouristCategory) {
+        setSelectedSeason(null);
+        setSearchParams((prevParams) => ({
+          ...prevParams,
+          season: null
+        }));
+      }
     }
 
     if (field === "season") {
@@ -170,8 +182,7 @@ const GeocodingSearchPage = () => {
 
     if (field === "district") {
       const districtName =
-        filters.districts.find((district) => district.id === value)?.name ||
-        null;
+        filters.districts.find((district) => district.id === value)?.name || null;
       setSelectedDistrict(districtName);
       setIsDistrictDropdownOpen(false);
     }
