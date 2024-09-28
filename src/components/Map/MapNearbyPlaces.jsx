@@ -128,6 +128,7 @@ const MapNearbyPlaces = ({ center, places, mainPlace, isLoaded }) => {
             url: mainPlace.images && mainPlace.images[0] ? mainPlace.images[0].image_url : "/icons/user.png",
             scaledSize: new window.google.maps.Size(50, 50)
           }}
+          animation={google.maps.Animation.BOUNCE} 
           onClick={() => setSelectedEntity(mainPlace)}
         />
 
@@ -141,7 +142,7 @@ const MapNearbyPlaces = ({ center, places, mainPlace, isLoaded }) => {
             }}
             title={entity.name}
             icon={{
-              url: entity.images && entity.images[0] ? entity.images[0].image_url : "/icons/user.png",
+              url: entity.images && entity.images[0] ? entity.images[0].image_url : "/icons/place-nearby.png",
               scaledSize: new window.google.maps.Size(40, 40)
             }}
             onMouseOver={() => setHoveredMarkerId(entity.id)}
@@ -184,7 +185,7 @@ const MapNearbyPlaces = ({ center, places, mainPlace, isLoaded }) => {
         src={
           selectedEntity.images && selectedEntity.images[0]?.image_url
             ? selectedEntity.images[0].image_url
-            : "/default-image.jpg"
+            : "/place-nearby.png"
         }
         alt={selectedEntity.name}
         width={150}

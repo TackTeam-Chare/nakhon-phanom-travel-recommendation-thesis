@@ -24,7 +24,7 @@ import {
   FaChevronDown,
   FaChevronUp 
 } from "react-icons/fa";
-import { FallingLines } from "react-loader-spinner";
+import { Circles } from "react-loader-spinner";
 import Link from "next/link";
 import "react-toastify/dist/ReactToastify.css";
 import {
@@ -511,10 +511,15 @@ const GeocodingSearchPage = () => {
 
       {/* Loading Spinner */}
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50">
-          <FallingLines width="100" color="#4fa94d" visible={true} />
-        </div>
-      )}
+  <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50">
+    <Circles
+      height="80"
+      width="80"
+      color="#FF7043"
+      ariaLabel="loading-indicator"
+    />
+  </div>
+)}
 
       {/* MapComponent Integration */}
       <div className={`w-full h-96 mb-6 ${loading ? "blur-sm" : ""}`}>

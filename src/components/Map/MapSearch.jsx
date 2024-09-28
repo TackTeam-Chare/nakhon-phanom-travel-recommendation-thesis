@@ -8,7 +8,8 @@ import {
 } from "@react-google-maps/api";
 import NextImage from "next/image";
 import Link from "next/link";
-import { FaMapMarkerAlt, FaInfoCircle, FaDirections, FaRoute, FaTag, FaMapSigns } from "react-icons/fa"; 
+import { FaMapMarkerAlt, FaInfoCircle, FaDirections, FaRoute, FaTag } from "react-icons/fa";
+
 const MapSearch = ({
   isLoaded,
   userLocation,
@@ -27,7 +28,6 @@ const MapSearch = ({
       if (!isLoaded || !window.google || !window.google.maps) return;
 
       const directionsService = new window.google.maps.DirectionsService();
-
       const destinations = [...searchResults, ...nearbyPlaces];
 
       directionsService.route(
@@ -36,18 +36,18 @@ const MapSearch = ({
           destination: destinations[0]
             ? {
                 lat: Number(destinations[0].latitude),
-                lng: Number(destinations[0].longitude)
+                lng: Number(destinations[0].longitude),
               }
             : origin,
           travelMode: google.maps.TravelMode.DRIVING,
           waypoints: destinations.slice(1).map((place) => ({
             location: {
               lat: Number(place.latitude),
-              lng: Number(place.longitude)
+              lng: Number(place.longitude),
             },
-            stopover: true
+            stopover: true,
           })),
-          optimizeWaypoints: true
+          optimizeWaypoints: true,
         },
         (result, status) => {
           if (status === google.maps.DirectionsStatus.OK) {
@@ -61,17 +61,12 @@ const MapSearch = ({
     [isLoaded]
   );
 
-  
   useEffect(() => {
     if (mapRef.current && userLocation) {
       mapRef.current.panTo(userLocation);
     }
   }, [userLocation]);
 
-  if (!isLoaded) {
-    return null;
-  }
-  
   useEffect(() => {
     if (
       isLoaded &&
@@ -85,47 +80,54 @@ const MapSearch = ({
   if (!isLoaded) {
     return null;
   }
-  
+
   const mapStyles = [
     {
       featureType: "all",
       elementType: "geometry.fill",
-      stylers: [{ color: "#fef3e2" }]
+      stylers: [{ color: "#fef3e2" }],
     },
     {
       featureType: "water",
       elementType: "geometry",
-      stylers: [{ color: "#b3d9ff" }]
+      stylers: [{ color: "#b3d9ff" }],
     },
     {
       featureType: "road",
       elementType: "geometry.stroke",
-      stylers: [{ color: "#ffa726" }, { lightness: 40 }]
+      stylers: [{ color: "#ffa726" }, { lightness: 40 }],
     },
     {
       featureType: "road",
       elementType: "geometry.fill",
-      stylers: [{ color: "#ffcc80" }]
+      stylers: [{ color: "#ffcc80" }],
     },
     {
       featureType: "poi",
       elementType: "geometry.fill",
-      stylers: [{ color: "#ffebcc" }]
+      stylers: [{ color: "#ffebcc" }],
     },
     {
       featureType: "landscape",
       elementType: "geometry.fill",
-      stylers: [{ color: "#fff5e6" }]
+      stylers: [{ color: "#fff5e6" }],
     },
     {
       featureType: "administrative",
       elementType: "geometry.stroke",
-      stylers: [{ color: "#f9a825" }, { lightness: 50 }]
-    }
+      stylers: [{ color: "#f9a825" }, { lightness: 50 }],
+    },
   ];
 
   const convertMetersToKilometers = (meters) => {
-    return (meters / 1000).toFixed(2);
+    if (!meters && meters !== 0) {
+      return "ไม่ทราบระยะทาง"; // ในกรณีที่ meters เป็น null หรือ undefined
+    }
+
+    if (meters >= 1000) {
+      return (meters / 1000).toFixed(2) + " กิโลเมตร";
+    }
+    return meters.toFixed(0) + " เมตร";
   };
 
   return (
@@ -140,7 +142,7 @@ const MapSearch = ({
         fullscreenControl: false,
         streetViewControl: false,
         disableDefaultUI: false,
-        clickableIcons: false
+        clickableIcons: false,
       }}
       onLoad={(map) => {
         mapRef.current = map;
@@ -152,9 +154,9 @@ const MapSearch = ({
             position={userLocation}
             icon={{
               url: "/icons/user.png",
-              scaledSize: new window.google.maps.Size(40, 40)
+              scaledSize: new window.google.maps.Size(40, 40),
             }}
-            animation={google.maps.Animation.BOUNCE} 
+            animation={google.maps.Animation.BOUNCE}
           />
           <Circle
             center={userLocation}
@@ -164,7 +166,7 @@ const MapSearch = ({
               fillOpacity: 0.1,
               strokeColor: "#FF7043",
               strokeOpacity: 0.3,
-              strokeWeight: 2
+              strokeWeight: 2,
             }}
           />
         </>
@@ -180,19 +182,18 @@ const MapSearch = ({
         }
 
         return (
-<Marker
-  key={place.id}
-  position={{ lat: Number(place.latitude), lng: Number(place.longitude) }}
-  icon={{
-    url: place.images[0]?.image_url || "/icons/user.png",
-    scaledSize: new window.google.maps.Size(40, 40),
-  }}
-  animation={hoveredMarkerId === place.id ? google.maps.Animation.BOUNCE : null}
-  onMouseOver={() => setHoveredMarkerId(place.id)}
-  onMouseOut={() => setHoveredMarkerId(null)}
-  onClick={() => onSelectPlace(place)}
-/>
-
+          <Marker
+            key={place.id}
+            position={{ lat: Number(place.latitude), lng: Number(place.longitude) }}
+            icon={{
+              url: place.images[0]?.image_url || "/icons/place-nearby.png",
+              scaledSize: new window.google.maps.Size(40, 40),
+            }}
+            animation={hoveredMarkerId === place.id ? google.maps.Animation.BOUNCE : null}
+            onMouseOver={() => setHoveredMarkerId(place.id)}
+            onMouseOut={() => setHoveredMarkerId(null)}
+            onClick={() => onSelectPlace(place)}
+          />
         );
       })}
 
@@ -213,13 +214,11 @@ const MapSearch = ({
               url:
                 place.images && place.images[0]?.image_url
                   ? place.images[0].image_url
-                  : "/icons/user.png",
-              scaledSize: new window.google.maps.Size(40, 40)
+                  : "/icons/place-nearby.png",
+              scaledSize: new window.google.maps.Size(40, 40),
             }}
             animation={
-              hoveredMarkerId === place.id
-                ? google.maps.Animation.BOUNCE
-                : undefined
+              hoveredMarkerId === place.id ? google.maps.Animation.BOUNCE : undefined
             }
             onMouseOver={() => setHoveredMarkerId(place.id)}
             onMouseOut={() => setHoveredMarkerId(null)}
@@ -235,75 +234,72 @@ const MapSearch = ({
             polylineOptions: {
               strokeColor: "#FF7043",
               strokeOpacity: 0.8,
-              strokeWeight: 6
-              },
-            suppressMarkers: true // ปิดการแสดง markers บนเส้นทาง
+              strokeWeight: 6,
+            },
+            suppressMarkers: true, // ปิดการแสดง markers บนเส้นทาง
           }}
         />
       )}
-{selectedPlace && (
-  <InfoWindow
-    position={{
-      lat: Number(selectedPlace.latitude),
-      lng: Number(selectedPlace.longitude)
-    }}
-    onCloseClick={() => onSelectPlace(null)}
-  >
-    <div className="flex flex-col md:flex-row items-center max-w-md p-4 bg-white rounded-lg shadow-lg text-gray-800 space-y-4 md:space-y-0 md:space-x-4">
-      {/* รูปภาพสถานที่ */}
-      <NextImage
-        src={
-          selectedPlace.images && selectedPlace.images[0]?.image_url
-            ? selectedPlace.images[0].image_url
-            : "/icons/user.png"
-        }
-        alt={selectedPlace.name}
-        width={150}
-        height={100}
-        className="object-cover rounded-md shadow"
-      />
 
-      {/* ข้อมูลสถานที่ */}
-      <div className="flex-1">
-        <h3 className="text-xl font-bold text-gray-900 mb-2 flex items-center">
-          <FaMapMarkerAlt className="mr-2 text-orange-500" />
-          {selectedPlace.name}
-        </h3>
+      {selectedPlace && (
+        <InfoWindow
+          position={{
+            lat: Number(selectedPlace.latitude),
+            lng: Number(selectedPlace.longitude),
+          }}
+          onCloseClick={() => onSelectPlace(null)}
+        >
+          <div className="flex flex-col md:flex-row items-center max-w-md p-4 bg-white rounded-lg shadow-lg text-gray-800 space-y-4 md:space-y-0 md:space-x-4">
+            <NextImage
+              src={
+                selectedPlace.images && selectedPlace.images[0]?.image_url
+                  ? selectedPlace.images[0].image_url
+                  : "/icons/place-nearby.png"
+              }
+              alt={selectedPlace.name}
+              width={150}
+              height={100}
+              className="object-cover rounded-md shadow"
+            />
 
-        <p className="text-sm text-orange-500 font-semibold flex items-center mb-2">
-          <FaTag className="mr-2" />
-          {selectedPlace.category_name}
-        </p>
-        <p className="text-orange-500 font-bold flex items-center">
-          <FaRoute className="mr-2" />
-          ระยะห่าง {convertMetersToKilometers(selectedPlace.distance)} กิโลเมตร
-        </p>
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-gray-900 mb-2 flex items-center">
+                <FaMapMarkerAlt className="mr-2 text-orange-500" />
+                {selectedPlace.name}
+              </h3>
 
-        <div className="flex space-x-2 mt-4">
-          <a
-            href={`https://www.google.com/maps/dir/?api=1&destination=${selectedPlace.latitude},${selectedPlace.longitude}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600 transition duration-300 flex items-center space-x-2"
-          >
-            <FaDirections className="inline-block" />
-            <span>นำทาง</span>
-          </a>
+              <p className="text-sm text-orange-500 font-semibold flex items-center mb-2">
+                <FaTag className="mr-2" />
+                {selectedPlace.category_name}
+              </p>
+              <p className="text-orange-500 font-bold flex items-center">
+                <FaRoute className="mr-2" />
+                ระยะห่าง {convertMetersToKilometers(selectedPlace.distance)} กิโลเมตร
+              </p>
 
-          <Link
-            href={`/place/${selectedPlace.id}`}
-            className="bg-green-500 text-white px-3 py-2 rounded-lg hover:bg-green-600 transition duration-300 flex items-center space-x-2"
-          >
-            <FaInfoCircle className="inline-block" />
-            <span>ดูข้อมูลเพิ่มเติม</span>
-          </Link>
-        </div>
-      </div>
-    </div>
-  </InfoWindow>
-)}
+              <div className="flex space-x-2 mt-4">
+                <a
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${selectedPlace.latitude},${selectedPlace.longitude}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600 transition duration-300 flex items-center space-x-2"
+                >
+                  <FaDirections className="inline-block" />
+                  <span>นำทาง</span>
+                </a>
 
-
+                <Link
+                  href={`/place/${selectedPlace.id}`}
+                  className="bg-green-500 text-white px-3 py-2 rounded-lg hover:bg-green-600 transition duration-300 flex items-center space-x-2"
+                >
+                  <FaInfoCircle className="inline-block" />
+                  <span>ดูข้อมูลเพิ่มเติม</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </InfoWindow>
+      )}
     </GoogleMap>
   );
 };
