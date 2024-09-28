@@ -164,7 +164,8 @@ const MapNearbyPlaces = ({ center, places, mainPlace, isLoaded }) => {
                 strokeColor: "#FF7043",
                 strokeOpacity: 0.8,
                 strokeWeight: 6
-              }
+              },
+              suppressMarkers: true // ปิดการแสดง markers บนเส้นทาง
             }}
           />
         )}

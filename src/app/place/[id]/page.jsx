@@ -7,7 +7,7 @@ import "react-multi-carousel/lib/styles.css";
 import Image from "next/image";
 import Link from "next/link";
 import { useLoadScript } from "@react-google-maps/api";
-import { FaSun, FaCloudRain, FaSnowflake, FaGlobe ,FaUtensils , FaStore ,FaMapMarkerAlt ,FaInfoCircle ,FaLandmark, FaHome, FaClock,FaTimesCircle , FaLayerGroup,FaMapSigns ,FaChevronDown ,FaCalendarDay ,FaChevronUp ,FaRegClock ,FaArrowRight , FaTag, FaRoute, FaChevronLeft, FaChevronRight } from "react-icons/fa"; 
+import { FaSun, FaCloudRain, FaSnowflake, FaGlobe ,FaUtensils ,FaCheckCircle , FaStore ,FaMapMarkerAlt ,FaInfoCircle ,FaLandmark, FaHome, FaClock,FaTimesCircle , FaLayerGroup,FaMapSigns ,FaChevronDown ,FaCalendarDay ,FaChevronUp ,FaRegClock ,FaArrowRight , FaTag, FaRoute, FaChevronLeft, FaChevronRight } from "react-icons/fa"; 
 import { getNearbyFetchTourismData } from "@/services/user/api";
 import Swal from "sweetalert2";
 import { ClipLoader } from "react-spinners";
@@ -121,18 +121,17 @@ const isOpenNow = (operatingHours) => {
     return (
       hours.day_of_week ===
         ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][currentDay] ||
-      hours.day_of_week === "Everyday" // ตรวจสอบวัน "ทุกวัน"
+      hours.day_of_week === "Everyday"
     );
   });
 
-  // หากเจอว่าช่วงเวลาทำการตรงกับวันปัจจุบันหรือ "Everyday"
   if (todayOperatingHours) {
     const openingTime = parseInt(todayOperatingHours.opening_time.replace(":", ""));
     const closingTime = parseInt(todayOperatingHours.closing_time.replace(":", ""));
 
-    // กรณีเวลาปิดทำการข้ามวัน
+    // Handle overnight open hours (closing after midnight)
     if (closingTime < openingTime) {
-      return currentTime >= openingTime || currentTime <= closingTime; // เปิดตั้งแต่เวลาหนึ่งจนถึงเที่ยงคืนของวันถัดไป
+      return currentTime >= openingTime || currentTime <= closingTime;
     } else {
       return currentTime >= openingTime && currentTime <= closingTime;
     }
@@ -140,6 +139,7 @@ const isOpenNow = (operatingHours) => {
 
   return false;
 };
+
 
 const isExceptHoliday = (operatingHours) => {
   const now = getCurrentTimeInThailand();
@@ -312,16 +312,17 @@ const PlaceNearbyPage = ({ params }) => {
 
   {/* Open/Closed Status */}
   <div className="flex items-center font-bold text-lg">
-    {isOpen ? (
-      <span className="text-green-500 flex items-center">
-        <FaCheckCircle className="mr-1" /> เปิดทำการ
-      </span>
-    ) : (
-      <span className="text-red-500 flex items-center">
-        <FaTimesCircle className="mr-1" /> ปิดทำการ
-      </span>
-    )}
-  </div>
+  {isOpenNow(tourismData.operating_hours) ? (
+    <span className="text-green-500 flex items-center">
+      <FaCheckCircle className="mr-1" /> เปิดทำการ
+    </span>
+  ) : (
+    <span className="text-red-500 flex items-center">
+      <FaTimesCircle className="mr-1" /> ปิดทำการ
+    </span>
+  )}
+</div>
+
 
   {/* Operating Hours */}
  {/* Operating Hours */}

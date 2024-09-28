@@ -41,9 +41,9 @@ const responsive = {
 
 const convertMetersToKilometers = (meters) => {
   if (meters >= 1000) {
-    return (meters / 1000).toFixed(2) + ' กิโลเมตร';
+    return (meters / 1000).toFixed(2) ;
   }
-  return meters.toFixed(0) + ' เมตร';
+  return meters.toFixed(0) + ' กิโลเมตร';
 };
 
 

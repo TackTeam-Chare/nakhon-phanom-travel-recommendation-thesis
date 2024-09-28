@@ -82,16 +82,23 @@ const GeocodingSearchPage = () => {
     loadFilters();
   }, []);
 
+  
   useEffect(() => {
     if (!isClient) return;
-
+  
     const updateLocation = () => {
       setLoading(true);
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
+  
+          // Log the user's location to the console
           console.log(`User's location: Latitude ${latitude}, Longitude ${longitude}`);
+  
+          // Set the user's location in state
           setUserLocation({ lat: latitude, lng: longitude });
+  
+          // Fetch nearby places based on user's location
           fetchNearbyPlaces(latitude, longitude);
           setLoading(false);
         },
@@ -101,9 +108,10 @@ const GeocodingSearchPage = () => {
         }
       );
     };
-
+  
     updateLocation();
   }, [isClient]);
+  
 
   const fetchNearbyPlaces = async (lat, lng) => {
     try {
@@ -151,16 +159,19 @@ const GeocodingSearchPage = () => {
         (cat) => cat.id === value
       );
       setSelectedCategory(selectedCategory?.name || null);
-      setIsSeasonEnabled(value === 1);
+      setIsSeasonEnabled(value === 1); 
     }
 
     if (field === "season") {
-      const seasonName = filters.seasons.find((season) => season.id === value)?.name || null;
+      const seasonName =
+        filters.seasons.find((season) => season.id === value)?.name || null;
       setSelectedSeason(seasonName);
     }
 
     if (field === "district") {
-      const districtName = filters.districts.find((district) => district.id === value)?.name || null;
+      const districtName =
+        filters.districts.find((district) => district.id === value)?.name ||
+        null;
       setSelectedDistrict(districtName);
       setIsDistrictDropdownOpen(false);
     }
@@ -222,15 +233,21 @@ const GeocodingSearchPage = () => {
     ]
   };
 
-  const categorizePlaces = (categoryId) => nearbyPlaces.filter((place) => place.category_id === categoryId);
+  const categorizePlaces = (categoryId) => {
+    return nearbyPlaces.filter((place) => place.category_id === categoryId);
+  };
 
   const convertMetersToKilometers = (meters) => {
     if (!meters && meters !== 0) {
-      return "ไม่ทราบระยะทาง";
+      return "ไม่ทราบระยะทาง";  // ในกรณีที่ meters เป็น null หรือ undefined
     }
-    return meters >= 1000 ? `${(meters / 1000).toFixed(2)} กิโลเมตร` : `${meters.toFixed(0)} เมตร`;
-  };
   
+    if (meters >= 1000) {
+      return (meters / 1000).toFixed(2) + ' กิโลเมตร';
+    }
+    return meters.toFixed(0) + ' เมตร';
+  };
+
   return (
     <div className="container mx-auto p-4 relative">
       {/* Search Bar and Buttons */}
@@ -401,6 +418,8 @@ const GeocodingSearchPage = () => {
               <option value="Thursday">วันพฤหัสบดี</option>
               <option value="Friday">วันศุกร์</option>
               <option value="Saturday">วันเสาร์</option>
+              <option value="Everyday">ทุกวัน</option>
+              <option value="ExceptHolidays">ยกเว้นวันหยุดนักขัตฤกษ์</option>
             </select>
           </div>
 
