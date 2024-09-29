@@ -34,40 +34,46 @@ const TouristAttractionsPage = () => {
   )
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-4xl md:text-4xl lg:text-5xl font-bold text-orange-500 text-center mt-10 mb-5">
+    <div className="container mx-auto px-4 py-8">
+      {/* Title with responsive margin */}
+      <h1 className="text-4xl md:text-5xl font-bold text-orange-500 text-center mt-10 mb-10">
         สถานที่ทั้งหมดที่มีในระบบ
       </h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      {/* Responsive grid with proper gap */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
         {paginatedAttractions.map(attraction => (
           <Link href={`/place/${attraction.id}`} key={attraction.id}>
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full">
-            {attraction.images &&
-                attraction.images.length > 0 &&
-                attraction.images[0].image_url ? (
-                  <Image
-                    src={attraction.images[0].image_url}
-                    alt={attraction.name}
-                    width={500}
-                    height={300}
-                    className="w-full h-48 object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-                    <span className="text-gray-500">ไม่มีรูปภาพ</span>
-                  </div>
-                )}
-              <h2 className="text-xl font-semibold">{attraction.name}</h2>
-              <p className="text-gray-600 flex-grow">
-                {attraction.description}
-              </p>
-              <p className="text-orange-500 mt-2 font-bold self-end">
-                อ่านต่อ...
-              </p>
+            {/* Add padding inside cards */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full p-4">
+              {/* Image section */}
+              {attraction.images && attraction.images.length > 0 && attraction.images[0].image_url ? (
+                <Image
+                  src={attraction.images[0].image_url}
+                  alt={attraction.name}
+                  width={500}
+                  height={300}
+                  className="w-full h-48 object-cover rounded"
+                />
+              ) : (
+                <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+                  <span className="text-gray-500">ไม่มีรูปภาพ</span>
+                </div>
+              )}
+              
+              {/* Text content */}
+              <div className="flex-grow mt-4">
+                <h2 className="text-xl font-bold mb-2 text-orange-500">{attraction.name}</h2>
+                <p className="text-gray-600 mb-4">
+                  {attraction.description}
+                </p>
+              </div>
             </div>
           </Link>
         ))}
       </div>
+      
+      {/* Pagination component */}
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
@@ -85,7 +91,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="mx-1 px-2 py-2 text-xs sm:text-sm bg-orange-500 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gradient-to-r hover:from-orange-400 hover:to-orange-600 transform hover:scale-105 transition duration-300 ease-in-out"
+        className="mx-1 px-3 py-2 text-xs sm:text-sm bg-orange-500 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gradient-to-r hover:from-orange-400 hover:to-orange-600 transform hover:scale-105 transition duration-300 ease-in-out"
       >
         ก่อนหน้า
       </button>
@@ -93,7 +99,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         <button
           key={page}
           onClick={() => onPageChange(page)}
-          className={`mx-1 px-2 py-2 text-xs sm:text-sm rounded-lg transform transition duration-300 ease-in-out ${
+          className={`mx-1 px-3 py-2 text-xs sm:text-sm rounded-lg transform transition duration-300 ease-in-out ${
             page === currentPage
               ? "bg-orange-700 text-white hover:shadow-xl hover:bg-gradient-to-r hover:from-orange-600 hover:to-orange-800"
               : "bg-orange-500 text-white hover:bg-gradient-to-r hover:from-orange-400 hover:to-orange-600"
@@ -105,7 +111,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="mx-1 px-2 py-2 text-xs sm:text-sm bg-orange-500 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gradient-to-r hover:from-orange-400 hover:to-orange-600 transform hover:scale-105 transition duration-300 ease-in-out"
+        className="mx-1 px-3 py-2 text-xs sm:text-sm bg-orange-500 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gradient-to-r hover:from-orange-400 hover:to-orange-600 transform hover:scale-105 transition duration-300 ease-in-out"
       >
         ถัดไป
       </button>

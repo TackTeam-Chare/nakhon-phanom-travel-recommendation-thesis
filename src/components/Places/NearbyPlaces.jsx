@@ -40,10 +40,14 @@ const responsive = {
 };
 
 const convertMetersToKilometers = (meters) => {
-  if (meters >= 1000) {
-    return (meters / 1000).toFixed(2) ;
+  if (!meters && meters !== 0) {
+    return "ไม่ทราบระยะทาง"; // ในกรณีที่ meters เป็น null หรือ undefined
   }
-  return meters.toFixed(0) + ' กิโลเมตร';
+
+  if (meters >= 1000) {
+    return (meters / 1000).toFixed(2) + " กิโลเมตร";
+  }
+  return meters.toFixed(0) + " เมตร";
 };
 
 
