@@ -115,13 +115,25 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
   }, [id, setValue])
 
   const handleFileChange = event => {
-    const files = Array.from(event.target.files || [])
+    const files = Array.from(event.target.files || []);
+
+    // Limit the number of uploaded files to 10
+    if (files.length > 10) {
+      MySwal.fire({
+        icon: "warning",
+        title: "อัพโหลดสูงสุด 10 รูปภาพ",
+        text: "คุณสามารถอัพโหลดภาพได้สูงสุด 10 ภาพเท่านั้น"
+      });
+      return;
+    }
+
     const uploaded = files.map(file => ({
       fileName: file.name,
       previewUrl: URL.createObjectURL(file)
-    }))
-    setUploadedFiles(uploaded)
-  }
+    }));
+
+    setUploadedFiles(uploaded);
+  };
 
   const onSubmit = async data => {
     if (!isDirty) {

@@ -37,7 +37,7 @@ export const updateTouristEntity = async (id, data) => {
 export const updateTourismImages = async (id, data) => {
   try {
     const token = getToken()
-    const response = await auth.put(`/admin/images/${id}`, data, {
+    const response = await auth.put(`/admin/update-images-place/${id}`, data, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data"

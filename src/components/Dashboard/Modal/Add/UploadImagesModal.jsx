@@ -42,42 +42,54 @@ const UploadImagesModal = ({ isOpen, onClose }) => {
   }, [])
 
   const handleFileChange = event => {
-    const files = Array.from(event.target.files || [])
-    const filePreviews = files.map(file => ({
-      file,
-      previewUrl: URL.createObjectURL(file)
-    }))
-    setUploadedFiles(filePreviews)
-  }
+    const files = Array.from(event.target.files || []);
 
-  const onSubmit = async data => {
-    const formData = new FormData()
-    formData.append("tourism_entities_id", data.tourism_entities_id)
-    uploadedFiles.forEach(file => {
-      formData.append("image_paths", file.file)
-    })
-
-    try {
-      await uploadTourismImages(formData)
-      MySwal.fire({
-        icon: "success",
-        title: "อัปโหลดรูปภาพสำเร็จ",
-        showConfirmButton: false,
-        timer: 1500
-      })
-      setTimeout(() => {
-        onClose()
-        router.push("/dashboard/table/tourism-entities-images")
-      }, 2000)
-    } catch (error) {
-      const err = error
-      MySwal.fire({
-        icon: "error",
-        title: "เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ",
-        text: err.message
-      })
+    // Enforce a maximum of 10 files
+    if (files.length > 10) {
+        MySwal.fire({
+            icon: "warning",
+            title: "สามารถอัปโหลดได้สูงสุด 10 รูปเท่านั้น",
+        });
+        return;
     }
+
+    const filePreviews = files.map(file => ({
+        file,
+        previewUrl: URL.createObjectURL(file)
+    }));
+    setUploadedFiles(filePreviews);
+};
+
+
+const onSubmit = async data => {
+  const formData = new FormData();
+  formData.append("tourism_entities_id", data.tourism_entities_id);
+  
+  uploadedFiles.forEach(file => {
+      formData.append("image_paths", file.file); // Add each file to the FormData
+  });
+
+  try {
+      await uploadTourismImages(formData);
+      MySwal.fire({
+          icon: "success",
+          title: "อัปโหลดรูปภาพสำเร็จ",
+          showConfirmButton: false,
+          timer: 1500
+      });
+      setTimeout(() => {
+          onClose();
+          router.push("/dashboard/table/tourism-entities-images");
+      }, 2000);
+  } catch (error) {
+      MySwal.fire({
+          icon: "error",
+          title: "เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ",
+          text: error.message
+      });
   }
+};
+
 
   return (
     <>
