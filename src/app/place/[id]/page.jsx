@@ -215,7 +215,7 @@ const PlaceNearbyPage = ({ params }) => {
   if (!isLoaded) {
     return (
       <div className="flex flex-col justify-center items-center h-screen">
-        <ClipLoader size={50} color={"#123abc"} loading={!isLoaded} />
+        <ClipLoader size={50} color={"#FF7043"} loading={!isLoaded} />
         <p className="mt-4 text-gray-600">กำลังโหลดแผนที่...</p>
       </div>
     );
@@ -224,7 +224,7 @@ const PlaceNearbyPage = ({ params }) => {
   if (!tourismData) {
     return (
       <div className="flex flex-col justify-center items-center h-screen">
-        <ClipLoader size={50} color={"#123abc"} loading={!tourismData} />
+        <ClipLoader size={50} color={"#FF7043"} loading={!tourismData} />
         <p className="mt-4 text-gray-600">กำลังโหลดข้อมูลสถานที่ท่องเที่ยว...</p>
       </div>
     );

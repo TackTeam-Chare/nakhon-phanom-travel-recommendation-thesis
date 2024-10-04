@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
@@ -42,13 +42,20 @@ import {
   faQuestionCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
+const categoryStyles = {
+  "สถานที่ท่องเที่ยว": { icon: faUmbrellaBeach, color: "text-blue-600" },
+  "ที่พัก": { icon: faBed, color: "text-green-600" },
+  "ร้านอาหาร": { icon: faUtensils, color: "text-red-600" },
+  "ร้านค้าของฝาก": { icon: faShoppingBag, color: "text-orange-600" },
+};
+
 const PlaceIndexPage = () => {
   const [places, setPlaces] = useState([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editPlaceId, setEditPlaceId] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to track if the dropdown is open
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -98,19 +105,8 @@ const PlaceIndexPage = () => {
     setSelectedCategory(categoryId);
   };
 
-  const getCategoryIcon = (categoryName) => {
-    switch (categoryName) {
-      case "สถานที่ท่องเที่ยว":
-        return faUmbrellaBeach;
-      case "ร้านอาหาร":
-        return faUtensils;
-      case "ที่พัก":
-        return faBed;
-      case "ร้านค้าของฝาก":
-        return faShoppingBag;
-      default:
-        return faQuestionCircle;
-    }
+  const getCategoryStyle = (categoryName) => {
+    return categoryStyles[categoryName] || { icon: faQuestionCircle, color: "text-gray-500" };
   };
 
   const columns = useMemo(
@@ -129,9 +125,9 @@ const PlaceIndexPage = () => {
         Header: "ชื่อ",
         accessor: "name",
         Cell: ({ row, cell: { value } }) => {
-          const icon = getCategoryIcon(row.original.category_name);
+          const { icon, color } = getCategoryStyle(row.original.category_name);
           return (
-            <span className="font-medium text-lg text-gray-700">
+            <span className={`font-medium text-lg ${color}`}>
               <FontAwesomeIcon icon={icon} className="mr-2" />
               {value}
             </span>
@@ -231,7 +227,6 @@ const PlaceIndexPage = () => {
           สถานที่
         </h1>
 
-        {/* Dropdown and search aligned properly */}
         <div className="flex justify-between items-center mb-4">
           <button
             onClick={() => setIsAddModalOpen(true)}
@@ -241,7 +236,6 @@ const PlaceIndexPage = () => {
             เพิ่มสถานที่ใหม่
           </button>
 
-          {/* Dropdown and search input in the same line */}
           <div className="flex items-center space-x-6">
             <div className="relative">
               <select
@@ -250,7 +244,7 @@ const PlaceIndexPage = () => {
                 className="p-2 border border-gray-300 rounded-md appearance-none cursor-pointer"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
-                <option value="">-- เลือกประเภทสถานที่ --     </option>
+                <option value="">-- เลือกประเภทสถานที่ --</option>
                 <option value="1">สถานที่ท่องเที่ยว</option>
                 <option value="2">ที่พัก</option>
                 <option value="3">ร้านอาหาร</option>
@@ -355,7 +349,6 @@ const PlaceIndexPage = () => {
         </div>
       </div>
 
-      {/* Add Modal */}
       {isAddModalOpen && (
         <AddPlacesModal
           isOpen={isAddModalOpen}
@@ -363,7 +356,6 @@ const PlaceIndexPage = () => {
         />
       )}
 
-      {/* Edit Modal */}
       {isEditModalOpen && editPlaceId && (
         <EditPlaceModal
           id={editPlaceId}

@@ -1,5 +1,6 @@
 import Carousel from "../components/Carousel"
 import NearbyPlaces from "../components/Places/NearbyPlaces"
+import CurrentlyOpenTouristEntities from "../components/Places/CurrentlyOpen"
 import RealTimeSeasonalAttractions from "../components/Places/RealTime"
 
 export const metadata = {
@@ -20,6 +21,9 @@ export default function Home() {
       </div>
       <div>
         <NearbyPlaces />
+      </div>
+      <div>
+        <CurrentlyOpenTouristEntities />
       </div>
     </>
   )

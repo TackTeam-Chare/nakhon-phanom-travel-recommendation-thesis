@@ -15,6 +15,7 @@ import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 
 const MySwal = withReactContent(Swal)
+const validDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 const AddOperatingHoursModal = ({ isOpen, onClose }) => {
   const {
@@ -42,28 +43,47 @@ const AddOperatingHoursModal = ({ isOpen, onClose }) => {
     fetchPlaces()
   }, [])
 
-  const onSubmit = async data => {
+  const onSubmit = async (data) => {
+    let daysToSubmit = [];
+
+    // Expand "Everyday" into all days of the week
+    if (data.day_of_week === "Everyday") {
+      daysToSubmit = validDays;
+    } else if (data.day_of_week === "Except Holidays") {
+      // Expand into all days except if you have a holiday exclusion logic
+      daysToSubmit = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];;  // Replace with specific logic if needed
+    } else {
+      daysToSubmit = [data.day_of_week]; // Single day selection
+    }
+
+    // Prepare to submit for each day
     try {
-      const response = await createOperatingHours(data)
+      for (let day of daysToSubmit) {
+        await createOperatingHours({
+          place_id: data.place_id,
+          day_of_week: day,
+          opening_time: data.opening_time,
+          closing_time: data.closing_time
+        });
+      }
+
       MySwal.fire({
         icon: "success",
-        title: "สร้างเวลาเปิดทำการสำเร็จ",
-        text: `เวลาเปิดทำการถูกสร้างสำเร็จด้วย ID: ${response.id}`,
-        showConfirmButton: false,
+        title: "เพิ่มเวลาเปิดทำการสำเร็จ",
+        text: "เวลาเปิดทำการถูกเพิ่มสำเร็จ!",
         timer: 2000
-      })
-
-      onClose()
-    } catch (error) {
-      console.error("Error creating operating hours:", error)
-
-      MySwal.fire({
-        icon: "error",
-        title: "เกิดข้อผิดพลาด",
-        text: "ไม่สามารถสร้างเวลาเปิดทำการได้ กรุณาลองใหม่อีกครั้ง."
-      })
-    }
-  }
+      });
+      
+      onClose();
+      } catch (error) {
+        console.error("Error creating operating hours:", error);
+        MySwal.fire({
+          icon: "error",
+          title: "เกิดข้อผิดพลาด",
+          text: "เกิดข้อผิดพลาดในการเพิ่มเวลาเปิดทำการ กรุณาลองใหม่อีกครั้ง."
+        });
+      }
+  };
 
   return (
     <>
