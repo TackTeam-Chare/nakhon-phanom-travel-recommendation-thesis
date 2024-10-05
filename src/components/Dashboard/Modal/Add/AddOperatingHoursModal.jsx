@@ -51,7 +51,7 @@ const AddOperatingHoursModal = ({ isOpen, onClose }) => {
       daysToSubmit = validDays;
     } else if (data.day_of_week === "Except Holidays") {
       // Expand into all days except if you have a holiday exclusion logic
-      daysToSubmit = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];;  // Replace with specific logic if needed
+      daysToSubmit = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];; 
     } else {
       daysToSubmit = [data.day_of_week]; // Single day selection
     }

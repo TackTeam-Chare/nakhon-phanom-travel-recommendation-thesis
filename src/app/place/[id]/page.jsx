@@ -290,17 +290,20 @@ const PlaceNearbyPage = ({ params }) => {
                 {tourismData.category_name}
               </strong>
             </div>
-            <div className={`flex items-center text-lg ${getSeasonColor(tourismData.season_name)}`}>
-  {getSeasonIcon(tourismData.season_name)}
-  <strong className={`ml-2 ${getSeasonColor(tourismData.season_name)}`}>
-    {tourismData.season_name}
-  </strong>
-</div>
+           {/* Check if it's a tourist spot */}
+    {tourismData.category_name === "สถานที่ท่องเที่ยว" && (
+      <div className={`flex items-center text-lg ${getSeasonColor(tourismData.season_name)}`}>
+        {getSeasonIcon(tourismData.season_name)}
+        <strong className={`ml-2 ${getSeasonColor(tourismData.season_name)}`}>
+          {tourismData.season_name}
+        </strong>
+      </div>
+    )}
   </div>
 
   {/* Description */}
   <div className="flex items-center text-gray-600">
-    <FaInfoCircle className="text-orange-500 mr-2" />
+    <FaInfoCircle className="text-orange-500 mr-2 text-3xl" />
     <span>{tourismData.description}</span>
   </div>
 
@@ -309,87 +312,89 @@ const PlaceNearbyPage = ({ params }) => {
     <FaHome className="text-orange-500 mr-2" />
     <span>{tourismData.location}</span>
   </div>
-
-  {/* Open/Closed Status */}
+{/* Open/Closed Status */}
+{tourismData.category_name !== "ที่พัก" && ( // เพิ่มเงื่อนไขเพื่อตรวจสอบประเภทสถานที่
   <div className="flex items-center font-bold text-lg">
-  {isOpenNow(tourismData.operating_hours) ? (
-    <span className="text-green-500 flex items-center">
-      <FaCheckCircle className="mr-1" /> เปิดทำการ
-    </span>
-  ) : (
-    <span className="text-red-500 flex items-center">
-      <FaTimesCircle className="mr-1" /> ปิดทำการ
-    </span>
-  )}
-</div>
-
-
-  {/* Operating Hours */}
- {/* Operating Hours */}
-<div className="mt-6 p-4 bg-white rounded-lg shadow-lg">
-  <h2
-    className="text-lg text-orange-500 font-black mb-3 flex items-center cursor-pointer"
-    onClick={toggleOperatingHours}
-  >
-    <FaClock className="text-orange-500 mr-2" />
-    ช่วงวันเวลาทำการของสถานที่
-    {showOperatingHours ? (
-      <FaChevronUp className="ml-2" />
+    {isOpenNow(tourismData.operating_hours) ? (
+      <span className="text-green-500 flex items-center">
+        <FaCheckCircle className="mr-1" /> เปิดทำการ
+      </span>
     ) : (
-      <FaChevronDown className="ml-2" />
+      <span className="text-red-500 flex items-center">
+        <FaTimesCircle className="mr-1" /> ปิดทำการ
+      </span>
     )}
-  </h2>
+  </div>
+)}
 
-  {/* Show/Hide Operating Hours */}
-  {showOperatingHours && tourismData.operating_hours && tourismData.operating_hours.length > 0 ? (
-    <ul className="mt-4">
-      {tourismData.operating_hours.map((hours, index) => (
-        <li
-          key={index}
-          className="flex justify-between items-center py-2 border-b border-gray-200 last:border-none"
-        >
-          <div className="flex items-center space-x-2">
-            <FaCalendarDay className="text-orange-500" />
-            <span className="font-medium text-gray-700">
-              {hours.day_of_week === "Sunday"
-                ? "วันอาทิตย์"
-                : hours.day_of_week === "Monday"
-                ? "วันจันทร์"
-                : hours.day_of_week === "Tuesday"
-                ? "วันอังคาร"
-                : hours.day_of_week === "Wednesday"
-                ? "วันพุธ"
-                : hours.day_of_week === "Thursday"
-                ? "วันพฤหัสบดี"
-                : hours.day_of_week === "Friday"
-                ? "วันศุกร์"
-                : hours.day_of_week === "Saturday"
-                ? "วันเสาร์"
-                : hours.day_of_week === "Everyday"
-                ? "ทุกวัน"
-                : hours.day_of_week === "Except Holidays"
-                ? "ยกเว้นวันหยุด"
-                : hours.day_of_week}
-            </span>
-          </div>
-          <div className="flex items-center space-x-1">
-            {hours.opening_time ? (
-              <>
-                <FaRegClock className="text-green-500" />
-                <span>{hours.opening_time}</span>
-                <FaArrowRight className="text-gray-500 mx-1" />
-                <FaRegClock className="text-red-500" />
-                <span>{hours.closing_time}</span>
-              </>
-            ) : (
-              <span className="text-gray-500">ปิด</span>
-            )}
-          </div>
-        </li>
-      ))}
-    </ul>
-  ) : showOperatingHours && <p>ช่วงวันเวลาทำการของสถานที่ไม่มีอยู่</p>}
-</div>
+{/* Operating Hours */}
+{tourismData.category_name !== "ที่พัก" && ( // เพิ่มเงื่อนไขเพื่อตรวจสอบประเภทสถานที่
+  <div className="mt-6 p-4 bg-white rounded-lg shadow-lg">
+    <h2
+      className="text-lg text-orange-500 font-black mb-3 flex items-center cursor-pointer"
+      onClick={toggleOperatingHours}
+    >
+      <FaClock className="text-orange-500 mr-2" />
+      ช่วงวันเวลาทำการของสถานที่
+      {showOperatingHours ? (
+        <FaChevronUp className="ml-2" />
+      ) : (
+        <FaChevronDown className="ml-2" />
+      )}
+    </h2>
+
+    {/* Show/Hide Operating Hours */}
+    {showOperatingHours && tourismData.operating_hours && tourismData.operating_hours.length > 0 ? (
+      <ul className="mt-4">
+        {tourismData.operating_hours.map((hours, index) => (
+          <li
+            key={index}
+            className="flex justify-between items-center py-2 border-b border-gray-200 last:border-none"
+          >
+            <div className="flex items-center space-x-2">
+              <FaCalendarDay className="text-orange-500" />
+              <span className="font-medium text-gray-700">
+                {hours.day_of_week === "Sunday"
+                  ? "วันอาทิตย์"
+                  : hours.day_of_week === "Monday"
+                  ? "วันจันทร์"
+                  : hours.day_of_week === "Tuesday"
+                  ? "วันอังคาร"
+                  : hours.day_of_week === "Wednesday"
+                  ? "วันพุธ"
+                  : hours.day_of_week === "Thursday"
+                  ? "วันพฤหัสบดี"
+                  : hours.day_of_week === "Friday"
+                  ? "วันศุกร์"
+                  : hours.day_of_week === "Saturday"
+                  ? "วันเสาร์"
+                  : hours.day_of_week === "Everyday"
+                  ? "ทุกวัน"
+                  : hours.day_of_week === "Except Holidays"
+                  ? "ยกเว้นวันหยุด"
+                  : hours.day_of_week}
+              </span>
+            </div>
+            <div className="flex items-center space-x-1">
+              {hours.opening_time ? (
+                <>
+                  <FaRegClock className="text-green-500" />
+                  <span>{hours.opening_time}</span>
+                  <FaArrowRight className="text-gray-500 mx-1" />
+                  <FaRegClock className="text-red-500" />
+                  <span>{hours.closing_time}</span>
+                </>
+              ) : (
+                <span className="text-gray-500">ปิด</span>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    ) : showOperatingHours && <p>ช่วงวันเวลาทำการของสถานที่ไม่มีอยู่</p>}
+  </div>
+)}
+
 
 </div>
 

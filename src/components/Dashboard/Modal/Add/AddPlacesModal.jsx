@@ -164,51 +164,58 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
         icon: "error",
         title: "ชื่อสถานที่ซ้ำ!",
         text: "กรุณาใช้ชื่ออื่น"
-      })
-      return
+      });
+      return;
     }
-
-    setSubmitting(true)
+  
+    setSubmitting(true);
     
     try {
-      const formData = new FormData()
+      const formData = new FormData();
       for (const key of Object.keys(data)) {
         if (key === "image_paths" && data[key]) {
-          const files = data[key]
+          const files = data[key];
           if (files instanceof FileList) {
             for (let i = 0; i < files.length; i++) {
-              formData.append(key, files[i])
+              formData.append(key, files[i]);
             }
           }
         } else if (key === "operating_hours") {
-          formData.append(key, JSON.stringify(data[key]))
+          // ตรวจสอบว่าข้อมูลเป็น array หรือไม่
+          if (Array.isArray(data[key])) {
+            formData.append(key, JSON.stringify(data[key])); // Convert operating hours to JSON if it's an array
+          } else {
+            console.error("Invalid format for operating_hours:", data[key]);
+            throw new Error("Invalid format for operating_hours");
+          }
         } else {
-          formData.append(key, data[key])
+          formData.append(key, data[key]);
         }
       }
-
-      const response = await createTouristEntity(formData)
+  
+      const response = await createTouristEntity(formData);
       if (!response) {
-        throw new Error("ไม่สามารถเพิ่มสถานที่ได้")
+        throw new Error("ไม่สามารถเพิ่มสถานที่ได้");
       }
-
+  
       MySwal.fire({
         icon: "success",
         title: "เพิ่มสถานที่สำเร็จ!",
         showConfirmButton: false,
         timer: 1500
-      })
-      setTimeout(onClose, 2000)
+      });
+      setTimeout(onClose, 2000);
     } catch (error) {
       MySwal.fire({
         icon: "error",
         title: "ไม่สามารถเพิ่มสถานที่ได้",
         text: error.message
-      })
+      });
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
-  }
+  };
+  
 
 
   const toggleDropdown = field => {
