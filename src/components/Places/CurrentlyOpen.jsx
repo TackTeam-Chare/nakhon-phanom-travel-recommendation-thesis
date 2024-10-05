@@ -62,27 +62,27 @@ const CurrentlyOpenTouristEntities = ({ latitude, longitude }) => {
 
   useEffect(() => {
     const getCurrentlyOpenTouristEntities = async () => {
-       
         try {
-          const data = await fetchCurrentlyOpenTouristEntities();
-          if (data.length === 0) {
-            showInfoAlert(
-              "ไม่มีสถานที่เปิดอยู่ในขณะนี้",
-              "ไม่พบสถานที่ท่องเที่ยวที่เปิดอยู่ใกล้ตำแหน่งของคุณ"
-            );
-          }
-          setPlaces(data);
+            const data = await fetchCurrentlyOpenTouristEntities();
+            if (data.length === 0) {
+                showInfoAlert(
+                    "ไม่มีสถานที่เปิดอยู่ในขณะนี้",
+                    "ไม่พบสถานที่ท่องเที่ยวที่เปิดอยู่ใกล้ตำแหน่งของคุณ"
+                );
+            }
+            setPlaces(data);
         } catch (error) {
-          console.error("Error fetching places nearby by coordinates:", error);
-          showErrorAlert(
-            "เกิดข้อผิดพลาด",
-            "ไม่สามารถดึงข้อมูลสถานที่ได้ กรุณาลองใหม่อีกครั้ง"
-          );
-      }
+            console.error("Error fetching places nearby by coordinates:", error);
+            showErrorAlert(
+                "เกิดข้อผิดพลาด",
+                "ไม่สามารถดึงข้อมูลสถานที่ได้ กรุณาลองใหม่อีกครั้ง"
+            );
+        }
     };
 
     getCurrentlyOpenTouristEntities();
-  },);
+}, []);
+
 
   if (places.length === 0) {
     return null;

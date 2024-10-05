@@ -52,11 +52,6 @@ export default function Header() {
               <div className="py-2">
                 {[
                   {
-                    href: "/places/currently-open-places",
-                    icon: ClockIcon,
-                    text: "เปิดในขณะนี้"
-                  },
-                  {
                     href: "/places/season-real-time",
                     icon: SunIcon,
                     text: "ฤดูกาลนี้"
@@ -167,11 +162,6 @@ export default function Header() {
 
               <Disclosure.Panel className="mt-2 space-y-2">
                 {[
-                  {
-                    href: "/places/currently-open-places",
-                    icon: ClockIcon,
-                    text: "เปิดในขณะนี้"
-                  },
                   {
                     href: "/places/season-real-time",
                     icon: SunIcon,

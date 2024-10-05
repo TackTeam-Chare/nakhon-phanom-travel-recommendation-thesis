@@ -394,17 +394,18 @@ export const getNearbyFetchTourismData = async (id, radius = 5000) => {
 export const fetchCurrentlyOpenTouristEntities = async () => {
   try {
     const response = await api.get("/places/currently-open")
-    const data = Array.isArray(response.data) ? response.data : []
+    const data = Array.isArray(response.data) ? response.data : [];
 
     return data.map(place => ({
       ...place,
-      images: place.images
+      images: Array.isArray(place.images)
         ? place.images.map(image => ({
             image_path: image.image_path,
             image_url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/${image.image_path}`
           }))
-        : [] // Default to an empty array if no images
-    }))
+        : [] // หากไม่ใช่ array ให้กำหนดเป็น array ว่าง
+    }));
+
   } catch (error) {
     console.error("Error fetching currently open tourist entities:", error)
     throw error
