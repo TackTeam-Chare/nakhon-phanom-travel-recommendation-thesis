@@ -1,3 +1,4 @@
+"use client"
 import React, { useEffect, useState, useRef } from 'react';
 import io from 'socket.io-client';
 import { FiChevronDown } from 'react-icons/fi';
