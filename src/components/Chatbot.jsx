@@ -163,6 +163,23 @@ const Chatbot = () => {
           </div>
 
           <div ref={chatContainerRef} className="flex-1 p-3 overflow-y-auto space-y-4 bg-gray-50">
+            
+            {/* คำแนะนำการตอบแชท */}
+            {isSuggestionsVisible && ( // Toggle suggestions
+              <div className="mt-4 flex flex-wrap">
+                {suggestions.map((suggestion, index) => (
+                  <button
+                    key={index}
+                    onClick={() => sendMessage(suggestion.suggestion_text)}
+                    className="bg-blue-500 text-white px-3 py-1 rounded-lg m-1 hover:bg-blue-600"
+                  >
+                    {suggestion.suggestion_text}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* ข้อความสนทนา */}
             {messages.map((msg, index) => (
               <div
                 key={index}
@@ -188,20 +205,6 @@ const Chatbot = () => {
               <div className="text-center text-gray-500 flex items-center justify-center space-x-2">
                 <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-gray-500"></div>
                 <span>กำลังประมวลผล...</span>
-              </div>
-            )}
-
-            {isSuggestionsVisible && ( // Toggle suggestions
-              <div className="mt-4 flex flex-wrap">
-                {suggestions.map((suggestion, index) => (
-                  <button
-                    key={index}
-                    onClick={() => sendMessage(suggestion.suggestion_text)}
-                    className="bg-blue-500 text-white px-3 py-1 rounded-lg m-1 hover:bg-blue-600"
-                  >
-                    {suggestion.suggestion_text}
-                  </button>
-                ))}
               </div>
             )}
           </div>
