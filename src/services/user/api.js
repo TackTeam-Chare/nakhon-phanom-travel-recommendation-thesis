@@ -178,9 +178,12 @@ export const searchByDistrict = async districtId => {
 
     return data.map(place => ({
       ...place,
-      image_url: place.image_url
-        ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/${place.image_url}`
-        : null
+      images: place.images
+        ? place.images.map(image => ({
+            image_path: image.image_path,
+            image_url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/${image.image_path}`
+          }))
+        : []
     }))
   } catch (error) {
     console.error("Error searching by district:", error)
