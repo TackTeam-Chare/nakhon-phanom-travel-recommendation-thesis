@@ -1,65 +1,69 @@
-"use client"
-import React, { useEffect, useState, Fragment } from "react"
-import { useForm } from "react-hook-form"
-import { Dialog, Transition } from "@headlessui/react"
-import { createSeasonsRelation } from "@/services/admin/insert"
-import { getSeasons, getPlaces } from "@/services/admin/get"
-import { FaMapMarkerAlt, FaCalendarAlt, FaPlus, FaTimes } from "react-icons/fa"
-import Swal from "sweetalert2"
-import withReactContent from "sweetalert2-react-content"
+import React, { useEffect, useState, Fragment } from "react";
+import { useForm } from "react-hook-form";
+import { Dialog, Transition } from "@headlessui/react";
+import { createSeasonsRelation } from "@/services/admin/insert";
+import { getSeasons, getPlaces } from "@/services/admin/get";
+import { FaMapMarkerAlt, FaCalendarAlt, FaPlus, FaTimes } from "react-icons/fa";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
-const MySwal = withReactContent(Swal)
+const MySwal = withReactContent(Swal);
 
 const AddSeasonsRelationModal = ({ isOpen, onClose }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors }
-  } = useForm()
-  const [seasons, setSeasons] = useState([])
-  const [touristEntities, setTouristEntities] = useState([])
+    formState: { errors },
+  } = useForm();
+  const [seasons, setSeasons] = useState([]);
+  const [touristEntities, setTouristEntities] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [seasonsData, touristEntitiesData] = await Promise.all([
           getSeasons(),
-          getPlaces()
-        ])
-        setSeasons(seasonsData)
-        setTouristEntities(touristEntitiesData)
+          getPlaces(),
+        ]);
+        setSeasons(seasonsData);
+        setTouristEntities(touristEntitiesData);
       } catch (error) {
-        console.error("Error fetching data:", error)
+        console.error("Error fetching data:", error);
         MySwal.fire({
           icon: "error",
           title: "เกิดข้อผิดพลาดในการดึงข้อมูล",
-          showConfirmButton: true
-        })
+          showConfirmButton: true,
+        });
       }
-    }
+    };
 
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
-  const onSubmit = async data => {
+  const onSubmit = async (data) => {
     try {
-      await createSeasonsRelation(data)
+      const seasonRelations = data.season_ids.map((season_id) => ({
+        season_id,
+        tourism_entities_id: data.tourism_entities_id,
+      }));
+
+      await createSeasonsRelation({ seasonRelations });
       MySwal.fire({
         icon: "success",
         title: "ความสัมพันธ์ถูกสร้างสำเร็จ",
         showConfirmButton: false,
-        timer: 1500
-      })
-      onClose()
+        timer: 1500,
+      });
+      onClose();
     } catch (error) {
       MySwal.fire({
         icon: "error",
         title: "เกิดข้อผิดพลาดในการสร้างความสัมพันธ์",
         text: "กรุณาลองอีกครั้ง",
-        showConfirmButton: true
-      })
+        showConfirmButton: true,
+      });
     }
-  }
+  };
 
   return (
     <>
@@ -112,12 +116,12 @@ const AddSeasonsRelationModal = ({ isOpen, onClose }) => {
                           id="tourism_entities_id"
                           {...register("tourism_entities_id", {
                             required: "กรุณาเลือกสถานที่ท่องเที่ยว",
-                            valueAsNumber: true
+                            valueAsNumber: true,
                           })}
                           className="block w-full py-2 px-3 bg-white border border-gray-300 rounded-md shadow-sm focus:border-Orange-500 focus:ring-Orange-500 sm:text-sm"
                         >
                           <option value="">เลือกสถานที่ท่องเที่ยว</option>
-                          {touristEntities.map(entity => (
+                          {touristEntities.map((entity) => (
                             <option key={entity.id} value={entity.id}>
                               {entity.name}
                             </option>
@@ -132,32 +136,31 @@ const AddSeasonsRelationModal = ({ isOpen, onClose }) => {
                     </div>
                     <div className="relative z-0 w-full mb-6 group">
                       <label
-                        htmlFor="season_id"
+                        htmlFor="season_ids"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        ฤดูกาล
+                        ฤดูกาล (เลือกได้หลายฤดู)
                       </label>
                       <div className="mt-1 flex items-center">
                         <FaCalendarAlt className="mr-2 text-gray-500" />
                         <select
-                          id="season_id"
-                          {...register("season_id", {
+                          id="season_ids"
+                          {...register("season_ids", {
                             required: "กรุณาเลือกฤดูกาล",
-                            valueAsNumber: true
                           })}
+                          multiple
                           className="block w-full py-2 px-3 bg-white border border-gray-300 rounded-md shadow-sm focus:border-Orange-500 focus:ring-Orange-500 sm:text-sm"
                         >
-                          <option value="">เลือกฤดูกาล</option>
-                          {seasons.map(season => (
+                          {seasons.map((season) => (
                             <option key={season.id} value={season.id}>
-                              {season.name} (ID: {season.id})
+                              {season.name}
                             </option>
                           ))}
                         </select>
                       </div>
-                      {errors.season_id && (
+                      {errors.season_ids && (
                         <p className="text-red-500 text-xs mt-1">
-                          {errors.season_id.message}
+                          {errors.season_ids.message}
                         </p>
                       )}
                     </div>
@@ -186,7 +189,7 @@ const AddSeasonsRelationModal = ({ isOpen, onClose }) => {
         </Dialog>
       </Transition>
     </>
-  )
-}
+  );
+};
 
-export default AddSeasonsRelationModal
+export default AddSeasonsRelationModal;

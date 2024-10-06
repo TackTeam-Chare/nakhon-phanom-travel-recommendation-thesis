@@ -39,7 +39,6 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
         { day_of_week: "", opening_time: "", closing_time: "" }
       ],
       published: true,
-      rating: 0
     }
   })
   const { fields, append, remove } = useFieldArray({

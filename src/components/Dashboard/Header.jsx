@@ -177,6 +177,11 @@ export default function Header() {
               <Popover.Panel className="absolute left-0 z-10 mt-2 w-56 rounded-lg bg-orange-500 text-white shadow-lg">
                 <div className="py-2">
                   {[
+                          {
+                            href: "/dashboard/table/chatbot-suggestions",
+                            icon: ClockIcon,
+                            text: "คำเเนะนำเเชทบอท",
+                          },
                     {
                       href: "/dashboard/table/categories",
                       icon: ClockIcon,
@@ -363,6 +368,11 @@ export default function Header() {
                 </Disclosure.Button>
                 <Disclosure.Panel className="mt-2 space-y-2">
                   {[
+                    {
+                      href: "/dashboard/table/chatbot-suggestions",
+                      icon: ClockIcon,
+                      text: "คำเเนะนำเเชทบอท",
+                    },
                     {
                       href: "/dashboard/table/categories",
                       icon: ClockIcon,
