@@ -6,12 +6,8 @@ import "react-multi-carousel/lib/styles.css";
 import { fetchCurrentlyOpenTouristEntities } from "@/services/user/api";
 import Image from "next/image";
 import Link from "next/link";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
 import { FaRoute } from "react-icons/fa";
 import { FaHotel, FaStore, FaUtensils, FaLandmark } from "react-icons/fa";
-
-const MySwal = withReactContent(Swal);
 
 const categoryIcons = {
   "สถานที่ท่องเที่ยว": { icon: <FaLandmark />, color: "text-blue-500" },
@@ -42,47 +38,18 @@ const responsive = {
 const CurrentlyOpenTouristEntities = ({ latitude, longitude }) => {
   const [places, setPlaces] = useState([]);
 
-  const showErrorAlert = (title, text) => {
-    MySwal.fire({
-      title,
-      text,
-      icon: "error",
-      confirmButtonText: "ตกลง",
-    });
-  };
-
-  const showInfoAlert = (title, text) => {
-    MySwal.fire({
-      title,
-      text,
-      icon: "info",
-      confirmButtonText: "ตกลง",
-    });
-  };
-
   useEffect(() => {
     const getCurrentlyOpenTouristEntities = async () => {
-        try {
-            const data = await fetchCurrentlyOpenTouristEntities();
-            if (data.length === 0) {
-                showInfoAlert(
-                    "ไม่มีสถานที่เปิดอยู่ในขณะนี้",
-                    "ไม่พบสถานที่ท่องเที่ยวที่เปิดอยู่ใกล้ตำแหน่งของคุณ"
-                );
-            }
-            setPlaces(data);
-        } catch (error) {
-            console.error("Error fetching places nearby by coordinates:", error);
-            showErrorAlert(
-                "เกิดข้อผิดพลาด",
-                "ไม่สามารถดึงข้อมูลสถานที่ได้ กรุณาลองใหม่อีกครั้ง"
-            );
-        }
+      try {
+        const data = await fetchCurrentlyOpenTouristEntities();
+        setPlaces(data);
+      } catch (error) {
+        console.error("Error fetching places nearby by coordinates:", error);
+      }
     };
 
     getCurrentlyOpenTouristEntities();
-}, []);
-
+  }, []);
 
   if (places.length === 0) {
     return null;
@@ -117,9 +84,7 @@ const CurrentlyOpenTouristEntities = ({ latitude, longitude }) => {
                     />
                   ) : (
                     <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-                      <span className="text-gray-500">
-                        ไม่มีรูปภาพสถานที่
-                      </span>
+                      <span className="text-gray-500">ไม่มีรูปภาพสถานที่</span>
                     </div>
                   )}
                   <div className="p-4 flex-grow flex flex-col justify-between">

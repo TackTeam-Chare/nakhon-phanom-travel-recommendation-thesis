@@ -7,7 +7,7 @@ const api = axios.create({
 // Function to fetch suggestions (for chatbot)
 export const fetchSuggestions = async () => {
   try {
-    const response = await api.get("/suggestions"); // Assumes /suggestions route is available
+    const response = await api.get("/suggestions");
     return response.data;
   } catch (error) {
     console.error("Error fetching suggestions:", error);

@@ -6,7 +6,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { updateChatbotSuggestion, getChatbotSuggestionById } from "@/services/admin/chatbot/api";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import { FaEdit, FaTimes, FaSave } from "react-icons/fa"; // เพิ่มไอคอนสำหรับใช้ใน Modal
+import { FaEdit, FaTimes, FaSave } from "react-icons/fa"; // Import necessary icons
 
 const MySwal = withReactContent(Swal);
 
@@ -25,6 +25,7 @@ const EditSuggestionModal = ({ id, isOpen, onClose }) => {
         const suggestion = await getChatbotSuggestionById(id);
         setValue("category", suggestion.category);
         setValue("suggestion_text", suggestion.suggestion_text);
+        setValue("active", suggestion.active); // Set the "active" field
       } catch (error) {
         MySwal.fire({
           icon: "error",
@@ -113,6 +114,18 @@ const EditSuggestionModal = ({ id, isOpen, onClose }) => {
                     {errors.suggestion_text && (
                       <p className="text-red-500 text-xs mt-1">{errors.suggestion_text.message}</p>
                     )}
+                  </div>
+                  {/* Add "active" checkbox */}
+                  <div className="flex items-center">
+                    <input
+                      id="active"
+                      type="checkbox"
+                      {...register("active")}
+                      className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor="active" className="ml-2 block text-sm text-gray-900">
+                      เปิดใช้งาน
+                    </label>
                   </div>
                   <div className="flex justify-end space-x-3">
                     <button

@@ -3,25 +3,22 @@
 import React, { useState, Fragment } from "react";
 import { useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
-import { createChatbotSuggestion } from "@/services/admin/chatbot/api";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
-import { FaRegLightbulb, FaTimes, FaPlus } from "react-icons/fa"; // เพิ่มไอคอนที่เกี่ยวข้อง
+import { createChatbotSuggestion } from "@/services/admin/chatbot/api"; // Your API function
+import { FaRegLightbulb, FaTimes, FaPlus } from "react-icons/fa";
+import Swal from "sweetalert2"; // Import SweetAlert2
+import withReactContent from "sweetalert2-react-content"; // SweetAlert2 React integration
 
 const MySwal = withReactContent(Swal);
 
 export default function CreateSuggestionModal() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const [isOpen, setIsOpen] = useState(true);
 
   const onSubmit = async (data) => {
     try {
-      await createChatbotSuggestion(data);
+      await createChatbotSuggestion(data); // API call
 
+      // Show success alert using SweetAlert2
       MySwal.fire({
         icon: "success",
         title: "เพิ่มคำแนะนำสำเร็จ!",
@@ -29,8 +26,9 @@ export default function CreateSuggestionModal() {
         timer: 1500,
       });
 
-      setIsOpen(false);
+      setIsOpen(false); // Close the modal on success
     } catch (error) {
+      // Show error alert using SweetAlert2
       MySwal.fire({
         icon: "error",
         title: "เกิดข้อผิดพลาด",
@@ -81,9 +79,7 @@ export default function CreateSuggestionModal() {
                       {...register("category", { required: "กรุณากรอกหมวดหมู่" })}
                       className="mt-1 block w-full px-4 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                     />
-                    {errors.category && (
-                      <p className="text-red-500 text-xs mt-1">{errors.category.message}</p>
-                    )}
+                    {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700">คำแนะนำ</label>
@@ -91,9 +87,17 @@ export default function CreateSuggestionModal() {
                       {...register("suggestion_text", { required: "กรุณากรอกคำแนะนำ" })}
                       className="mt-1 block w-full px-4 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                     ></textarea>
-                    {errors.suggestion_text && (
-                      <p className="text-red-500 text-xs mt-1">{errors.suggestion_text.message}</p>
-                    )}
+                    {errors.suggestion_text && <p className="text-red-500 text-xs mt-1">{errors.suggestion_text.message}</p>}
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      id="active"
+                      type="checkbox"
+                      {...register("active")}
+                      defaultChecked
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor="active" className="ml-2 block text-sm text-gray-900">เผยเเพร่คำเเนะนำ</label>
                   </div>
                   <div className="flex justify-end space-x-3">
                     <button

@@ -82,37 +82,40 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
           getCategories(),
           getSeasons(),
           getPlaceById(parseInt(id, 10))
-        ])
-        setDistricts(districtsData)
-        setCategories(categoriesData)
-        setSeasons(seasonsData)
-
-        setValue("name", placeData.name)
-        setValue("description", placeData.description)
-        setValue("location", placeData.location)
-        setValue("latitude", placeData.latitude)
-        setValue("longitude", placeData.longitude)
-        setValue("district_name", placeData.district_name || "")
-        setValue("category_name", placeData.category_name || "")
-        setValue("season_id", placeData.season_id || "")
-        setValue("operating_hours", placeData.operating_hours || [])
-        setValue("published", placeData.published === 1 ? 1 : 0)
-        setExistingImages(placeData.images || [])
-        setSelectedCategory(placeData.category_name || "")
+        ]);
+  
+        setDistricts(districtsData);
+        setCategories(categoriesData);
+        setSeasons(seasonsData);
+  
+        setValue("name", placeData.name);
+        setValue("description", placeData.description);
+        setValue("location", placeData.location);
+        setValue("latitude", placeData.latitude);
+        setValue("longitude", placeData.longitude);
+        setValue("district_name", placeData.district_name || "");
+        setValue("category_name", placeData.category_name || "");
+        setValue("season_id", placeData.season_id || "");
+        
+        // Ensure operating_hours is parsed correctly and provided as an array
+        setValue("operating_hours", placeData.operating_hours || []);
+        setValue("published", placeData.published === 1 ? 1 : 0);
+        setExistingImages(placeData.images || []);
       } catch (error) {
-        console.error("ไม่สามารถดึงข้อมูลได้", error)
+        console.error("Error fetching data:", error);
         MySwal.fire({
           icon: "error",
-          title: "ไม่สามารถดึงข้อมูลได้",
-          text: "กรุณาลองอีกครั้ง"
-        })
+          title: "Unable to fetch data",
+          text: "Please try again later."
+        });
       }
-    }
-
+    };
+  
     if (id) {
-      fetchData()
+      fetchData();
     }
-  }, [id, setValue])
+  }, [id, setValue]);
+  
 
   const handleFileChange = event => {
     const files = Array.from(event.target.files || []);
@@ -582,29 +585,29 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                       >
                         รูปภาพสถานที่
                       </label>
-
-                      {/* Existing Images Section */}
-                      {existingImages.length > 0 && (
-                        <div className="relative z-0 w-full mb-6 group">
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                            {existingImages.map((image, index) => (
-                              <Image
-                                key={index}
-                                src={image.image_url}
-                                alt={`Existing Image ${index + 1}`}
-                                width={200}
-                                height={200}
-                                className="object-cover rounded-lg cursor-pointer"
-                                onClick={() => {
-                                  setSelectedExistingImage(image.image_url)
-                                  setExistingImagesModalOpen(true)
-                                }}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
+{/* Existing Images Section */}
+{existingImages.length > 0 && (
+  <div className="relative z-0 w-full mb-6 group">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      {existingImages.map((image, index) => (
+        image.image_url ? (
+          <Image
+            key={index}
+            src={image.image_url}
+            alt={`Existing Image ${index + 1}`}
+            width={200}
+            height={200}
+            className="object-cover rounded-lg cursor-pointer"
+            onClick={() => {
+              setSelectedExistingImage(image.image_url);
+              setExistingImagesModalOpen(true);
+            }}
+          />
+        ) : null
+      ))}
+    </div>
+  </div>
+)}
                       {/* Upload Images Section */}
                       <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                         <div className="text-center">
