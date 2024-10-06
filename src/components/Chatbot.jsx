@@ -165,20 +165,25 @@ const Chatbot = () => {
           <div ref={chatContainerRef} className="flex-1 p-3 overflow-y-auto space-y-4 bg-gray-50">
             {messages.map((msg, index) => (
               <div
-                key={index}
-                className={`p-2 rounded-lg max-w-full flex ${
-                  msg.user === 'user' ? 'bg-orange-500 text-white self-end' : 'bg-gray-200 text-black self-start'
-                } items-center space-x-2 break-words whitespace-pre-wrap w-full`}
-              >
-                {msg.user === 'user' ? <FaUser className="text-white" /> : <AiOutlineRobot className="text-black" />}
-                {msg.user === 'bot' ? (
-                  <span dangerouslySetInnerHTML={{ __html: createLinkInMessage(msg.text) }} />
-                ) : (
-                  <span>{msg.text}</span>
-                )}
-                {/* Display the time for each message */}
+              key={index}
+              className={`p-2 rounded-lg max-w-full flex ${
+                msg.user === 'user' ? 'bg-orange-500 text-white self-end' : 'bg-gray-200 text-black self-start'
+              } items-center space-x-2 break-words whitespace-pre-wrap w-full`}
+            >
+              {msg.user === 'user' ? <FaUser className="text-white" /> : <AiOutlineRobot className="text-black" />}
+              {msg.user === 'bot' ? (
+                <span dangerouslySetInnerHTML={{ __html: createLinkInMessage(msg.text) }} />
+              ) : (
+                <span>{msg.text}</span>
+              )}
+              {/* Display the time for each message */}
+              {msg.user === 'user' ? (
                 <span className="text-base font-bold text-white ml-2">{msg.time}</span>
-              </div>
+              ) : (
+                <span className="text-base font-bold text-black ml-2">{msg.time}</span>
+              )}
+            </div>
+            
             ))}
             {isLoading && (
               <div className="text-center text-gray-500 flex items-center justify-center space-x-2">
