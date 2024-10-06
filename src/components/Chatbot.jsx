@@ -29,6 +29,7 @@ const Chatbot = () => {
   const [userLocation, setUserLocation] = useState(null);
   const [recordingTime, setRecordingTime] = useState(0);
   const [audioUrl, setAudioUrl] = useState(null);
+  const [isSuggestionsVisible, setIsSuggestionsVisible] = useState(true); // Toggle suggestions
   const chatContainerRef = useRef(null);
   const recordingIntervalRef = useRef(null);
 
@@ -140,7 +141,6 @@ const Chatbot = () => {
     }
   }, [messages]);
 
-  // Function to auto-detect URLs in text and convert them into anchor tags
   const createLinkInMessage = (message) => {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     return message.replace(urlRegex, (url) => {
@@ -165,26 +165,25 @@ const Chatbot = () => {
           <div ref={chatContainerRef} className="flex-1 p-3 overflow-y-auto space-y-4 bg-gray-50">
             {messages.map((msg, index) => (
               <div
-              key={index}
-              className={`p-2 rounded-lg max-w-full flex ${
-                msg.user === 'user' ? 'bg-orange-500 text-white self-end' : 'bg-gray-200 text-black self-start'
-              } items-center space-x-2 break-words whitespace-pre-wrap w-full`}
-            >
-              {msg.user === 'user' ? <FaUser className="text-white" /> : <AiOutlineRobot className="text-black" />}
-              {msg.user === 'bot' ? (
-                <span dangerouslySetInnerHTML={{ __html: createLinkInMessage(msg.text) }} />
-              ) : (
-                <span>{msg.text}</span>
-              )}
-              {/* Display the time for each message */}
-              {msg.user === 'user' ? (
-                <span className="text-base font-bold text-white ml-2">{msg.time}</span>
-              ) : (
-                <span className="text-base font-bold text-black ml-2">{msg.time}</span>
-              )}
-            </div>
-            
+                key={index}
+                className={`p-2 rounded-lg max-w-full flex ${
+                  msg.user === 'user' ? 'bg-orange-500 text-white self-end' : 'bg-gray-200 text-black self-start'
+                } items-center space-x-2 break-words whitespace-pre-wrap w-full`}
+              >
+                {msg.user === 'user' ? <FaUser className="text-white" /> : <AiOutlineRobot className="text-black" />}
+                {msg.user === 'bot' ? (
+                  <span dangerouslySetInnerHTML={{ __html: createLinkInMessage(msg.text) }} />
+                ) : (
+                  <span>{msg.text}</span>
+                )}
+                {msg.user === 'user' ? (
+                  <span className="text-base font-bold text-white ml-2">{msg.time}</span>
+                ) : (
+                  <span className="text-base font-bold text-black ml-2">{msg.time}</span>
+                )}
+              </div>
             ))}
+
             {isLoading && (
               <div className="text-center text-gray-500 flex items-center justify-center space-x-2">
                 <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-gray-500"></div>
@@ -192,20 +191,28 @@ const Chatbot = () => {
               </div>
             )}
 
-            <div className="mt-4 flex flex-wrap">
-              {suggestions.map((suggestion, index) => (
-                <button
-                  key={index}
-                  onClick={() => sendMessage(suggestion.suggestion_text)}
-                  className="bg-blue-500 text-white px-3 py-1 rounded-lg m-1 hover:bg-blue-600"
-                >
-                  {suggestion.suggestion_text}
-                </button>
-              ))}
-            </div>
+            {isSuggestionsVisible && ( // Toggle suggestions
+              <div className="mt-4 flex flex-wrap">
+                {suggestions.map((suggestion, index) => (
+                  <button
+                    key={index}
+                    onClick={() => sendMessage(suggestion.suggestion_text)}
+                    className="bg-blue-500 text-white px-3 py-1 rounded-lg m-1 hover:bg-blue-600"
+                  >
+                    {suggestion.suggestion_text}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="p-3 border-t flex bg-white">
+            <button
+              onClick={() => setIsSuggestionsVisible((prev) => !prev)}
+              className="bg-gray-300 text-black px-4 py-2 mr-2 rounded-lg hover:bg-gray-400"
+            >
+              {isSuggestionsVisible ? 'ซ่อนคำแนะนำ' : 'แสดงคำแนะนำ'}
+            </button>
             <input
               type="text"
               value={message}
@@ -231,7 +238,7 @@ const Chatbot = () => {
             )}
             {audioUrl && (
               <audio controls src={audioUrl} className="ml-2">
-               เบราว์เซอร์ของคุณไม่รองรับองค์ประกอบเสียง
+                เบราว์เซอร์ของคุณไม่รองรับองค์ประกอบเสียง
               </audio>
             )}
             <button onClick={clearChatHistory} className="bg-red-600 text-white px-4 py-2 ml-2 rounded-lg hover:bg-red-700">
