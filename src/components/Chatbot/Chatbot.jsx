@@ -67,23 +67,26 @@ const Chatbot = () => {
   }, []);
 
   useEffect(() => {
-    socket.on('botMessage', (botMessage) => {
-      const newMessage = { user: 'bot', text: botMessage, time: new Date().toLocaleTimeString() };
-      setMessages((prevMessages) => {
-        const updatedMessages = [...prevMessages, newMessage];
-        Cookies.set('chatbotMessages', JSON.stringify(updatedMessages), { expires: 7 });
+    if (typeof window !== 'undefined') {
+      // Web Workers จะถูกสร้างเฉพาะใน environment ของ browser เท่านั้น
+      socket.on('botMessage', (botMessage) => {
+        const newMessage = { user: 'bot', text: botMessage, time: new Date().toLocaleTimeString() };
+        setMessages((prevMessages) => {
+          const updatedMessages = [...prevMessages, newMessage];
+          Cookies.set('chatbotMessages', JSON.stringify(updatedMessages), { expires: 7 });
 
-        if (!isChatbotOpen) {
-          setUnreadMessages((prevCount) => prevCount + 1);
-        }
-        return updatedMessages;
+          if (!isChatbotOpen) {
+            setUnreadMessages((prevCount) => prevCount + 1);
+          }
+          return updatedMessages;
+        });
+        setIsLoading(false);
       });
-      setIsLoading(false);
-    });
 
-    return () => {
-      socket.off('botMessage');
-    };
+      return () => {
+        socket.off('botMessage');
+      };
+    }
   }, [isChatbotOpen]);
 
   const sendMessage = (text) => {
