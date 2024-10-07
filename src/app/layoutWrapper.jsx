@@ -3,7 +3,7 @@
 import React from "react";
 import Layout from "../components/layout";
 import { usePathname } from "next/navigation";
-import Chatbot from "../components/Chatbot/Chatbot";
+
 
 export default function LayoutWrapper({ children }) {
   const pathname = usePathname();
@@ -17,7 +17,7 @@ export default function LayoutWrapper({ children }) {
       {isDashboard ? children : <Layout>{children}</Layout>}
 
       {/* Add the Chatbot component */}
-      {!isDashboard && <Chatbot />}
+      {!isDashboard }
     </>
   );
 }
