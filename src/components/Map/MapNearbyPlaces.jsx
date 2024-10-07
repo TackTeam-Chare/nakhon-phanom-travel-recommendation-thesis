@@ -1,3 +1,4 @@
+"use client"
 import React, { useCallback, useRef, useState, useEffect } from "react";
 import { FaMapMarkerAlt, FaInfoCircle, FaDirections, FaRoute, FaTag } from "react-icons/fa"; 
 import {

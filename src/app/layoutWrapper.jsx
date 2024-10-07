@@ -3,7 +3,7 @@
 import React from "react";
 import Layout from "../components/layout";
 import { usePathname } from "next/navigation";
-import Chatbot from "../components/Chatbot";
+import Chatbot from "../components/Chatbot/Chatbot";
 
 export default function LayoutWrapper({ children }) {
   const pathname = usePathname();
