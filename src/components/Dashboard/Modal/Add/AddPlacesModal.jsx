@@ -22,7 +22,7 @@ import {
 import { faImage } from "@fortawesome/free-regular-svg-icons"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
-
+import Select from 'react-select';
 const MySwal = withReactContent(Swal)
 
 const CreatePlaceModal = ({ isOpen, onClose }) => {
@@ -39,6 +39,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
         { day_of_week: "", opening_time: "", closing_time: "" }
       ],
       published: true,
+      season_ids: [], 
     }
   })
   const { fields, append, remove } = useFieldArray({
@@ -67,14 +68,12 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [districtsData, categoriesData, seasonsData] = await Promise.all([
+        const [districtsData, categoriesData] = await Promise.all([
           getDistricts(),
           getCategories(),
-          getSeasons()
         ])
         setDistricts(districtsData)
         setCategories(categoriesData)
-        setSeasons(seasonsData)
       } catch (error) {
         MySwal.fire({
           icon: "error",
@@ -87,7 +86,23 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
     fetchData()
   }, [])
 
-  
+  useEffect(() => {
+    const fetchSeasons = async () => {
+      try {
+        const seasonsData = await getSeasons();
+        setSeasons(seasonsData.map(season => ({ label: season.name, value: season.id })));
+      } catch (error) {
+        console.error("Error fetching seasons:", error);
+      }
+    };
+
+    fetchSeasons();
+  }, []);
+
+  const handleSeasonChange = (selectedOptions) => {
+    const selectedSeasons = selectedOptions ? selectedOptions.map(option => option.value) : [];
+    setValue("season_ids", selectedSeasons); // ใช้ setValue เพื่อส่งค่าไปยัง react-hook-form
+  };
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value)
   }
@@ -287,12 +302,13 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                 icon={dropdownOpen.category ? faChevronUp : faChevronDown}
                 className="absolute right-3 top-3 text-gray-400"
               />
-              <label
-                htmlFor="category_name"
-                className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
-                หมวดหมู่
-              </label>
+      <label
+  htmlFor="category_name"
+  className="absolute text-base font-semibold text-gray-700 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+>
+  หมวดหมู่สถานที่
+</label>
+
               {errors.name && (
                         <p className="text-red-500 text-xs mt-1">
                           {errors.category_name.message}
@@ -463,12 +479,13 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                           }
                           className="absolute right-3 top-3 text-gray-400"
                         />
-                        <label
-                          htmlFor="district_name"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
-                        >
-                          อำเภอ
-                        </label>
+                    <label
+  htmlFor="district_name"
+  className="absolute text-base font-semibold text-gray-700 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+>
+  อำเภอ
+</label>
+
 
                         {errors.name && (
                         <p className="text-red-500 text-xs mt-1">
@@ -478,36 +495,35 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                       </div>
                    {/* Conditional rendering for Season input */}
                    {selectedCategory === "สถานที่ท่องเที่ยว" && (
-                      <div className="relative z-0 w-full group mt-3">
-                        <FontAwesomeIcon
-                          icon={faSnowflake}
-                          className="absolute left-3 top-3 text-gray-400"
-                        />
-                        <select
-                          id="season_id"
-                          {...register("season_id")}
-                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
-                          onClick={() => toggleDropdown("season")}
-                        >
-                          <option value="">เลือกฤดู</option>
-                          {seasons.map(season => (
-                            <option key={season.id} value={season.id}>
-                              {season.name}
-                            </option>
-                          ))}
-                        </select>
-                        <FontAwesomeIcon
-                          icon={dropdownOpen.season ? faChevronUp : faChevronDown}
-                          className="absolute right-3 top-3 text-gray-400"
-                        />
-                        <label
-                          htmlFor="season_id"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
-                        >
-                          ฤดู
-                        </label>
-                      </div>
-                    )}
+  <div className="relative z-10 w-full group mt-3"> {/* Add z-10 to ensure higher stacking order */}
+    <FontAwesomeIcon
+      icon={faSnowflake}
+      className="absolute left-3 top-3 text-gray-400"
+    />
+    <Select
+      isMulti // ใช้ isMulti สำหรับการเลือกหลายค่า
+      options={seasons}
+      className="basic-multi-select"
+      classNamePrefix="select"
+      placeholder="เลือกฤดูกาล"
+      onChange={handleSeasonChange} // เมื่อมีการเลือกฤดูกาล
+      menuPortalTarget={document.body} // Use this to ensure the dropdown menu is rendered outside other elements
+      styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }} // Add high z-index for the dropdown menu
+    />
+    <FontAwesomeIcon
+      icon={dropdownOpen.season ? faChevronUp : faChevronDown}
+      className="absolute right-3 top-3 text-gray-400"
+    />
+<label
+  htmlFor="season_id"
+  className="absolute text-base font-semibold text-gray-700 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+>
+  ฤดู
+</label>
+
+  </div>
+)}
+
                       <div className="relative z-0 w-full group mt-3">
                       <div className="flex items-center ">
 
@@ -568,12 +584,13 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
           {...register(`operating_hours.${index}.opening_time`)}
           className="block py-2 pl-10 pr-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
         />
-        <label
-          htmlFor={`operating_hours.${index}.opening_time`}
-          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
-        >
-          เวลาเปิด
-        </label>
+<label
+  htmlFor={`operating_hours.${index}.opening_time`}
+  className="absolute text-base font-semibold text-gray-700 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+>
+  เวลาเปิด
+</label>
+
       </div>
       <div className="relative ">
         <FontAwesomeIcon
@@ -585,12 +602,13 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
           {...register(`operating_hours.${index}.closing_time`)}
           className="block py-2 pl-10 pr-4 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
         />
-        <label
-          htmlFor={`operating_hours.${index}.closing_time`}
-          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
-        >
-          เวลาปิด
-        </label>
+<label
+  htmlFor={`operating_hours.${index}.closing_time`}
+  className="absolute text-base font-semibold text-gray-700 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+>
+  เวลาปิด
+</label>
+
       </div>
       <button
         type="button"
