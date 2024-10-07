@@ -1,9 +1,16 @@
 "use client";
 
 import React from "react";
-import Layout from "../components/layout";
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
-import Chatbot from "../components/Chatbot/Chatbot";
+
+// Dynamically import the Chatbot component with no SSR
+const Chatbot = dynamic(() => import("@/components/Chatbot/Chatbot"), {
+  ssr: false, // Ensure this component is client-side only
+});
+
+// Import Layout normally
+import Layout from "@/components/layout";
 
 export default function LayoutWrapper({ children }) {
   const pathname = usePathname();
@@ -16,7 +23,7 @@ export default function LayoutWrapper({ children }) {
       {/* Conditional rendering based on the path */}
       {isDashboard ? children : <Layout>{children}</Layout>}
 
-      {/* Add the Chatbot component */}
+      {/* Add the Chatbot component only on non-dashboard pages */}
       {!isDashboard && <Chatbot />}
     </>
   );

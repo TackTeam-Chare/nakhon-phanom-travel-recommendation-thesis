@@ -1,4 +1,5 @@
-"use client"
+"use client";
+
 import React, { useEffect, useState, useRef } from 'react';
 import io from 'socket.io-client';
 import { FiChevronDown } from 'react-icons/fi';
@@ -6,12 +7,12 @@ import { AiOutlineRobot } from 'react-icons/ai';
 import { BiMessageRoundedDots } from 'react-icons/bi';
 import { FaUser } from 'react-icons/fa';
 import { FiMic, FiStopCircle } from 'react-icons/fi';
-import ReactTooltip from 'react-tooltip';
 import Cookies from 'js-cookie';
 import { fetchSuggestions } from '@/services/user/api';
 import { useReactMediaRecorder } from 'react-media-recorder';
+import dynamic from 'next/dynamic';
 
-const socket = io(process.env.NEXT_PUBLIC_SOCKET_IO_URL);
+const ReactTooltip = dynamic(() => import('react-tooltip'), { ssr: false });
 
 const Chatbot = () => {
   const [messages, setMessages] = useState(() => {
@@ -33,8 +34,19 @@ const Chatbot = () => {
   const [isSuggestionsVisible, setIsSuggestionsVisible] = useState(true); // Toggle suggestions
   const chatContainerRef = useRef(null);
   const recordingIntervalRef = useRef(null);
+  const [socket, setSocket] = useState(null); // Initialize socket state
 
   const { status, startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder({ audio: true });
+
+  // Initialize socket inside useEffect
+  useEffect(() => {
+    const socketIo = io(process.env.NEXT_PUBLIC_SOCKET_IO_URL);
+    setSocket(socketIo); // Set the socket instance
+
+    return () => {
+      socketIo.disconnect(); // Clean up on unmount
+    };
+  }, []);
 
   useEffect(() => {
     const fetchSuggestionsData = async () => {
@@ -49,7 +61,7 @@ const Chatbot = () => {
   }, []);
 
   useEffect(() => {
-    if (navigator.geolocation) {
+    if (typeof window !== 'undefined' && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setUserLocation({
@@ -67,8 +79,7 @@ const Chatbot = () => {
   }, []);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      // Web Workers จะถูกสร้างเฉพาะใน environment ของ browser เท่านั้น
+    if (socket) {
       socket.on('botMessage', (botMessage) => {
         const newMessage = { user: 'bot', text: botMessage, time: new Date().toLocaleTimeString() };
         setMessages((prevMessages) => {
@@ -87,10 +98,10 @@ const Chatbot = () => {
         socket.off('botMessage');
       };
     }
-  }, [isChatbotOpen]);
+  }, [socket, isChatbotOpen]);
 
   const sendMessage = (text) => {
-    if (text.trim()) {
+    if (text.trim() && socket) {
       const userMessage = { user: 'user', text, time: new Date().toLocaleTimeString() };
       setMessages((prevMessages) => {
         const updatedMessages = [...prevMessages, userMessage];
@@ -127,7 +138,7 @@ const Chatbot = () => {
   };
 
   const handleSendAudio = async () => {
-    if (mediaBlobUrl) {
+    if (mediaBlobUrl && socket) {
       const blob = await fetch(mediaBlobUrl).then((r) => r.blob());
       const reader = new FileReader();
       reader.onload = () => {
@@ -167,9 +178,8 @@ const Chatbot = () => {
           </div>
 
           <div ref={chatContainerRef} className="flex-1 p-3 overflow-y-auto space-y-4 bg-gray-50">
-            
-            {/* คำแนะนำการตอบแชท */}
-            {isSuggestionsVisible && ( // Toggle suggestions
+            {/* Suggestions */}
+            {isSuggestionsVisible && (
               <div className="mt-4 flex flex-wrap">
                 {suggestions.map((suggestion, index) => (
                   <button
@@ -183,7 +193,7 @@ const Chatbot = () => {
               </div>
             )}
 
-            {/* ข้อความสนทนา */}
+            {/* Chat Messages */}
             {messages.map((msg, index) => (
               <div
                 key={index}
@@ -197,11 +207,9 @@ const Chatbot = () => {
                 ) : (
                   <span>{msg.text}</span>
                 )}
-                {msg.user === 'user' ? (
-                  <span className="text-base font-bold text-white ml-2">{msg.time}</span>
-                ) : (
-                  <span className="text-base font-bold text-black ml-2">{msg.time}</span>
-                )}
+                <span className={`text-base font-bold ml-2 ${msg.user === 'user' ? 'text-white' : 'text-black'}`}>
+                  {msg.time}
+                </span>
               </div>
             ))}
 
