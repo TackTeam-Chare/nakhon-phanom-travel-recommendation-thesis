@@ -119,37 +119,32 @@ export default function Header() {
                 <div className="py-2">
                   {[
                     {
-                      href: "/dashboard/table/currently-open-places",
-                      icon: ClockIcon,
-                      text: "เปิดในขณะนี้"
-                    },
-                    {
-                      href: "/dashboard/table/season-real-time",
+                      href: "/dashboard/places/season-real-time",
                       icon: SunIcon,
                       text: "ฤดูกาลนี้"
                     },
                     {
-                      href: "/places",
+                      href: "/dashboard/places",
                       icon: BuildingOfficeIcon,
                       text: "สถานที่ทั้งหมด"
                     },
                     {
-                      href: "/dashboard/table/tourist-attractions",
+                      href: "/dashboard/places/tourist-attractions",
                       icon: MapIcon,
                       text: "สถานที่ท่องเที่ยว"
                     },
                     {
-                      href: "/dashboard/table/accommodations",
+                      href: "/dashboard/places/accommodations",
                       icon: BuildingStorefrontIcon,
                       text: "ที่พัก"
                     },
                     {
-                      href: "/dashboard/table/restaurants",
+                      href: "/dashboard/places/restaurants",
                       icon: GiftIcon,
                       text: "ร้านอาหาร"
                     },
                     {
-                      href: "/dashboard/table/souvenir-shops",
+                      href: "/dashboard/places/souvenir-shops",
                       icon: ShoppingBagIcon,
                       text: "ร้านค้าของฝาก"
                     }
@@ -312,37 +307,32 @@ export default function Header() {
                 <Disclosure.Panel className="mt-2 space-y-2">
                   {[
                     {
-                      href: "/dashboard/table/currently-open-places",
-                      icon: ClockIcon,
-                      text: "เปิดในขณะนี้",
-                    },
-                    {
-                      href: "/dashboard/table/season-real-time",
+                      href: "/dashboard/places/season-real-time",
                       icon: SunIcon,
                       text: "ฤดูกาลนี้",
                     },
                     {
-                      href: "/places",
+                      href: "/dashboard/places",
                       icon: BuildingOfficeIcon,
                       text: "สถานที่ทั้งหมด",
                     },
                     {
-                      href: "/dashboard/table/tourist-attractions",
+                      href: "/dashboard/places/tourist-attractions",
                       icon: MapIcon,
                       text: "สถานที่ท่องเที่ยว",
                     },
                     {
-                      href: "/dashboard/table/accommodations",
+                      href: "/dashboard/places/accommodations",
                       icon: BuildingStorefrontIcon,
                       text: "ที่พัก",
                     },
                     {
-                      href: "/dashboard/table/restaurants",
+                      href: "/dashboard/places/restaurants",
                       icon: GiftIcon,
                       text: "ร้านอาหาร",
                     },
                     {
-                      href: "/dashboard/table/souvenir-shops",
+                      href: "/dashboard/places/souvenir-shops",
                       icon: ShoppingBagIcon,
                       text: "ร้านค้าของฝาก",
                     },
