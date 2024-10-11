@@ -645,7 +645,44 @@ export const fetchPlacesNearbyByCoordinates = async (
     throw error;
   }
 };
+// Function to fetch places nearby by coordinates
+export const fetchPlacesNearbyByCoordinatesRealTime = async (
+  latitude,
+  longitude,
+  radius = 20000
+) => {
+  const token = Cookies.get("token");
+  try {
+    const response = await api.get(`/admin/general/places/nearby-by-coordinates`, {
+      params: {
+        lat: latitude,
+        lng: longitude,
+        radius: radius
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
 
+    const data = Array.isArray(response.data) ? response.data : []
+
+    return data.map(place => ({
+      ...place,
+      image_url: place.images
+        ? place.images.map(
+            image =>
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/${image.image_path}`
+          )
+        : []
+    }))
+  } catch (error) {
+    console.error("Error fetching places nearby by coordinates:", error)
+    throw new Error(
+      error.response?.data?.error ||
+        "Error fetching places nearby by coordinates"
+    )
+  }
+}
 // Unified search for all criteria
 export const searchTouristEntitiesUnified = async (params) => {
   try {

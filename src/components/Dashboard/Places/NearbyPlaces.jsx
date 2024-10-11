@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-import { fetchPlacesNearbyByCoordinatesRealTime } from "@/services/user/api";
+import { fetchPlacesNearbyByCoordinatesRealTime } from "@/services/admin/dashboard/general/routes";
 import Image from "next/image";
 import Link from "next/link";
 import Swal from "sweetalert2";

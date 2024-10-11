@@ -3,9 +3,9 @@ import dynamic from "next/dynamic";
 import Header from "@/components/Dashboard/Header"
 import Footer from "@/components/Dashboard/Footer"
 // // Dynamically import the Chatbot component with no SSR
-// const Chatbot = dynamic(() => import("@/components/Dashboard/Chatbot/Chatbot"), {
-//   ssr: false, // Ensure this component is client-side only
-// });
+const Chatbot = dynamic(() => import("@/components/Dashboard/Chatbot/Chatbot"), {
+  ssr: false, // Ensure this component is client-side only
+});
 
 export default function DashboardLayout({ children }) {
   return (
@@ -14,7 +14,7 @@ export default function DashboardLayout({ children }) {
       <Header />
 
       {/* Main content area */}
-      <main className="flex-grow p-4 bg-gray-100">
+      <main className="flex-grow  bg-gray-100">
         {children}
       </main>
       {/* <Chatbot /> */}

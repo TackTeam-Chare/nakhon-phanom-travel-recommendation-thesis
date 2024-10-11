@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react"
 import Carousel from "react-multi-carousel"
 import "react-multi-carousel/lib/styles.css"
-import { fetchRealTimeTouristAttractions } from "../../services/user/api"
+import { fetchRealTimeTouristAttractions } from "@/services/admin/dashboard/general/routes"
 import Image from "next/image"
 import Link from "next/link"
 

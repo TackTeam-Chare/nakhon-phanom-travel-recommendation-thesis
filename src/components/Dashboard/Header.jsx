@@ -20,7 +20,9 @@ import {
   ArrowLeftOnRectangleIcon,
   CalendarIcon,
   CubeIcon,
-  UserIcon
+  UserIcon,
+  ChartBarIcon,
+  ChatBubbleBottomCenterTextIcon,TagIcon,MapPinIcon,PhotoIcon,LinkIcon
 } from "@heroicons/react/20/solid";
 
 import Swal from "sweetalert2";
@@ -96,6 +98,11 @@ export default function Header() {
                 href: "/dashboard/search",
                 icon: MagnifyingGlassIcon,
                 text: "ค้นหาสถานที่"
+              },
+              {
+                href: "/dashboard/overview",
+                icon: ChartBarIcon,
+                text: "ภาพรวม"
               }
             ].map((item, index) => (
               <a
@@ -174,37 +181,37 @@ export default function Header() {
                   {[
                           {
                             href: "/dashboard/table/chatbot-suggestions",
-                            icon: ClockIcon,
+                            icon: ChatBubbleBottomCenterTextIcon,
                             text: "คำเเนะนำเเชทบอท",
                           },
                     {
                       href: "/dashboard/table/categories",
-                      icon: ClockIcon,
+                      icon: TagIcon,
                       text: "หมวดหมู่สถานที่"
                     },
                     {
                       href: "/dashboard/table/districts",
-                      icon: SunIcon,
+                      icon: MapPinIcon,
                       text: "อำเภอ"
                     },
                     {
                       href: "/dashboard/table/operating-hours",
-                      icon: CubeIcon,
+                      icon: ClockIcon,
                       text: "เวลาทำการสถานที่"
                     },
                     {
                       href: "/dashboard/table/seasons",
-                      icon: StarIcon,
+                      icon: SunIcon,
                       text: "ฤดูกาล"
                     },
                     {
                       href: "/dashboard/table/seasons-relation",
-                      icon: MapIcon,
+                      icon: LinkIcon,
                       text: "ความสัมพันธ์ฤดูกาล"
                     },
                     {
                       href: "/dashboard/table/tourism-entities-images",
-                      icon: CalendarIcon,
+                      icon: PhotoIcon,
                       text: "รูปภาพของสถานที่"
                     },
                     {
@@ -283,8 +290,13 @@ export default function Header() {
             </div>
             <div className="mt-6 space-y-4">
               {[
-                { href: "/", icon: HomeIcon, text: "หน้าเเรก" },
-                { href: "/search", icon: MagnifyingGlassIcon, text: "ค้นหาสถานที่" },
+                { href: "/dashboard", icon: HomeIcon, text: "หน้าเเรก" },
+                { href: "/dashboard/search", icon: MagnifyingGlassIcon, text: "ค้นหาสถานที่" },
+                {
+                  href: "/dashboard/overview",
+                  icon: ChartBarIcon,
+                  text: "ภาพรวม"
+                }
               ].map((item, index) => (
                 <a
                   key={index}
@@ -358,46 +370,46 @@ export default function Header() {
                 </Disclosure.Button>
                 <Disclosure.Panel className="mt-2 space-y-2">
                   {[
-                    {
-                      href: "/dashboard/table/chatbot-suggestions",
-                      icon: ClockIcon,
-                      text: "คำเเนะนำเเชทบอท",
-                    },
-                    {
-                      href: "/dashboard/table/categories",
-                      icon: ClockIcon,
-                      text: "หมวดหมู่สถานที่",
-                    },
-                    {
-                      href: "/dashboard/table/districts",
-                      icon: SunIcon,
-                      text: "อำเภอ",
-                    },
-                    {
-                      href: "/dashboard/table/operating-hours",
-                      icon: CubeIcon,
-                      text: "เวลาทำการสถานที่",
-                    },
-                    {
-                      href: "/dashboard/table/seasons",
-                      icon: StarIcon,
-                      text: "ฤดูกาล",
-                    },
-                    {
-                      href: "/dashboard/table/seasons-relation",
-                      icon: MapIcon,
-                      text: "ความสัมพันธ์ฤดูกาล",
-                    },
-                    {
-                      href: "/dashboard/table/tourism-entities-images",
-                      icon: CalendarIcon,
-                      text: "รูปภาพของสถานที่",
-                    },
-                    {
-                      href: "/dashboard/table/tourist-entities",
-                      icon: BuildingOfficeIcon,
-                      text: "สถานที่",
-                    },
+                  {
+                    href: "/dashboard/table/chatbot-suggestions",
+                    icon: ChatBubbleBottomCenterTextIcon,
+                    text: "คำเเนะนำเเชทบอท",
+                  },
+            {
+              href: "/dashboard/table/categories",
+              icon: TagIcon,
+              text: "หมวดหมู่สถานที่"
+            },
+            {
+              href: "/dashboard/table/districts",
+              icon: MapPinIcon,
+              text: "อำเภอ"
+            },
+            {
+              href: "/dashboard/table/operating-hours",
+              icon: ClockIcon,
+              text: "เวลาทำการสถานที่"
+            },
+            {
+              href: "/dashboard/table/seasons",
+              icon: SunIcon,
+              text: "ฤดูกาล"
+            },
+            {
+              href: "/dashboard/table/seasons-relation",
+              icon: LinkIcon,
+              text: "ความสัมพันธ์ฤดูกาล"
+            },
+            {
+              href: "/dashboard/table/tourism-entities-images",
+              icon: PhotoIcon,
+              text: "รูปภาพของสถานที่"
+            },
+            {
+              href: "/dashboard/table/tourist-entities",
+              icon: BuildingOfficeIcon,
+              text: "สถานที่"
+            },
                   ].map((item, index) => (
                     <a
                       key={index}

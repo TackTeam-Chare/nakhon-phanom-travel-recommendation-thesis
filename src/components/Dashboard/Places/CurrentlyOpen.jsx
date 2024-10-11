@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-import { fetchCurrentlyOpenTouristEntities } from "@/services/user/api";
+import { fetchCurrentlyOpenTouristEntities } from "@/services/admin/dashboard/general/routes";
 import Image from "next/image";
 import Link from "next/link";
 import { FaRoute } from "react-icons/fa";
@@ -74,19 +74,21 @@ const CurrentlyOpenTouristEntities = ({ latitude, longitude }) => {
             <div key={place.id} className="p-2 h-full flex">
               <Link href={`/place/${place.id}`} className="block w-full">
                 <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full">
-                  {place.image_url && place.image_url.length > 0 ? (
-                    <Image
-                      src={place.image_url[0]}
-                      alt={place.name}
-                      width={500}
-                      height={300}
-                      className="w-full h-48 object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-                      <span className="text-gray-500">ไม่มีรูปภาพสถานที่</span>
-                    </div>
-                  )}
+                {place.images &&
+                place.images.length > 0 &&
+                place.images[0].image_url ? (
+                  <Image
+                    src={place.images[0].image_url}
+                    alt={place.name}
+                    width={500}
+                    height={300}
+                    className="w-full h-48 object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+                    <span className="text-gray-500">ไม่มีรูปภาพ</span>
+                  </div>
+                )}
                   <div className="p-4 flex-grow flex flex-col justify-between">
                     <div>
                       <h3 className="text-lg font-semibold  text-orange-500 mb-2">
