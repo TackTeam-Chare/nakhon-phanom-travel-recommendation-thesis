@@ -158,6 +158,7 @@ const isOpenNow = (operatingHours) => {
   return false;
 };
 
+
 // Helper function to check if the place is "Opening Soon" or "Closing Soon"
 const getTimeUntilNextEvent = (openingTime, closingTime) => {
   const now = getCurrentTimeInThailand();
@@ -166,20 +167,33 @@ const getTimeUntilNextEvent = (openingTime, closingTime) => {
   const openingTimeInt = parseInt(openingTime.replace(":", ""));
   const closingTimeInt = parseInt(closingTime.replace(":", ""));
 
-  if (currentTime < openingTimeInt) {
-    const timeUntilOpen = openingTimeInt - currentTime;
-    if (timeUntilOpen <= 100) {
-      return { status: "Opening Soon" };
+  // หากเวลาเปิดเป็นหลังเที่ยงคืน ให้จัดการกรณีพิเศษ
+  if (closingTimeInt < openingTimeInt) {
+    // สถานที่เปิดถึงวันถัดไป (ข้ามคืน)
+    if (currentTime >= openingTimeInt || currentTime <= closingTimeInt) {
+      const timeUntilClose = closingTimeInt - currentTime;
+      if (timeUntilClose <= 100) {
+        return { status: "Closing Soon" };
+      }
     }
-  } else if (currentTime < closingTimeInt) {
-    const timeUntilClose = closingTimeInt - currentTime;
-    if (timeUntilClose <= 100) {
-      return { status: "Closing Soon" };
+  } else {
+    // สถานที่เปิดปกติภายในวันเดียวกัน
+    if (currentTime < openingTimeInt) {
+      const timeUntilOpen = openingTimeInt - currentTime;
+      if (timeUntilOpen <= 100) {
+        return { status: "Opening Soon" };
+      }
+    } else if (currentTime < closingTimeInt) {
+      const timeUntilClose = closingTimeInt - currentTime;
+      if (timeUntilClose <= 100) {
+        return { status: "Closing Soon" };
+      }
     }
   }
 
   return { status: null };
 };
+
 
 const PlaceNearbyPage = ({ params }) => {
   const { id } = params;
@@ -325,40 +339,35 @@ const PlaceNearbyPage = ({ params }) => {
             <span>{tourismData.location}</span>
           </div>
 
-          {/* Open/Closed Status */}
           {tourismData.category_name !== "ที่พัก" && (
-            <div className="flex items-center font-bold text-lg">
-              {isOpenNow(tourismData.operating_hours) ? (
-                <span className="text-green-500 flex items-center">
-                  <FaCheckCircle className="mr-1" /> เปิดทำการ
-                </span>
-              ) : (
-                <span className="text-red-500 flex items-center">
-                  <FaTimesCircle className="mr-1" /> ปิดทำการ
-                </span>
-              )}
+  <div className="flex items-center font-bold text-lg">
+    {isOpenNow(tourismData.operating_hours) ? (
+      <span className="text-green-500 flex items-center">
+        <FaCheckCircle className="mr-1" /> เปิดทำการ
+      </span>
+    ) : (
+      <span className="text-red-500 flex items-center">
+        <FaTimesCircle className="mr-1" /> ปิดทำการ
+      </span>
+    )}
 
-              {/* Check for Opening Soon or Closing Soon */}
-              {tourismData.operating_hours.map((hours, index) => {
-                const nextEvent = getTimeUntilNextEvent(hours.opening_time, hours.closing_time);
+    {/* ตรวจสอบเพียงครั้งเดียวเพื่อแสดงสถานะ "ใกล้เปิดเร็วๆนี้" หรือ "ใกล้ปิดเร็วๆนี้" */}
+    {tourismData.operating_hours.some((hours) => {
+      const nextEvent = getTimeUntilNextEvent(hours.opening_time, hours.closing_time);
+      return nextEvent.status === "Opening Soon" || nextEvent.status === "Closing Soon";
+    }) && (
+      <span className="ml-4 flex items-center text-red-500">
+      <FaClock className="mr-1" />
+      {tourismData.operating_hours.some((hours) => getTimeUntilNextEvent(hours.opening_time, hours.closing_time).status === "Opening Soon")
+        ? "ใกล้เปิดเร็วๆนี้"
+        : "ใกล้ปิดเร็วๆนี้"}
+    </span>
+    
+    )}
+  </div>
+)}
 
-                if (nextEvent.status === "Opening Soon") {
-                  return (
-                    <span key={index} className="text-yellow-500 flex items-center ml-4">
-                      <FaClock className="mr-1" /> ใกล้เปิดเร็วๆนี้
-                    </span>
-                  );
-                } else if (nextEvent.status === "Closing Soon") {
-                  return (
-                    <span key={index} className="text-orange-500 flex items-center ml-4">
-                      <FaClock className="mr-1" /> ใกล้ปิดเร็วๆนี้
-                    </span>
-                  );
-                }
-                return null;
-              })}
-            </div>
-          )}
+
 
           {/* Operating Hours */}
           {tourismData.category_name !== "ที่พัก" && (

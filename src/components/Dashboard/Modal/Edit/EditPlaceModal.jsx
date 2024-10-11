@@ -1,6 +1,6 @@
 import React, { useEffect, useState, Fragment } from "react"
 import Image from "next/image"
-import { useForm, useFieldArray } from "react-hook-form"
+import { useForm, useFieldArray,Controller  } from "react-hook-form"
 import { Dialog, Transition } from "@headlessui/react"
 import { useRouter } from "next/navigation"
 import Swal from "sweetalert2"
@@ -26,7 +26,7 @@ import {
   faChevronUp 
 } from "@fortawesome/free-solid-svg-icons"
 import { faImage } from "@fortawesome/free-regular-svg-icons"
-
+import Select from 'react-select';
 
 const MySwal = withReactContent(Swal)
 
@@ -38,12 +38,15 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
   const [selectedExistingImage, setSelectedExistingImage] = useState(null)
   const [selectedUploadedImage, setSelectedUploadedImage] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedSeasons, setSelectedSeasons] = useState([]);
+  const [seasons, setSeasons] = useState([]); 
   const {
     register,
     handleSubmit,
     setValue,
     control,
-    formState: { isDirty }
+    formState: { isDirty },
+    watch
   } = useForm({
     defaultValues: {
       operating_hours: [],
@@ -54,10 +57,9 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
     control,
     name: "operating_hours"
   })
-
+  const [isLoading, setIsLoading] = useState(true);
   const [districts, setDistricts] = useState([])
   const [categories, setCategories] = useState([])
-  const [seasons, setSeasons] = useState([])
   const [existingImages, setExistingImages] = useState([])
   const [uploadedFiles, setUploadedFiles] = useState([])
   const [submitting, setSubmitting] = useState(false)
@@ -67,27 +69,55 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
     season: false,
     operatingHours: false
   })
+
+  useEffect(() => {
+    // If the category is already set to "สถานที่ท่องเที่ยว", trigger the seasons input
+    if (watch("category_name") === "สถานที่ท่องเที่ยว") {
+      setSelectedCategory("สถานที่ท่องเที่ยว");
+    }
+  }, [watch("category_name")]);
   
+  useEffect(() => {
+    const fetchSeasons = async () => {
+      try {
+        const seasonsData = await getSeasons();
+        setSeasons(seasonsData.map(season => ({ label: season.name, value: season.id }))); // Format for react-select
+      } catch (error) {
+        console.error("Error fetching seasons:", error);
+      }
+    };
+    fetchSeasons();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [
-          districtsData,
-          categoriesData,
-          seasonsData,
-          placeData
-        ] = await Promise.all([
+        const [districtsData, categoriesData, seasonsData, placeData] = await Promise.all([
           getDistricts(),
           getCategories(),
           getSeasons(),
           getPlaceById(parseInt(id, 10))
         ]);
   
+        // Make sure to format seasons for react-select
+        const formattedSeasons = seasonsData.map(season => ({ label: season.name, value: season.id }));
+  
+        // Set the seasons state properly
+        setSeasons(formattedSeasons);
+  
+        // Only set selected seasons if `placeData.season_ids` exists
+        if (placeData.season_ids && placeData.season_ids.length > 0) {
+          setSelectedSeasons(
+            placeData.season_ids.map(seasonId =>
+              formattedSeasons.find(season => season.value === seasonId)
+            )
+          );
+        }
+  
         setDistricts(districtsData);
         setCategories(categoriesData);
-        setSeasons(seasonsData);
   
+        // Set form default values
         setValue("name", placeData.name);
         setValue("description", placeData.description);
         setValue("location", placeData.location);
@@ -96,8 +126,6 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
         setValue("district_name", placeData.district_name || "");
         setValue("category_name", placeData.category_name || "");
         setValue("season_id", placeData.season_id || "");
-        
-        // Ensure operating_hours is parsed correctly and provided as an array
         setValue("operating_hours", placeData.operating_hours || []);
         setValue("published", placeData.published === 1 ? 1 : 0);
         setExistingImages(placeData.images || []);
@@ -115,6 +143,11 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
       fetchData();
     }
   }, [id, setValue]);
+  
+
+  
+  
+  
   
 
   const handleFileChange = event => {
@@ -138,7 +171,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
     setUploadedFiles(uploaded);
   };
 
-  const onSubmit = async data => {
+  const onSubmit = async (data) => {
     if (!isDirty) {
       MySwal.fire({
         icon: "warning",
@@ -146,55 +179,67 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
         showConfirmButton: false,
         timer: 1500
       })
-      return
+      return;
     }
-
-    setSubmitting(true)
+  
+    setSubmitting(true);
+  
     try {
-      const formDataToSend = new FormData()
-      Object.keys(data).forEach(key => {
+      // Initialize formData
+      const formData = new FormData(); // This is where formData is declared
+  
+      // Append the season_ids
+      formData.append("season_ids", JSON.stringify(selectedSeasons.map(season => season.value)));
+  
+      // Loop through the data object and append to formData
+      Object.keys(data).forEach((key) => {
         if (key === "image_paths" && data[key]) {
-          const files = data[key]
+          const files = data[key];
           for (let i = 0; i < files.length; i++) {
-            formDataToSend.append(key, files[i])
+            formData.append(key, files[i]);
           }
         } else if (key === "operating_hours" && data.operating_hours?.length) {
-          formDataToSend.append(key, JSON.stringify(data.operating_hours))
+          formData.append(key, JSON.stringify(data.operating_hours));
         } else {
-          formDataToSend.append(key, data[key])
+          formData.append(key, data[key]);
         }
-      })
-
-      const response = await updateTouristEntity(
-        parseInt(id, 10),
-        formDataToSend
-      )
+      });
+  
+      // Send the formData to the backend
+      const response = await updateTouristEntity(parseInt(id, 10), formData);
+  
       if (!response) {
-        throw new Error("ไม่สามารถอัปเดตสถานที่ได้")
+        throw new Error("ไม่สามารถอัปเดตสถานที่ได้");
       }
-
+  
       MySwal.fire({
         icon: "success",
         title: "อัปเดตสถานที่สำเร็จ!",
         showConfirmButton: false,
         timer: 1500
-      })
+      });
+  
       setTimeout(() => {
-        onClose()
-        router.push("/dashboard/table/tourist-entities")
-      }, 2000)
+        onClose();
+        router.push("/dashboard/table/tourist-entities");
+      }, 2000);
     } catch (error) {
-      console.error("ไม่สามารถอัปเดตสถานที่ได้", error)
+      console.error("ไม่สามารถอัปเดตสถานที่ได้", error);
       MySwal.fire({
         icon: "error",
         title: "ไม่สามารถอัปเดตสถานที่ได้",
         text: "กรุณาลองอีกครั้ง"
-      })
+      });
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
-  }
+  };
 
+
+  const handleSeasonChange = (selectedOptions) => {
+    setSelectedSeasons(selectedOptions || []); // Update the selected seasons
+  };
+  
   const handleClose = () => {
     if (isDirty) {
       MySwal.fire({
@@ -220,7 +265,17 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
     const selectedValue = event.target.value;
     setSelectedCategory(selectedValue);
   };
-
+  // const handleCategoryChange = (event) => {
+  //   const selectedValue = event.target.value;
+  //   setSelectedCategory(selectedValue);
+  
+  //   // Check if the selected category is "สถานที่ท่องเที่ยว"
+  //   if (selectedValue === "สถานที่ท่องเที่ยว") {
+  //     // This triggers the rendering of the seasons select immediately
+  //     setSelectedCategory("สถานที่ท่องเที่ยว");
+  //   }
+  // };
+  
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
@@ -420,50 +475,38 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                           อำเภอ
                         </label>
                       </div>
-                    {/* Conditionally render the season input */}
-                    {selectedCategory === "สถานที่ท่องเที่ยว" && (
-                      <div className="relative z-0 w-full group">
-                        <FontAwesomeIcon
-                          icon={faSnowflake}
-                          className="absolute left-3 top-3 text-gray-400"
-                        />
-                        <select
-                          id="season_id"
-                          {...register("season_id")}
-                          onClick={() => toggleDropdown("season")}
-                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
-                        >
-                          <option value="">เลือกฤดู</option>
-                          {seasons.map(season => (
-                            <option key={season.id} value={season.id}>
-                              {season.name}
-                            </option>
-                          ))}
-                        </select>
-                        <FontAwesomeIcon
-                          icon={dropdownOpen.season ? faChevronUp : faChevronDown}
-                          className="absolute right-3 top-3 text-gray-400"
-                        />
-                        <label
-                          htmlFor="season_id"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
-                        >
-                          ฤดู
-                        </label>
-                      </div>
-                    )}
+                      {selectedCategory === "สถานที่ท่องเที่ยว" && (
+  <Controller
+    control={control}
+    name="season_id"
+    render={({ field: { onChange, value } }) => (
+      <Select
+      isMulti
+      options={seasons}
+      className="basic-multi-select"
+      classNamePrefix="select"
+      value={selectedSeasons} // Use the selected seasons state
+      onChange={handleSeasonChange}
+      placeholder="เลือกฤดูกาล"
+      />
+    )}
+  />
+)}
+
                       <div className="relative z-0 w-full mb-6 group">
                       <div className="flex items-center ">
                       <FontAwesomeIcon
                           icon={faUpload}
                           className="mr-2 text-gray-500"
                         />
-                      <input
-                        type="checkbox"
-                        id="published"
-                        {...register("published")}
-                        className="form-checkbox h-4 w-4 text-orange-600 transition duration-150 ease-in-out"
-                      />
+<input
+  type="checkbox"
+  id="published"
+  {...register("published")}
+  className="form-checkbox h-4 w-4 text-orange-600 transition duration-150 ease-in-out"
+/>
+
+
                       <label
                         htmlFor="published"
                         className="ml-2 block text-sm leading-5 text-gray-900"

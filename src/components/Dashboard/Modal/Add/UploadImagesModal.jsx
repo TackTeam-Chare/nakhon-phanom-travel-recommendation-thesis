@@ -1,95 +1,93 @@
-"use client"
-import React, { useState, useEffect, Fragment } from "react"
-import { useForm } from "react-hook-form"
-import { Dialog, Transition } from "@headlessui/react"
-import { useRouter } from "next/navigation"
-import { getPlaces } from "@/services/admin/get"
-import { uploadTourismImages } from "@/services/admin/insert"
-import { FaMapMarkerAlt, FaUpload } from "react-icons/fa"
-import Image from "next/image"
-import Swal from "sweetalert2"
-import withReactContent from "sweetalert2-react-content"
+"use client";
+import React, { useState, useEffect, Fragment } from "react";
+import { useForm } from "react-hook-form";
+import { Dialog, Transition } from "@headlessui/react";
+import { useRouter } from "next/navigation";
+import { fetchTouristEntitiesWithoutImages } from "@/services/admin/get";
+import { uploadTourismImages } from "@/services/admin/insert";
+import { FaMapMarkerAlt, FaUpload } from "react-icons/fa";
+import Image from "next/image";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
-const MySwal = withReactContent(Swal)
+const MySwal = withReactContent(Swal);
 
 const UploadImagesModal = ({ isOpen, onClose }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors }
-  } = useForm()
-  const router = useRouter()
-  const [places, setPlaces] = useState([])
-  const [uploadedFiles, setUploadedFiles] = useState([])
-  const [selectedImage, setSelectedImage] = useState(null)
+    formState: { errors },
+  } = useForm();
+  const router = useRouter();
+  const [places, setPlaces] = useState([]);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     const fetchPlaces = async () => {
       try {
-        const placesData = await getPlaces()
-        setPlaces(placesData)
+        const placesData = await fetchTouristEntitiesWithoutImages();
+        setPlaces(placesData);
       } catch (error) {
-        const err = error
+        const err = error;
         MySwal.fire({
           icon: "error",
           title: "เกิดข้อผิดพลาดในการดึงข้อมูลสถานที่",
-          text: err.message
-        })
+          text: err.message,
+        });
       }
-    }
+    };
 
-    fetchPlaces()
-  }, [])
+    fetchPlaces();
+  }, []);
 
-  const handleFileChange = event => {
+  const handleFileChange = (event) => {
     const files = Array.from(event.target.files || []);
 
     // Enforce a maximum of 10 files
     if (files.length > 10) {
-        MySwal.fire({
-            icon: "warning",
-            title: "สามารถอัปโหลดได้สูงสุด 10 รูปเท่านั้น",
-        });
-        return;
+      MySwal.fire({
+        icon: "warning",
+        title: "สามารถอัปโหลดได้สูงสุด 10 รูปเท่านั้น",
+      });
+      return;
     }
 
-    const filePreviews = files.map(file => ({
-        file,
-        previewUrl: URL.createObjectURL(file)
+    const filePreviews = files.map((file) => ({
+      file,
+      previewUrl: URL.createObjectURL(file),
     }));
     setUploadedFiles(filePreviews);
-};
+  };
 
+  const onSubmit = async (data) => {
+    const formData = new FormData();
+    formData.append("tourism_entities_id", data.tourism_entities_id);
 
-const onSubmit = async data => {
-  const formData = new FormData();
-  formData.append("tourism_entities_id", data.tourism_entities_id);
-  
-  uploadedFiles.forEach(file => {
+    uploadedFiles.forEach((file) => {
       formData.append("image_paths", file.file); // Add each file to the FormData
-  });
+    });
 
-  try {
+    try {
       await uploadTourismImages(formData);
       MySwal.fire({
-          icon: "success",
-          title: "อัปโหลดรูปภาพสำเร็จ",
-          showConfirmButton: false,
-          timer: 1500
+        icon: "success",
+        title: "อัปโหลดรูปภาพสำเร็จ",
+        showConfirmButton: false,
+        timer: 1500,
       });
       setTimeout(() => {
-          onClose();
-          router.push("/dashboard/table/tourism-entities-images");
+        onClose();
+        router.push("/dashboard/table/tourism-entities-images");
       }, 2000);
-  } catch (error) {
+    } catch (error) {
       MySwal.fire({
-          icon: "error",
-          title: "เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ",
-          text: error.message
+        icon: "error",
+        title: "เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ",
+        text: error.message,
       });
-  }
-};
-
+    }
+  };
 
   return (
     <>
@@ -137,14 +135,14 @@ const onSubmit = async data => {
                         <FaMapMarkerAlt className="mr-2 text-gray-500" />
                         <select
                           {...register("tourism_entities_id", {
-                            required: "กรุณาเลือกสถานที่"
+                            required: "กรุณาเลือกสถานที่",
                           })}
                           className="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
                         >
                           <option value="">เลือกสถานที่</option>
-                          {places.map(place => (
+                          {places.map((place, index) => (
                             <option key={place.id} value={place.id}>
-                              {place.name}
+                              {index + 1}. {place.name} (ID: {place.id}, หมวดหมู่: {place.category_name}) {/* Display index and category */}
                             </option>
                           ))}
                         </select>
@@ -164,7 +162,7 @@ const onSubmit = async data => {
                         <input
                           type="file"
                           {...register("image_paths", {
-                            required: "กรุณาเลือกรูปภาพ"
+                            required: "กรุณาเลือกรูปภาพ",
                           })}
                           multiple
                           className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
@@ -260,7 +258,7 @@ const onSubmit = async data => {
         </Dialog>
       </Transition>
     </>
-  )
-}
+  );
+};
 
-export default UploadImagesModal
+export default UploadImagesModal;

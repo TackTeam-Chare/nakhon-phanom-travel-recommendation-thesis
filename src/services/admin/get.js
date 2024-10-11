@@ -57,6 +57,30 @@ export const getPlaces = async () => {
   }
 }
 
+// Function to fetch all places
+export const fetchTouristEntitiesWithoutImages  = async () => {
+  try {
+    const token = getToken()
+    const response = await auth.get("/admin/place-without-images", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+
+    const data = Array.isArray(response.data) ? response.data : []
+    return data.map(place => ({
+      ...place,
+      image_url: place.image_path
+        ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/uploads/${place.image_path}`
+        : null,
+      image_path: place.image_path || null // Ensure image_path is either string or null
+    }))
+  } catch (error) {
+    console.error("Error fetching places:", error)
+    throw error
+  }
+}
+
 // Function to fetch a place by ID
 export const getPlaceById = async id => {
   try {
