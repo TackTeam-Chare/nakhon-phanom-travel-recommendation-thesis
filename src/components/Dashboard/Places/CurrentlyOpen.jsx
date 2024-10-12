@@ -72,7 +72,7 @@ const CurrentlyOpenTouristEntities = ({ latitude, longitude }) => {
 
           return (
             <div key={place.id} className="p-2 h-full flex">
-              <Link href={`/place/${place.id}`} className="block w-full">
+              <Link href={`/dashboard/place/${place.id}`} className="block w-full">
                 <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full">
                 {place.images &&
                 place.images.length > 0 &&

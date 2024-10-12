@@ -1,5 +1,6 @@
- "use client"
+"use client"
 import React, { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { Slide } from "react-slideshow-image";
 import "react-slideshow-image/dist/styles.css";
 import Carousel from "react-multi-carousel";
@@ -36,7 +37,10 @@ import {
 import { getNearbyFetchTourismData } from "@/services/user/api";
 import Swal from "sweetalert2";
 import { ClipLoader } from "react-spinners";
-import MapComponent from "@/components/Map/MapNearbyPlaces";
+const MapComponent = dynamic(() => import("@/components/Map/MapNearbyPlaces"), {
+  loading: () => <ClipLoader size={50} color={"#FF7043"} />, // Loader ระหว่างการโหลด
+  ssr: false, // ปิดการ SSR (Server Side Rendering) เพื่อให้แน่ใจว่า component นี้จะถูกโหลดเฉพาะฝั่ง client เท่านั้น
+});
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
@@ -158,7 +162,6 @@ const isOpenNow = (operatingHours) => {
   return false;
 };
 
-
 // Helper function to check if the place is "Opening Soon" or "Closing Soon"
 const getTimeUntilNextEvent = (openingTime, closingTime) => {
   const now = getCurrentTimeInThailand();
@@ -167,33 +170,20 @@ const getTimeUntilNextEvent = (openingTime, closingTime) => {
   const openingTimeInt = parseInt(openingTime.replace(":", ""));
   const closingTimeInt = parseInt(closingTime.replace(":", ""));
 
-  // หากเวลาเปิดเป็นหลังเที่ยงคืน ให้จัดการกรณีพิเศษ
-  if (closingTimeInt < openingTimeInt) {
-    // สถานที่เปิดถึงวันถัดไป (ข้ามคืน)
-    if (currentTime >= openingTimeInt || currentTime <= closingTimeInt) {
-      const timeUntilClose = closingTimeInt - currentTime;
-      if (timeUntilClose <= 100) {
-        return { status: "Closing Soon" };
-      }
+  if (currentTime < openingTimeInt) {
+    const timeUntilOpen = openingTimeInt - currentTime;
+    if (timeUntilOpen <= 100) {
+      return { status: "Opening Soon" };
     }
-  } else {
-    // สถานที่เปิดปกติภายในวันเดียวกัน
-    if (currentTime < openingTimeInt) {
-      const timeUntilOpen = openingTimeInt - currentTime;
-      if (timeUntilOpen <= 100) {
-        return { status: "Opening Soon" };
-      }
-    } else if (currentTime < closingTimeInt) {
-      const timeUntilClose = closingTimeInt - currentTime;
-      if (timeUntilClose <= 100) {
-        return { status: "Closing Soon" };
-      }
+  } else if (currentTime < closingTimeInt) {
+    const timeUntilClose = closingTimeInt - currentTime;
+    if (timeUntilClose <= 100) {
+      return { status: "Closing Soon" };
     }
   }
 
   return { status: null };
 };
-
 
 const PlaceNearbyPage = ({ params }) => {
   const { id } = params;
@@ -225,10 +215,6 @@ const PlaceNearbyPage = ({ params }) => {
           }
           setTourismData(data.entity);
           setNearbyEntities(data.nearbyEntities);
-
-          if (!data.nearbyEntities || data.nearbyEntities.length === 0) {
-            Swal.fire("No Nearby Places", "ไม่พบสถานที่ใกล้เคียง", "info");
-          }
         } catch (error) {
           console.error("Error fetching tourism data:", error);
           Swal.fire("Error", "ไม่สามารถดึงข้อมูลได้ กรุณาลองใหม่อีกครั้ง", "error");
@@ -339,35 +325,40 @@ const PlaceNearbyPage = ({ params }) => {
             <span>{tourismData.location}</span>
           </div>
 
+          {/* Open/Closed Status */}
           {tourismData.category_name !== "ที่พัก" && (
-  <div className="flex items-center font-bold text-lg">
-    {isOpenNow(tourismData.operating_hours) ? (
-      <span className="text-green-500 flex items-center">
-        <FaCheckCircle className="mr-1" /> เปิดทำการ
-      </span>
-    ) : (
-      <span className="text-red-500 flex items-center">
-        <FaTimesCircle className="mr-1" /> ปิดทำการ
-      </span>
-    )}
+            <div className="flex items-center font-bold text-lg">
+              {isOpenNow(tourismData.operating_hours) ? (
+                <span className="text-green-500 flex items-center">
+                  <FaCheckCircle className="mr-1" /> เปิดทำการ
+                </span>
+              ) : (
+                <span className="text-red-500 flex items-center">
+                  <FaTimesCircle className="mr-1" /> ปิดทำการ
+                </span>
+              )}
 
-    {/* ตรวจสอบเพียงครั้งเดียวเพื่อแสดงสถานะ "ใกล้เปิดเร็วๆนี้" หรือ "ใกล้ปิดเร็วๆนี้" */}
-    {tourismData.operating_hours.some((hours) => {
-      const nextEvent = getTimeUntilNextEvent(hours.opening_time, hours.closing_time);
-      return nextEvent.status === "Opening Soon" || nextEvent.status === "Closing Soon";
-    }) && (
-      <span className="ml-4 flex items-center text-red-500">
-      <FaClock className="mr-1" />
-      {tourismData.operating_hours.some((hours) => getTimeUntilNextEvent(hours.opening_time, hours.closing_time).status === "Opening Soon")
-        ? "ใกล้เปิดเร็วๆนี้"
-        : "ใกล้ปิดเร็วๆนี้"}
-    </span>
-    
-    )}
-  </div>
-)}
+              {/* Check for Opening Soon or Closing Soon */}
+              {tourismData.operating_hours.map((hours, index) => {
+                const nextEvent = getTimeUntilNextEvent(hours.opening_time, hours.closing_time);
 
-
+                if (nextEvent.status === "Opening Soon") {
+                  return (
+                    <span key={index} className="text-yellow-500 flex items-center ml-4">
+                      <FaClock className="mr-1" /> ใกล้เปิดเร็วๆนี้
+                    </span>
+                  );
+                } else if (nextEvent.status === "Closing Soon") {
+                  return (
+                    <span key={index} className="text-orange-500 flex items-center ml-4">
+                      <FaClock className="mr-1" /> ใกล้ปิดเร็วๆนี้
+                    </span>
+                  );
+                }
+                return null;
+              })}
+            </div>
+          )}
 
           {/* Operating Hours */}
           {tourismData.category_name !== "ที่พัก" && (
@@ -470,65 +461,69 @@ const PlaceNearbyPage = ({ params }) => {
         )}
       </div>
 
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl md:text-4xl lg:text-5xl font-bold text-orange-500 mt-10 mb-5">
-          สถานที่ใกล้เคียง
-        </h1>
-      </div>
+     {/* Hide nearby places if no nearbyEntities */}
+{nearbyEntities.length > 0 && (
+  <div className="flex justify-between items-center mb-8">
+    <h1 className="text-4xl md:text-4xl lg:text-5xl font-bold text-orange-500 mt-10 mb-5">
+      สถานที่ใกล้เคียง
+    </h1>
 
-      <Carousel responsive={responsive} infinite autoPlay autoPlaySpeed={3000}>
-        {nearbyEntities.map((entity) => (
-          <div key={entity.id} className="p-2 h-full flex">
-            <Link href={`/place/${entity.id}`} className="block w-full">
-              <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full relative">
-                {entity.images && entity.images.length > 0 ? (
-                  <Image
-                    src={entity.images[0].image_url}
-                    alt={entity.name}
-                    width={500}
-                    height={300}
-                    className="w-full h-48 object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-                    <span className="text-gray-500">ไม่มีรูปภาพ</span>
-                  </div>
-                )}
+    <Carousel responsive={responsive} infinite autoPlay autoPlaySpeed={3000}>
+      {nearbyEntities.map((entity) => (
+        <div key={entity.id} className="p-2 h-full flex">
+          <Link href={`/dashboard/place/${entity.id}`} className="block w-full">
+            <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full relative">
+              {entity.images && entity.images.length > 0 ? (
+                <Image
+                  src={entity.images[0].image_url}
+                  alt={entity.name}
+                  width={500}
+                  height={300}
+                  className="w-full h-48 object-cover"
+                />
+              ) : (
+                <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+                  <span className="text-gray-500">ไม่มีรูปภาพ</span>
+                </div>
+              )}
 
-                <div className="p-4 flex-grow flex flex-col justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2 flex items-center">
-                      {entity.name}
-                    </h3>
-                    <p className={`font-bold flex items-center mb-2 ${getCategoryDetails(entity.category_name).color}`}>
-                      {getCategoryDetails(entity.category_name).icon}
-                      <span className="ml-2">{entity.category_name}</span>
-                    </p>
+              <div className="p-4 flex-grow flex flex-col justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold mb-2 flex items-center">
+                    {entity.name}
+                  </h3>
+                  <p className={`font-bold flex items-center mb-2 ${getCategoryDetails(entity.category_name).color}`}>
+                    {getCategoryDetails(entity.category_name).icon}
+                    <span className="ml-2">{entity.category_name}</span>
+                  </p>
 
-                    <p className="text-orange-500 font-bold flex items-center">
-                      <FaRoute className="mr-2" />
-                      ระยะห่าง {convertMetersToKilometers(entity.distance)} กิโลเมตร
-                    </p>
-                  </div>
+                  <p className="text-orange-500 font-bold flex items-center">
+                    <FaRoute className="mr-2" />
+                    ระยะห่าง {convertMetersToKilometers(entity.distance)} กิโลเมตร
+                  </p>
+                </div>
 
-                  {/* Status Section (Open/Closed) */}
-                  <div className="flex justify-end mt-5">
-                    {isOpenNow(entity.operating_hours) ? (
-                      <span className="text-green-500 font-bold flex items-center mr-2">
-                        <FaCheckCircle className="mr-1" /> เปิดทำการ
-                      </span>
-                    ) : (
-                      <span className="text-red-500 font-bold flex items-center mr-2">
-                        <FaTimesCircle className="mr-1" /> ปิดทำการ
-                      </span>
-                    )}
-                  </div>
+                {/* Status Section (Open/Closed) */}
+                <div className="flex justify-end mt-5">
+                  {isOpenNow(entity.operating_hours) ? (
+                    <span className="text-green-500 font-bold flex items-center mr-2">
+                      <FaCheckCircle className="mr-1" /> เปิดทำการ
+                    </span>
+                  ) : (
+                    <span className="text-red-500 font-bold flex items-center mr-2">
+                      <FaTimesCircle className="mr-1" /> ปิดทำการ
+                    </span>
+                  )}
                 </div>
               </div>
-            </Link>
-          </div>
-        ))}
-      </Carousel>
+            </div>
+          </Link>
+        </div>
+      ))}
+    </Carousel>
+  </div>
+)}
+
     </div>
   );
 };

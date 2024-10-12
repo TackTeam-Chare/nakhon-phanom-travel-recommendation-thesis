@@ -290,7 +290,7 @@ const MapSearch = ({
                 </a>
 
                 <Link
-                  href={`/place/${selectedPlace.id}`}
+                  href={`/dashboard/place/${selectedPlace.id}`}
                   className="bg-green-500 text-white px-3 py-2 rounded-lg hover:bg-green-600 transition duration-300 flex items-center space-x-2"
                 >
                   <FaInfoCircle className="inline-block" />

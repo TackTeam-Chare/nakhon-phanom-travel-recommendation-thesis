@@ -54,7 +54,7 @@ const RealTimeSeasonalAttractions = () => {
           {attractions.map((attraction, index) => (
             <Link
               key={index}
-              href={`/place/${attraction.id}`}
+              href={`/dashboard/place/${attraction.id}`}
               className="p-4 block"
             >
               <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full">
@@ -90,7 +90,7 @@ const RealTimeSeasonalAttractions = () => {
         </Carousel>
         <div className="flex justify-end mt-4">
           <Link
-            href="/places/season-real-time"
+            href="/dashboard/places/season-real-time"
             className="bg-orange-500 text-white font-bold py-2 px-4 rounded-full shadow-lg hover:bg-orange-600 transition duration-300 ease-in-out transform hover:scale-105"
           >
             ดูทั้งหมด
