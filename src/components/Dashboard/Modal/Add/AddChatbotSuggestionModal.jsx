@@ -3,10 +3,10 @@
 import React, { useState, Fragment } from "react";
 import { useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
-import { createChatbotSuggestion } from "@/services/admin/chatbot/api"; // Your API function
+import { createChatbotSuggestion } from "@/services/admin/chatbot/api";
 import { FaRegLightbulb, FaTimes, FaPlus } from "react-icons/fa";
-import Swal from "sweetalert2"; // Import SweetAlert2
-import withReactContent from "sweetalert2-react-content"; // SweetAlert2 React integration
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 const MySwal = withReactContent(Swal);
 
@@ -28,12 +28,21 @@ export default function CreateSuggestionModal() {
 
       setIsOpen(false); // Close the modal on success
     } catch (error) {
-      // Show error alert using SweetAlert2
-      MySwal.fire({
-        icon: "error",
-        title: "เกิดข้อผิดพลาด",
-        text: "ไม่สามารถเพิ่มคำแนะนำได้",
-      });
+      if (error.response && error.response.status === 409) {
+        // Show a specific SweetAlert2 notification for duplicate entries
+        MySwal.fire({
+          icon: "error",
+          title: "คำแนะนำซ้ำ",
+          text: "คำแนะนำนี้มีอยู่ในระบบแล้ว กรุณาเลือกคำแนะนำใหม่",
+        });
+      } else {
+        // Show generic error alert
+        MySwal.fire({
+          icon: "error",
+          title: "เกิดข้อผิดพลาด",
+          text: "ไม่สามารถเพิ่มคำแนะนำได้",
+        });
+      }
     }
   };
 

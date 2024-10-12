@@ -1,40 +1,59 @@
-"use client"
-import React, { Fragment } from "react"
-import { useForm } from "react-hook-form"
-import { Dialog, Transition } from "@headlessui/react"
-import { createSeason } from "@/services/admin/insert"
-import Swal from "sweetalert2"
-import withReactContent from "sweetalert2-react-content"
-import { FaPlus, FaTimes } from "react-icons/fa"
+"use client";
 
-const MySwal = withReactContent(Swal)
+import React, { Fragment } from "react";
+import { useForm } from "react-hook-form";
+import { Dialog, Transition } from "@headlessui/react";
+import { createSeason } from "@/services/admin/insert";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import { FaPlus, FaTimes } from "react-icons/fa";
+
+const MySwal = withReactContent(Swal);
 
 const AddSeasonModal = ({ isOpen, onClose }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors }
-  } = useForm()
+    setError,
+    formState: { errors },
+  } = useForm();
 
-  const onSubmit = async data => {
+  const onSubmit = async (data) => {
     try {
-      const response = await createSeason(data)
+      const response = await createSeason(data);
       MySwal.fire({
         icon: "success",
         title: `ฤดูกาลถูกสร้างสำเร็จ`,
         showConfirmButton: true,
-        timer: 3000
-      })
-      onClose()
+        timer: 3000,
+      });
+      onClose();
     } catch (error) {
-      MySwal.fire({
-        icon: "error",
-        title: "เกิดข้อผิดพลาดในการสร้างฤดูกาล",
-        text: "กรุณาลองอีกครั้ง",
-        showConfirmButton: true
-      })
+      if (error.response && error.response.status === 409) {
+        // Show SweetAlert2 when a duplicate season name is found
+        MySwal.fire({
+          icon: "error",
+          title: "ชื่อฤดูกาลซ้ำ",
+          text: "ชื่อฤดูกาลนี้มีอยู่แล้วในระบบ กรุณาเลือกชื่อใหม่.",
+          showConfirmButton: true,
+        });
+
+        // Set error for the name field in the form
+        setError("name", {
+          type: "manual",
+          message: "ชื่อฤดูกาลนี้มีอยู่แล้วในระบบ",
+        });
+      } else {
+        // Show general error alert for other errors
+        MySwal.fire({
+          icon: "error",
+          title: "เกิดข้อผิดพลาดในการสร้างฤดูกาล",
+          text: "กรุณาลองอีกครั้ง",
+          showConfirmButton: true,
+        });
+      }
     }
-  }
+  };
 
   return (
     <>
@@ -74,21 +93,22 @@ const AddSeasonModal = ({ isOpen, onClose }) => {
                     onSubmit={handleSubmit(onSubmit)}
                     className="space-y-6 mt-4"
                   >
+                    {/* Name Input */}
                     <div className="relative z-0 w-full mb-6 group">
                       <input
                         id="name"
                         {...register("name", {
-                          required: "กรุณากรอกชื่อฤดูกาล"
+                          required: "กรุณากรอกชื่อฤดูกาล",
                         })}
                         type="text"
                         className={`block py-2.5 px-4 w-full text-sm text-gray-900 bg-transparent border ${
                           errors.name ? "border-red-500" : "border-gray-300"
-                        } rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-Orange-600 peer`}
+                        } rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer`}
                         placeholder=" "
                       />
                       <label
                         htmlFor="name"
-                        className={`absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-3 -z-10 origin-[0] peer-focus:left-3 peer-focus:text-Orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6 ${
+                        className={`absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-3 -z-10 origin-[0] peer-focus:left-3 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6 ${
                           errors.name ? "text-red-500" : ""
                         }`}
                       >
@@ -100,23 +120,25 @@ const AddSeasonModal = ({ isOpen, onClose }) => {
                         </p>
                       )}
                     </div>
+
+                    {/* Date Start Input */}
                     <div className="relative z-0 w-full mb-6 group">
                       <input
                         id="date_start"
                         {...register("date_start", {
-                          required: "กรุณาระบุวันที่เริ่มต้น"
+                          required: "กรุณาระบุวันที่เริ่มต้น",
                         })}
                         type="date"
                         className={`block py-2.5 px-4 w-full text-sm text-gray-900 bg-transparent border ${
                           errors.date_start
                             ? "border-red-500"
                             : "border-gray-300"
-                        } rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-Orange-600 peer`}
+                        } rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer`}
                         placeholder=" "
                       />
                       <label
                         htmlFor="date_start"
-                        className={`absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-3 -z-10 origin-[0] peer-focus:left-3 peer-focus:text-Orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6 ${
+                        className={`absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-3 -z-10 origin-[0] peer-focus:left-3 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6 ${
                           errors.date_start ? "text-red-500" : ""
                         }`}
                       >
@@ -128,21 +150,23 @@ const AddSeasonModal = ({ isOpen, onClose }) => {
                         </p>
                       )}
                     </div>
+
+                    {/* Date End Input */}
                     <div className="relative z-0 w-full mb-6 group">
                       <input
                         id="date_end"
                         {...register("date_end", {
-                          required: "กรุณาระบุวันที่สิ้นสุด"
+                          required: "กรุณาระบุวันที่สิ้นสุด",
                         })}
                         type="date"
                         className={`block py-2.5 px-4 w-full text-sm text-gray-900 bg-transparent border ${
                           errors.date_end ? "border-red-500" : "border-gray-300"
-                        } rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-Orange-600 peer`}
+                        } rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer`}
                         placeholder=" "
                       />
                       <label
                         htmlFor="date_end"
-                        className={`absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-3 -z-10 origin-[0] peer-focus:left-3 peer-focus:text-Orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6 ${
+                        className={`absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-3 -z-10 origin-[0] peer-focus:left-3 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6 ${
                           errors.date_end ? "text-red-500" : ""
                         }`}
                       >
@@ -154,6 +178,8 @@ const AddSeasonModal = ({ isOpen, onClose }) => {
                         </p>
                       )}
                     </div>
+
+                    {/* Action Buttons */}
                     <div className="flex justify-end">
                       <button
                         type="button"
@@ -165,7 +191,7 @@ const AddSeasonModal = ({ isOpen, onClose }) => {
                       </button>
                       <button
                         type="submit"
-                        className="bg-Orange-600 text-white px-4 py-2 rounded-md hover:bg-Orange-700 transition duration-300 ease-in-out flex items-center gap-2"
+                        className="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition duration-300 ease-in-out flex items-center gap-2"
                       >
                         <FaPlus />
                         เพิ่มฤดูกาล
@@ -179,7 +205,7 @@ const AddSeasonModal = ({ isOpen, onClose }) => {
         </Dialog>
       </Transition>
     </>
-  )
-}
+  );
+};
 
-export default AddSeasonModal
+export default AddSeasonModal;
