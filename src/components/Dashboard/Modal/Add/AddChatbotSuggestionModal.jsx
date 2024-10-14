@@ -3,7 +3,7 @@
 import React, { useState, Fragment } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
-import Select from 'react-select'; // Importing react-select for multi-select dropdown
+import Select from "react-select";
 import { createChatbotSuggestion } from "@/services/admin/chatbot/api";
 import { FaRegLightbulb, FaTimes, FaPlus } from "react-icons/fa";
 import Swal from "sweetalert2";
@@ -15,21 +15,28 @@ const categoryOptions = [
   { value: "สถานที่ท่องเที่ยว", label: "สถานที่ท่องเที่ยว" },
   { value: "ร้านค้าของฝาก", label: "ร้านค้าของฝาก" },
   { value: "ที่พัก", label: "ที่พัก" },
-  { value: "ร้านอาหาร", label: "ร้านอาหาร" }
+  { value: "ร้านอาหาร", label: "ร้านอาหาร" },
 ];
 
-export default function CreateSuggestionModal() {
-  const { register, handleSubmit, formState: { errors }, control } = useForm();
-  const [isOpen, setIsOpen] = useState(true);
+export default function CreateSuggestionModal({
+  isOpen,
+  onClose,
+  onSuggestionCreated,
+}) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    control,
+  } = useForm();
 
   const onSubmit = async (data) => {
     try {
-      const selectedCategories = data.category.map(option => option.value); // Extract category values
-      const payload = { ...data, category: selectedCategories }; // Attach the selected categories
+      const selectedCategories = data.category.map((option) => option.value);
+      const payload = { ...data, category: selectedCategories };
 
-      await createChatbotSuggestion(payload); // API call with modified payload
+      await createChatbotSuggestion(payload);
 
-      // Show success alert using SweetAlert2
       MySwal.fire({
         icon: "success",
         title: "เพิ่มคำแนะนำสำเร็จ!",
@@ -37,17 +44,16 @@ export default function CreateSuggestionModal() {
         timer: 1500,
       });
 
-      setIsOpen(false); // Close the modal on success
+      onSuggestionCreated(); // เรียก callback function เพื่ออัปเดตข้อมูล
+      onClose(); // ปิดโมดอล
     } catch (error) {
       if (error.response && error.response.status === 409) {
-        // Show a specific SweetAlert2 notification for duplicate entries
         MySwal.fire({
           icon: "error",
           title: "คำแนะนำซ้ำ",
           text: "คำแนะนำนี้มีอยู่ในระบบแล้ว กรุณาเลือกคำแนะนำใหม่",
         });
       } else {
-        // Show generic error alert
         MySwal.fire({
           icon: "error",
           title: "เกิดข้อผิดพลาด",
@@ -59,7 +65,7 @@ export default function CreateSuggestionModal() {
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={() => setIsOpen(false)}>
+      <Dialog as="div" className="relative z-50" onClose={onClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -131,7 +137,7 @@ export default function CreateSuggestionModal() {
                     <button
                       type="button"
                       className="flex items-center py-2 px-4 bg-gray-300 text-gray-700 rounded-lg shadow-md hover:bg-gray-400 transition-colors"
-                      onClick={() => setIsOpen(false)}
+                      onClick={onClose} // Updated to use onClose
                     >
                       <FaTimes className="mr-2" />
                       ยกเลิก

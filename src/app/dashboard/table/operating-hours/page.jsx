@@ -1,16 +1,10 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import { getAllOperatingHours } from "@/services/admin/get";
 import { deleteOperatingHours } from "@/services/admin/delete";
 import { FaCalendarDay, FaClock, FaPlus, FaEdit, FaTrash, FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
-import {
-  useTable,
-  useSortBy,
-  usePagination,
-  useGlobalFilter
-} from "react-table";
+import { useTable, useSortBy, usePagination, useGlobalFilter } from "react-table";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import AddOperatingHoursForm from "@/components/Dashboard/Modal/Add/AddOperatingHoursModal";
@@ -23,27 +17,27 @@ const OperatingHoursPage = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedOperatingHour, setSelectedOperatingHour] = useState(null);
-  const router = useRouter();
+
+  // ฟังก์ชันดึงข้อมูลเวลาทำการ
+  const fetchOperatingHours = async () => {
+    try {
+      const result = await getAllOperatingHours();
+      // แทนที่ 'Everyday' ด้วย 'ทุกวัน'
+      const updatedHours = result.map(hour => ({
+        ...hour,
+        day_of_week: hour.day_of_week === "Everyday" ? "ทุกวัน" : hour.day_of_week
+      }));
+      setOperatingHours(updatedHours);
+    } catch (err) {
+      MySwal.fire({
+        icon: "error",
+        title: "เกิดข้อผิดพลาด",
+        text: "ไม่สามารถดึงข้อมูลเวลาทำการได้",
+      });
+    }
+  };
 
   useEffect(() => {
-    const fetchOperatingHours = async () => {
-      try {
-        const result = await getAllOperatingHours();
-        // Replace 'Everyday' with 'ทุกวัน'
-        const updatedHours = result.map(hour => ({
-          ...hour,
-          day_of_week: hour.day_of_week === "Everyday" ? "ทุกวัน" : hour.day_of_week
-        }));
-        setOperatingHours(updatedHours);
-      } catch (err) {
-        MySwal.fire({
-          icon: "error",
-          title: "เกิดข้อผิดพลาด",
-          text: "ไม่สามารถดึงข้อมูลเวลาทำการได้",
-        });
-      }
-    };
-
     fetchOperatingHours();
   }, []);
 
@@ -59,9 +53,7 @@ const OperatingHoursPage = () => {
       if (result.isConfirmed) {
         try {
           await deleteOperatingHours(id);
-          setOperatingHours((prevHours) =>
-            prevHours.filter((hour) => hour.id !== id)
-          );
+          fetchOperatingHours(); // เรียก fetchOperatingHours เพื่อรีเฟรชข้อมูล
           MySwal.fire("ลบสำเร็จ!", "เวลาทำการได้ถูกลบออกแล้ว.", "success");
         } catch (error) {
           console.error(`เกิดข้อผิดพลาดในการลบเวลาทำการที่มี ID ${id}:`, error);
@@ -283,7 +275,7 @@ const OperatingHoursPage = () => {
 
         {/* เพิ่ม Modal เวลาทำการ */}
         {isAddModalOpen && (
-          <AddOperatingHoursForm isOpen={isAddModalOpen} onClose={closeAddModal} />
+          <AddOperatingHoursForm isOpen={isAddModalOpen} onClose={() => { closeAddModal(); fetchOperatingHours(); }} />
         )}
 
         {/* แก้ไข Modal เวลาทำการ */}
@@ -291,7 +283,7 @@ const OperatingHoursPage = () => {
           <EditOperatingHoursModal
             id={selectedOperatingHour.id}
             isOpen={isEditModalOpen}
-            onClose={closeEditModal}
+            onClose={() => { closeEditModal(); fetchOperatingHours(); }}
           />
         )}
       </div>

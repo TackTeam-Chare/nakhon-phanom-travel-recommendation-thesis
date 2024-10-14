@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState, useMemo } from "react";
 import { FaPlus, FaSearch, FaEdit, FaTrashAlt, FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import { useRouter } from "next/navigation";
 import { getAllSeasonsRelations } from "@/services/admin/get";
 import { deleteSeasonsRelations } from "@/services/admin/delete";
 import {
@@ -23,22 +22,23 @@ const SeasonsRelationIndexPage = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedRelationId, setSelectedRelationId] = useState(null);
-  const router = useRouter();
 
+  // Fetch relations function
+  const fetchRelations = async () => {
+    try {
+      const result = await getAllSeasonsRelations();
+      setRelations(result);
+    } catch (err) {
+      MySwal.fire({
+        icon: "error",
+        title: "เกิดข้อผิดพลาด",
+        text: "ไม่สามารถดึงข้อมูลความสัมพันธ์ได้",
+      });
+    }
+  };
+
+  // Fetch relations on component mount
   useEffect(() => {
-    const fetchRelations = async () => {
-      try {
-        const result = await getAllSeasonsRelations();
-        setRelations(result);
-      } catch (err) {
-        MySwal.fire({
-          icon: "error",
-          title: "เกิดข้อผิดพลาด",
-          text: "ไม่สามารถดึงข้อมูลความสัมพันธ์ได้",
-        });
-      }
-    };
-
     fetchRelations();
   }, []);
 
@@ -61,10 +61,6 @@ const SeasonsRelationIndexPage = () => {
           );
           MySwal.fire("ลบสำเร็จ!", "ความสัมพันธ์ถูกลบแล้ว", "success");
         } catch (error) {
-          console.error(
-            `เกิดข้อผิดพลาดในการลบความสัมพันธ์ที่มี ID ${id}:`,
-            error
-          );
           MySwal.fire({
             icon: "error",
             title: "เกิดข้อผิดพลาด",
@@ -78,6 +74,11 @@ const SeasonsRelationIndexPage = () => {
   const handleEdit = (id) => {
     setSelectedRelationId(id);
     setIsEditModalOpen(true);
+  };
+
+  // Callback function to refresh relations after add/edit
+  const refreshRelations = () => {
+    fetchRelations();
   };
 
   const columns = useMemo(
@@ -120,7 +121,7 @@ const SeasonsRelationIndexPage = () => {
         ),
       },
     ],
-    [router]
+    []
   );
 
   const {
@@ -252,13 +253,19 @@ const SeasonsRelationIndexPage = () => {
       {/* Modals */}
       <AddSeasonsRelationModal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        onClose={() => {
+          setIsAddModalOpen(false);
+          refreshRelations(); // Refresh after adding new relation
+        }}
       />
       {selectedRelationId && (
         <EditSeasonsRelationModal
           id={selectedRelationId}
           isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            refreshRelations(); // Refresh after editing relation
+          }}
         />
       )}
     </div>

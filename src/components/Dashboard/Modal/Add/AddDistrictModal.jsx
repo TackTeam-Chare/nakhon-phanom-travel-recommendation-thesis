@@ -10,7 +10,7 @@ import withReactContent from "sweetalert2-react-content";
 
 const MySwal = withReactContent(Swal);
 
-const AddDistrictModal = ({ isOpen, onClose }) => {
+const AddDistrictModal = ({ isOpen, onClose, onDistrictAdded }) => {
   const {
     register,
     handleSubmit,
@@ -31,20 +31,17 @@ const AddDistrictModal = ({ isOpen, onClose }) => {
         timer: 1500,
       });
 
+      onDistrictAdded(); // Call parent function to refresh data
       onClose(); // Close the modal after success
     } catch (error) {
       if (error.response && error.response.status === 409) {
-        // Handle duplicate district name
         setError("name", { message: "ชื่อเขตซ้ำ" });
-
-        // Show SweetAlert2 for duplicate name
         Swal.fire({
           icon: "error",
           title: "ชื่อเขตซ้ำ",
           text: "ชื่อเขตนี้มีอยู่แล้วในระบบ กรุณาเลือกชื่อใหม่",
         });
       } else {
-        // General error handler
         Swal.fire({
           icon: "error",
           title: "เกิดข้อผิดพลาด",

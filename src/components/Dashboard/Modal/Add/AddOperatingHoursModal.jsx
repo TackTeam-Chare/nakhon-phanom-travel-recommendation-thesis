@@ -1,47 +1,38 @@
-"use client"
-import React, { useState, useEffect, Fragment } from "react"
-import { useForm } from "react-hook-form"
-import { Dialog, Transition } from "@headlessui/react"
-import { createOperatingHours } from "@/services/admin/insert"
-import { getPlaces } from "@/services/admin/get"
-import {
-  FaClock,
-  FaCalendarDay,
-  FaMapMarkerAlt,
-  FaPlus,
-  FaTimes
-} from "react-icons/fa"
-import Swal from "sweetalert2"
-import withReactContent from "sweetalert2-react-content"
+"use client";
 
-const MySwal = withReactContent(Swal)
+import React, { useState, useEffect, Fragment } from "react";
+import { useForm } from "react-hook-form";
+import { Dialog, Transition } from "@headlessui/react";
+import { createOperatingHours } from "@/services/admin/insert";
+import { getPlaces } from "@/services/admin/get";
+import { FaClock, FaCalendarDay, FaMapMarkerAlt, FaPlus, FaTimes } from "react-icons/fa";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
 const validDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-const AddOperatingHoursModal = ({ isOpen, onClose }) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm()
-  const [places, setPlaces] = useState([])
+const AddOperatingHoursModal = ({ isOpen, onClose, onAddSuccess }) => {
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  const [places, setPlaces] = useState([]);
 
   useEffect(() => {
     const fetchPlaces = async () => {
       try {
-        const placesData = await getPlaces()
-        setPlaces(placesData)
+        const placesData = await getPlaces();
+        setPlaces(placesData);
       } catch (error) {
-        console.error("Error fetching places:", error)
+        console.error("Error fetching places:", error);
         MySwal.fire({
           icon: "error",
           title: "Error",
           text: "Error fetching places. Please try again."
-        })
+        });
       }
-    }
+    };
 
-    fetchPlaces()
-  }, [])
+    fetchPlaces();
+  }, []);
 
   const onSubmit = async (data) => {
     let daysToSubmit = [];
@@ -51,19 +42,19 @@ const AddOperatingHoursModal = ({ isOpen, onClose }) => {
       daysToSubmit = validDays;
     } else if (data.day_of_week === "Except Holidays") {
       // Expand into all days except if you have a holiday exclusion logic
-      daysToSubmit = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];; 
+      daysToSubmit = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
     } else {
       daysToSubmit = [data.day_of_week]; // Single day selection
     }
 
-    // Prepare to submit for each day
     try {
+      // Prepare to submit for each day
       for (let day of daysToSubmit) {
         await createOperatingHours({
           place_id: data.place_id,
           day_of_week: day,
           opening_time: data.opening_time,
-          closing_time: data.closing_time
+          closing_time: data.closing_time,
         });
       }
 
@@ -71,55 +62,52 @@ const AddOperatingHoursModal = ({ isOpen, onClose }) => {
         icon: "success",
         title: "เพิ่มเวลาเปิดทำการสำเร็จ",
         text: "เวลาเปิดทำการถูกเพิ่มสำเร็จ!",
-        timer: 2000
+        timer: 2000,
       });
-      
+
       onClose();
-      } catch (error) {
-        console.error("Error creating operating hours:", error);
-        MySwal.fire({
-          icon: "error",
-          title: "เกิดข้อผิดพลาด",
-          text: "เกิดข้อผิดพลาดในการเพิ่มเวลาเปิดทำการ กรุณาลองใหม่อีกครั้ง."
-        });
-      }
+      onAddSuccess(); // เรียก callback เพื่ออัปเดตข้อมูลในตาราง
+    } catch (error) {
+      console.error("Error creating operating hours:", error);
+      MySwal.fire({
+        icon: "error",
+        title: "เกิดข้อผิดพลาด",
+        text: "เกิดข้อผิดพลาดในการเพิ่มเวลาเปิดทำการ กรุณาลองใหม่อีกครั้ง.",
+      });
+    }
   };
 
   return (
-    <>
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-50" onClose={onClose}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" />
-          </Transition.Child>
+    <Transition appear show={isOpen} as={Fragment}>
+      <Dialog as="div" className="relative z-50" onClose={onClose}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" />
+        </Transition.Child>
 
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900"
-                  >
-                    เพิ่มเวลาเปิดทำการ
-                  </Dialog.Title>
-                  <form
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
+                  เพิ่มเวลาเปิดทำการ
+                </Dialog.Title>
+                <form
                     onSubmit={handleSubmit(onSubmit)}
                     className="space-y-6 mt-4"
                   >
@@ -269,14 +257,13 @@ const AddOperatingHoursModal = ({ isOpen, onClose }) => {
                       </button>
                     </div>
                   </form>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
+              </Dialog.Panel>
+            </Transition.Child>
           </div>
-        </Dialog>
-      </Transition>
-    </>
-  )
-}
+        </div>
+      </Dialog>
+    </Transition>
+  );
+};
 
-export default AddOperatingHoursModal
+export default AddOperatingHoursModal;

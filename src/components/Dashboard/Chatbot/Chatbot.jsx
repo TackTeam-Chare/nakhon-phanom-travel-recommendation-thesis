@@ -7,7 +7,7 @@ import { AiOutlineRobot } from 'react-icons/ai';
 import { BiMessageRoundedDots } from 'react-icons/bi';
 import { FaUser } from 'react-icons/fa';
 import Cookies from 'js-cookie';
-import { fetchSuggestions } from '@/services/user/api';
+import { fetchSuggestions } from '@/services/admin/dashboard/general/routes';
 import dynamic from 'next/dynamic';
 
 const ReactTooltip = dynamic(() => import('react-tooltip'), { ssr: false });

@@ -1,47 +1,53 @@
-"use client"
+"use client";
 
-import React, { useState } from "react"
-import { useRouter } from "next/navigation"
-import Image from "next/image"
-import { login } from "../../../services/admin/auth"
-import { FaUser, FaLock } from "react-icons/fa"
-import Swal from "sweetalert2"
-import withReactContent from "sweetalert2-react-content"
-import Cookies from "js-cookie"
+import React from "react";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { login } from "../../../services/admin/auth";
+import { FaUser, FaLock } from "react-icons/fa";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import Cookies from "js-cookie";
 
-const MySwal = withReactContent(Swal)
+const MySwal = withReactContent(Swal);
 
 const AdminLogin = () => {
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
-  const router = useRouter()
+  const router = useRouter();
 
-  const handleLogin = async e => {
-    e.preventDefault()
+  // Initialize React Hook Form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  // Handle form submission
+  const onSubmit = async (data) => {
     try {
-      const response = await login({ username, password })
-      console.log("Login successful:", response)
+      const response = await login(data); // `data` contains `username` and `password`
+      console.log("Login successful:", response);
 
-      // เก็บ token ลงใน cookies
-      Cookies.set("token", response.token, { expires: 7 }) // กำหนดอายุ token เป็น 7 วัน
+      // Store token in cookies
+      Cookies.set("token", response.token, { expires: 7 }); // Token lasts for 7 days
 
       MySwal.fire({
         icon: "success",
         title: "เข้าสู่ระบบสำเร็จ!",
         showConfirmButton: false,
-        timer: 1500
+        timer: 1500,
       }).then(() => {
-        router.push("/dashboard") // ไปยังหน้า dashboard
-      })
+        router.push("/dashboard"); // Redirect to dashboard
+      });
     } catch (error) {
-      console.error("Login failed:", error)
+      console.error("Login failed:", error);
       MySwal.fire({
         icon: "error",
         title: "เข้าสู่ระบบล้มเหลว",
-        text: "กรุณาลองอีกครั้ง"
-      })
+        text: "กรุณาลองอีกครั้ง",
+      });
     }
-  }
+  };
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
@@ -72,7 +78,7 @@ const AdminLogin = () => {
           <h2 className="text-center text-2xl font-bold text-gray-700 mb-6">
             สำหรับผู้ดูแลระบบ
           </h2>
-          <form className="space-y-6" onSubmit={handleLogin}>
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div className="relative z-0 w-full mb-6 group">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <FaUser className="text-gray-400" />
@@ -81,12 +87,16 @@ const AdminLogin = () => {
                 type="text"
                 name="username"
                 id="username"
-                className="block py-3 px-10 w-full text-sm text-gray-900 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-Orange-500 focus:border-transparent peer transition duration-300 ease-in-out"
+                className={`block py-3 pl-10 pr-4 w-full text-sm text-gray-900 bg-white border ${errors.username ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-Orange-500 focus:border-transparent transition duration-300 ease-in-out`}
                 placeholder="ชื่อผู้ใช้"
-                value={username}
-                onChange={e => setUsername(e.target.value)}
+                {...register("username", { required: "กรุณากรอกชื่อผู้ใช้" })}
               />
+              {errors.username && (
+                <span className="text-red-500 text-sm">{errors.username.message}</span>
+              )}
+              
             </div>
+
             <div className="relative z-0 w-full mb-6 group">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <FaLock className="text-gray-400" />
@@ -95,12 +105,15 @@ const AdminLogin = () => {
                 type="password"
                 name="password"
                 id="password"
-                className="block py-3 px-10 w-full text-sm text-gray-900 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-Orange-500 focus:border-transparent peer transition duration-300 ease-in-out"
+                className={`block py-3 pl-10 pr-4 w-full text-sm text-gray-900 bg-white border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-Orange-500 focus:border-transparent transition duration-300 ease-in-out`}
                 placeholder="รหัสผ่าน"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
+                {...register("password", { required: "กรุณากรอกรหัสผ่าน" })}
               />
+              {errors.password && (
+                <span className="text-red-500 text-sm">{errors.password.message}</span>
+              )}
             </div>
+
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
                 <input
@@ -117,6 +130,7 @@ const AdminLogin = () => {
                 </label>
               </div>
             </div>
+
             <div>
               <button
                 type="submit"
@@ -129,7 +143,7 @@ const AdminLogin = () => {
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default AdminLogin
+export default AdminLogin;

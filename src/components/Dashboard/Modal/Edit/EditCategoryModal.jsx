@@ -12,7 +12,7 @@ import withReactContent from "sweetalert2-react-content"
 
 const MySwal = withReactContent(Swal)
 
-const EditCategoryModal = ({ id, isOpen, onClose }) => {
+const EditCategoryModal = ({ id, isOpen, onClose, refreshCategories}) => {
   const {
     register,
     handleSubmit,
@@ -56,7 +56,7 @@ const EditCategoryModal = ({ id, isOpen, onClose }) => {
       })
       setTimeout(() => {
         onClose()
-        router.push("/dashboard/table/categories")
+        refreshCategories(); 
       }, 2000)
     } catch (error) {
       MySwal.fire({

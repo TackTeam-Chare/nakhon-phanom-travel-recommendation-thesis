@@ -1,9 +1,24 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
-import { getAllChatbotSuggestions, deleteChatbotSuggestion } from "@/services/admin/chatbot/api";
-import { useTable, useSortBy, usePagination, useGlobalFilter } from "react-table";
-import { FaPlus, FaEdit, FaTrash, FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
+import {
+  getAllChatbotSuggestions,
+  deleteChatbotSuggestion,
+} from "@/services/admin/chatbot/api";
+import {
+  useTable,
+  useSortBy,
+  usePagination,
+  useGlobalFilter,
+} from "react-table";
+import {
+  FaPlus,
+  FaEdit,
+  FaTrash,
+  FaArrowLeft,
+  FaArrowRight,
+  FaSearch,
+} from "react-icons/fa";
 import CreateSuggestionModal from "@/components/Dashboard/Modal/Add/AddChatbotSuggestionModal";
 import EditSuggestionModal from "@/components/Dashboard/Modal/Edit/EditChatbotSuggestionModal";
 import Swal from "sweetalert2";
@@ -17,20 +32,21 @@ const ChatbotSuggestionsPage = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editSuggestionId, setEditSuggestionId] = useState(null);
 
-  useEffect(() => {
-    const fetchSuggestions = async () => {
-      try {
-        const result = await getAllChatbotSuggestions();
-        setSuggestions(result);
-      } catch (err) {
-        MySwal.fire({
-          icon: "error",
-          title: "เกิดข้อผิดพลาด",
-          text: "เกิดข้อผิดพลาดในการดึงข้อมูลคำแนะนำแชทบอท",
-        });
-      }
-    };
+  // ย้ายฟังก์ชัน fetchSuggestions ออกมา
+  const fetchSuggestions = async () => {
+    try {
+      const result = await getAllChatbotSuggestions();
+      setSuggestions(result);
+    } catch (err) {
+      MySwal.fire({
+        icon: "error",
+        title: "เกิดข้อผิดพลาด",
+        text: "เกิดข้อผิดพลาดในการดึงข้อมูลคำแนะนำแชทบอท",
+      });
+    }
+  };
 
+  useEffect(() => {
     fetchSuggestions();
   }, []);
 
@@ -168,7 +184,10 @@ const ChatbotSuggestionsPage = () => {
           >
             <thead className="bg-gray-100">
               {headerGroups.map((headerGroup) => (
-                <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
+                <tr
+                  {...headerGroup.getHeaderGroupProps()}
+                  key={headerGroup.id}
+                >
                   {headerGroup.headers.map((column) => (
                     <th
                       {...column.getHeaderProps(
@@ -238,13 +257,20 @@ const ChatbotSuggestionsPage = () => {
             ถัดไป <FaArrowRight className="ml-2" />
           </button>
         </div>
-        {/* Modals */}
-        {isCreateModalOpen && <CreateSuggestionModal />}
+        {/* โมดอล */}
+        {isCreateModalOpen && (
+          <CreateSuggestionModal
+            isOpen={isCreateModalOpen}
+            onClose={() => setIsCreateModalOpen(false)}
+            onSuggestionCreated={fetchSuggestions} // ส่ง callback function
+          />
+        )}
         {isEditModalOpen && editSuggestionId && (
           <EditSuggestionModal
             id={editSuggestionId}
             isOpen={isEditModalOpen}
             onClose={() => setIsEditModalOpen(false)}
+            onSuggestionUpdated={fetchSuggestions} // ส่ง callback function
           />
         )}
       </div>

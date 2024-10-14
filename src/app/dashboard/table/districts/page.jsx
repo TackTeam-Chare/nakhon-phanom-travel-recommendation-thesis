@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import { getDistricts } from "@/services/admin/get";
 import { deleteDistrict } from "@/services/admin/delete";
 import {
@@ -19,29 +18,31 @@ import EditDistrictModal from "@/components/Dashboard/Modal/Edit/EditDistrictMod
 const MySwal = withReactContent(Swal);
 
 const DistrictsPage = () => {
-  const [districts, setDistricts] = useState([]);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedDistrict, setSelectedDistrict] = useState(null);
-  const router = useRouter();
+  const [districts, setDistricts] = useState([]); // List of districts
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false); // For add modal visibility
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // For edit modal visibility
+  const [selectedDistrict, setSelectedDistrict] = useState(null); // To store the selected district for editing
 
+  // Function to fetch districts from the backend
+  const fetchDistricts = async () => {
+    try {
+      const result = await getDistricts();
+      setDistricts(result);
+    } catch (err) {
+      MySwal.fire({
+        icon: "error",
+        title: "เกิดข้อผิดพลาด",
+        text: "ไม่สามารถดึงข้อมูลอำเภอได้"
+      });
+    }
+  };
+
+  // Fetch districts on component mount
   useEffect(() => {
-    const fetchDistricts = async () => {
-      try {
-        const result = await getDistricts();
-        setDistricts(result);
-      } catch (err) {
-        MySwal.fire({
-          icon: "error",
-          title: "เกิดข้อผิดพลาด",
-          text: "ไม่สามารถดึงข้อมูลอำเภอได้"
-        });
-      }
-    };
-
     fetchDistricts();
   }, []);
 
+  // Handle deletion of a district
   const handleDelete = async (id) => {
     MySwal.fire({
       title: "คุณแน่ใจหรือไม่?",
@@ -59,7 +60,6 @@ const DistrictsPage = () => {
           );
           MySwal.fire("ลบสำเร็จ!", "อำเภอได้ถูกลบออกแล้ว.", "success");
         } catch (error) {
-          console.error(`เกิดข้อผิดพลาดในการลบอำเภอที่มี ID ${id}:`, error);
           MySwal.fire({
             icon: "error",
             title: "เกิดข้อผิดพลาด",
@@ -70,19 +70,19 @@ const DistrictsPage = () => {
     });
   };
 
+  // Open and close modals
   const openAddModal = () => setIsAddModalOpen(true);
   const closeAddModal = () => setIsAddModalOpen(false);
-
   const openEditModal = (district) => {
     setSelectedDistrict(district);
     setIsEditModalOpen(true);
   };
-
   const closeEditModal = () => {
     setIsEditModalOpen(false);
     setSelectedDistrict(null);
   };
 
+  // Define table columns
   const columns = useMemo(
     () => [
       {
@@ -118,6 +118,7 @@ const DistrictsPage = () => {
     []
   );
 
+  // React Table setup
   const {
     getTableProps,
     getTableBodyProps,
@@ -240,17 +241,18 @@ const DistrictsPage = () => {
           </button>
         </div>
 
-        {/* เพิ่ม Modal อำเภอ */}
+        {/* Add District Modal */}
         {isAddModalOpen && (
-          <AddDistrictModal isOpen={isAddModalOpen} onClose={closeAddModal} />
+          <AddDistrictModal isOpen={isAddModalOpen} onClose={closeAddModal} onDistrictAdded={fetchDistricts} />
         )}
 
-        {/* แก้ไข Modal อำเภอ */}
+        {/* Edit District Modal */}
         {isEditModalOpen && selectedDistrict && (
           <EditDistrictModal
             isOpen={isEditModalOpen}
             onClose={closeEditModal}
             district={selectedDistrict}
+            onDistrictUpdated={fetchDistricts}
           />
         )}
       </div>

@@ -17,7 +17,7 @@ export default function DashboardLayout({ children }) {
       <main className="flex-grow  bg-gray-100">
         {children}
       </main>
-      {/* <Chatbot /> */}
+      <Chatbot />
       {/* Footer */}
       <Footer />
     </div>

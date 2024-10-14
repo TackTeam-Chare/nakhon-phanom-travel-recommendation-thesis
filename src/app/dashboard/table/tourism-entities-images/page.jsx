@@ -1,50 +1,52 @@
-"use client"
+"use client";
 
-import React, { useEffect, useState, useMemo } from "react"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
-import { getPlaceImages } from "@/services/admin/get"
-import { deletePlaceImage } from "@/services/admin/delete"
+import React, { useEffect, useState, useMemo } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { getPlaceImages } from "@/services/admin/get";
+import { deletePlaceImage } from "@/services/admin/delete";
 import {
   useTable,
   useSortBy,
   usePagination,
-  useGlobalFilter
-} from "react-table"
-import Swal from "sweetalert2"
-import withReactContent from "sweetalert2-react-content"
-import { FaPlus, FaEdit, FaTrash, FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa"
-import AddImagesModal from "@/components/Dashboard/Modal/Add/UploadImagesModal"
-import EditImagesModal from "@/components/Dashboard/Modal/Edit/EditImagesModal"
+  useGlobalFilter,
+} from "react-table";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import { FaPlus, FaEdit, FaTrash, FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
+import AddImagesModal from "@/components/Dashboard/Modal/Add/UploadImagesModal";
+import EditImagesModal from "@/components/Dashboard/Modal/Edit/EditImagesModal";
 
-const MySwal = withReactContent(Swal)
+const MySwal = withReactContent(Swal);
 
 const ImagesIndexPage = () => {
-  const [images, setImages] = useState([])
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [editImageId, setEditImageId] = useState(null)
-  const router = useRouter()
+  const [images, setImages] = useState([]);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editImageId, setEditImageId] = useState(null);
+
+  const router = useRouter();
+
+  // Fetching images
+  const fetchImages = async () => {
+    try {
+      const imagesData = await getPlaceImages();
+      setImages(imagesData);
+    } catch (error) {
+      console.error("เกิดข้อผิดพลาดในการดึงข้อมูลรูปภาพ:", error);
+      MySwal.fire({
+        icon: "error",
+        title: "เกิดข้อผิดพลาด",
+        text: "ไม่สามารถดึงข้อมูลรูปภาพได้",
+      });
+    }
+  };
 
   useEffect(() => {
-    const fetchImages = async () => {
-      try {
-        const imagesData = await getPlaceImages()
-        setImages(imagesData)
-      } catch (error) {
-        console.error("เกิดข้อผิดพลาดในการดึงข้อมูลรูปภาพ:", error)
-        MySwal.fire({
-          icon: "error",
-          title: "เกิดข้อผิดพลาด",
-          text: "ไม่สามารถดึงข้อมูลรูปภาพได้"
-        })
-      }
-    }
+    fetchImages();
+  }, []);
 
-    fetchImages()
-  }, [])
-
-  const handleDelete = async id => {
+  const handleDelete = async (id) => {
     MySwal.fire({
       title: "คุณแน่ใจหรือไม่?",
       text: "คุณต้องการลบรูปภาพนี้ใช่ไหม?",
@@ -53,37 +55,35 @@ const ImagesIndexPage = () => {
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
       confirmButtonText: "ใช่, ลบเลย!",
-      cancelButtonText: "ยกเลิก"
-    }).then(async result => {
+      cancelButtonText: "ยกเลิก",
+    }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await deletePlaceImage(id)
-          setImages(prevImages =>
-            prevImages.filter(image => image.id !== id)
-          )
-          MySwal.fire("ลบสำเร็จ!", "รูปภาพถูกลบแล้ว", "success")
+          await deletePlaceImage(id);
+          setImages((prevImages) => prevImages.filter((image) => image.id !== id));
+          MySwal.fire("ลบสำเร็จ!", "รูปภาพถูกลบแล้ว", "success");
         } catch (error) {
-          console.error(`เกิดข้อผิดพลาดในการลบรูปภาพที่มี ID ${id}:`, error)
+          console.error(`เกิดข้อผิดพลาดในการลบรูปภาพที่มี ID ${id}:`, error);
           MySwal.fire({
             icon: "error",
             title: "เกิดข้อผิดพลาด",
-            text: "ไม่สามารถลบรูปภาพได้ กรุณาลองใหม่อีกครั้ง"
-          })
+            text: "ไม่สามารถลบรูปภาพได้ กรุณาลองใหม่อีกครั้ง",
+          });
         }
       }
-    })
-  }
+    });
+  };
 
-  const openEditModal = id => {
-    setEditImageId(id)
-    setIsEditModalOpen(true)
-  }
+  const openEditModal = (id) => {
+    setEditImageId(id);
+    setIsEditModalOpen(true);
+  };
 
   const columns = useMemo(
     () => [
       {
         Header: "รหัส",
-        accessor: "id"
+        accessor: "id",
       },
       {
         Header: "รูปภาพ",
@@ -97,14 +97,14 @@ const ImagesIndexPage = () => {
             className="object-cover rounded-lg"
             priority
           />
-        )
+        ),
       },
       {
         Header: "สถานที่",
         accessor: "tourism_entities_id",
         Cell: ({ cell: { value }, row }) => (
           <span>{`${row.original.tourism_entity_name}`}</span>
-        )
+        ),
       },
       {
         Header: "การจัดการข้อมูล",
@@ -123,11 +123,11 @@ const ImagesIndexPage = () => {
               <FaTrash className="mr-2" /> ลบ
             </button>
           </div>
-        )
-      }
+        ),
+      },
     ],
     []
-  )
+  );
 
   const {
     getTableProps,
@@ -141,18 +141,23 @@ const ImagesIndexPage = () => {
     pageOptions,
     prepareRow,
     state,
-    setGlobalFilter
+    setGlobalFilter,
   } = useTable(
     {
       columns,
-      data: images
+      data: images,
     },
     useGlobalFilter,
     useSortBy,
     usePagination
-  )
+  );
 
-  const { globalFilter, pageIndex } = state
+  const { globalFilter, pageIndex } = state;
+
+  // Refresh the images list after adding/editing
+  const refreshImages = () => {
+    fetchImages();
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
@@ -169,7 +174,7 @@ const ImagesIndexPage = () => {
             <FaSearch className="mr-2 text-gray-500" />
             <input
               value={globalFilter || ""}
-              onChange={e => setGlobalFilter(e.target.value)}
+              onChange={(e) => setGlobalFilter(e.target.value)}
               placeholder="ค้นหา..."
               className="outline-none"
             />
@@ -204,7 +209,7 @@ const ImagesIndexPage = () => {
             </thead>
             <tbody {...getTableBodyProps()}>
               {page.map((row, rowIndex) => {
-                prepareRow(row)
+                prepareRow(row);
                 return (
                   <tr
                     {...row.getRowProps()}
@@ -221,7 +226,7 @@ const ImagesIndexPage = () => {
                       </td>
                     ))}
                   </tr>
-                )
+                );
               })}
             </tbody>
           </table>
@@ -250,22 +255,30 @@ const ImagesIndexPage = () => {
         </div>
       </div>
 
+      {/* Add Modal */}
       {isAddModalOpen && (
         <AddImagesModal
           isOpen={isAddModalOpen}
-          onClose={() => setIsAddModalOpen(false)}
+          onClose={() => {
+            setIsAddModalOpen(false);
+            refreshImages(); // Refresh images after closing modal
+          }}
         />
       )}
 
+      {/* Edit Modal */}
       {isEditModalOpen && editImageId && (
         <EditImagesModal
           id={editImageId}
           isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            refreshImages(); // Refresh images after closing modal
+          }}
         />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default ImagesIndexPage
+export default ImagesIndexPage;

@@ -13,28 +13,31 @@ import withReactContent from "sweetalert2-react-content";
 const MySwal = withReactContent(Swal);
 
 const CategoriesPage = () => {
-  const [categories, setCategories] = useState([]);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editCategoryId, setEditCategoryId] = useState(null);
+  const [categories, setCategories] = useState([]);  // Categories state
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);  // State for Create Modal
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);  // State for Edit Modal
+  const [editCategoryId, setEditCategoryId] = useState(null);  // State for tracking category being edited
 
+  // Fetch categories initially
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const result = await getCategories();
-        setCategories(result);
-      } catch (err) {
-        MySwal.fire({
-          icon: "error",
-          title: "เกิดข้อผิดพลาด",
-          text: "เกิดข้อผิดพลาดในการดึงข้อมูลหมวดหมู่",
-        });
-      }
-    };
-
     fetchCategories();
   }, []);
 
+  // Fetch categories function
+  const fetchCategories = async () => {
+    try {
+      const result = await getCategories();
+      setCategories(result);
+    } catch (err) {
+      MySwal.fire({
+        icon: "error",
+        title: "เกิดข้อผิดพลาด",
+        text: "เกิดข้อผิดพลาดในการดึงข้อมูลหมวดหมู่",
+      });
+    }
+  };
+
+  // Function to delete a category
   const handleDelete = async (id) => {
     const result = await MySwal.fire({
       title: "คุณแน่ใจหรือไม่?",
@@ -50,6 +53,7 @@ const CategoriesPage = () => {
     if (result.isConfirmed) {
       try {
         await deleteCategory(id);
+        // Update state after deletion
         setCategories((prevCategories) =>
           prevCategories.filter((category) => category.id !== id)
         );
@@ -68,11 +72,13 @@ const CategoriesPage = () => {
     }
   };
 
+  // Handle when edit button is clicked
   const handleEdit = (id) => {
     setEditCategoryId(id.toString());
     setIsEditModalOpen(true);
   };
 
+  // Memoized columns for table
   const columns = useMemo(
     () => [
       {
@@ -108,6 +114,7 @@ const CategoriesPage = () => {
     []
   );
 
+  // React Table hooks
   const {
     getTableProps,
     getTableBodyProps,
@@ -124,7 +131,7 @@ const CategoriesPage = () => {
   } = useTable(
     {
       columns,
-      data: categories,
+      data: categories,  // Pass categories state to table
       initialState: { pageIndex: 0 },
     },
     useGlobalFilter,
@@ -168,11 +175,7 @@ const CategoriesPage = () => {
                 <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
                   {headerGroup.headers.map((column) => (
                     <th
-                      {...column.getHeaderProps(
-                        column.getSortByToggleProps
-                          ? column.getSortByToggleProps()
-                          : {}
-                      )}
+                      {...column.getHeaderProps(column.getSortByToggleProps())}
                       key={column.id}
                       className="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-gray-600 uppercase tracking-wider"
                     >
@@ -236,12 +239,18 @@ const CategoriesPage = () => {
           </button>
         </div>
         {/* Modals */}
-        {isCreateModalOpen && <CreateCategory />}
+        {isCreateModalOpen && (
+          <CreateCategory
+            onClose={() => setIsCreateModalOpen(false)}
+            refreshCategories={fetchCategories}  // Pass the refresh function as prop
+          />
+        )}
         {isEditModalOpen && editCategoryId && (
           <EditCategoryModal
             id={editCategoryId}
             isOpen={isEditModalOpen}
             onClose={() => setIsEditModalOpen(false)}
+            refreshCategories={fetchCategories}  // Pass the refresh function as prop
           />
         )}
       </div>

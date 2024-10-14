@@ -1,12 +1,12 @@
-"use client"
+"use client";
+
 import React, { useEffect, useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import { getSeasons } from "@/services/admin/get";
 import { deleteSeason } from "@/services/admin/delete";
 import { useTable, useSortBy, usePagination, useGlobalFilter } from "react-table";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import { format } from "date-fns"; // Import date-fns format function
+import { format } from "date-fns";
 import { FaPlus, FaEdit, FaTrash, FaArrowLeft, FaArrowRight, FaSearch } from "react-icons/fa";
 import AddSeasonForm from "@/components/Dashboard/Modal/Add/AddSeasonModal";
 import EditSeasonModal from "@/components/Dashboard/Modal/Edit/EditSeasonModal";
@@ -18,22 +18,22 @@ const SeasonsPage = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedSeasonId, setSelectedSeasonId] = useState(null);
-  const router = useRouter();
+
+  // Fetch all seasons from the backend
+  const fetchSeasons = async () => {
+    try {
+      const result = await getSeasons();
+      setSeasons(result);
+    } catch (err) {
+      MySwal.fire({
+        icon: "error",
+        title: "เกิดข้อผิดพลาด",
+        text: "ไม่สามารถดึงข้อมูลฤดูกาลได้",
+      });
+    }
+  };
 
   useEffect(() => {
-    const fetchSeasons = async () => {
-      try {
-        const result = await getSeasons();
-        setSeasons(result);
-      } catch (err) {
-        MySwal.fire({
-          icon: "error",
-          title: "เกิดข้อผิดพลาด",
-          text: "ไม่สามารถดึงข้อมูลฤดูกาลได้",
-        });
-      }
-    };
-
     fetchSeasons();
   }, []);
 
@@ -49,12 +49,9 @@ const SeasonsPage = () => {
       if (result.isConfirmed) {
         try {
           await deleteSeason(id);
-          setSeasons((prevSeasons) =>
-            prevSeasons.filter((season) => season.id !== id)
-          );
+          setSeasons((prevSeasons) => prevSeasons.filter((season) => season.id !== id));
           MySwal.fire("ลบสำเร็จ!", "ฤดูกาลได้ถูกลบออกแล้ว.", "success");
         } catch (error) {
-          console.error(`เกิดข้อผิดพลาดในการลบฤดูกาล ID ${id}:`, error);
           MySwal.fire({
             icon: "error",
             title: "เกิดข้อผิดพลาด",
@@ -70,6 +67,11 @@ const SeasonsPage = () => {
     setIsEditModalOpen(true);
   };
 
+  // Callback to refresh the season list after adding/editing
+  const refreshSeasons = () => {
+    fetchSeasons();
+  };
+
   const columns = useMemo(
     () => [
       {
@@ -83,12 +85,12 @@ const SeasonsPage = () => {
       {
         Header: "วันที่เริ่มต้น",
         accessor: "date_start",
-        Cell: ({ value }) => format(new Date(value), "dd MMMM yyyy"), // Format date
+        Cell: ({ value }) => format(new Date(value), "dd MMMM yyyy"),
       },
       {
         Header: "วันที่สิ้นสุด",
         accessor: "date_end",
-        Cell: ({ value }) => format(new Date(value), "dd MMMM yyyy"), // Format date
+        Cell: ({ value }) => format(new Date(value), "dd MMMM yyyy"),
       },
       {
         Header: "การจัดการข้อมูล",
@@ -178,11 +180,7 @@ const SeasonsPage = () => {
                     >
                       {column.render("Header")}
                       <span>
-                        {column.isSorted
-                          ? column.isSortedDesc
-                            ? " 🔽"
-                            : " 🔼"
-                          : ""}
+                        {column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}
                       </span>
                     </th>
                   ))}
@@ -238,16 +236,16 @@ const SeasonsPage = () => {
       </div>
 
       {/* Modals */}
-      <AddSeasonForm isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />
+      <AddSeasonForm isOpen={isAddModalOpen} onClose={() => { setIsAddModalOpen(false); refreshSeasons(); }} />
       {selectedSeasonId && (
         <EditSeasonModal
           id={selectedSeasonId}
           isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
+          onClose={() => { setIsEditModalOpen(false); refreshSeasons(); }}
         />
       )}
     </div>
   );
 };
 
-export default SeasonsPage
+export default SeasonsPage;

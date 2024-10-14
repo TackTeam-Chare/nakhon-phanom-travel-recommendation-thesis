@@ -1,46 +1,47 @@
-"use client"
-import React, { Fragment, useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { Dialog, Transition } from "@headlessui/react"
-import { updateDistrict } from "@/services/admin/edit"
-import Swal from "sweetalert2"
-import withReactContent from "sweetalert2-react-content"
-import { FaSave, FaTimes } from "react-icons/fa" // Import icons
+"use client";
+import React, { Fragment, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { Dialog, Transition } from "@headlessui/react";
+import { updateDistrict } from "@/services/admin/edit";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import { FaSave, FaTimes } from "react-icons/fa";
 
-const MySwal = withReactContent(Swal)
+const MySwal = withReactContent(Swal);
 
-const EditDistrictModal = ({ isOpen, onClose, district }) => {
+const EditDistrictModal = ({ isOpen, onClose, district, onDistrictUpdated }) => {
   const {
     register,
     handleSubmit,
     setValue,
-    formState: { errors }
-  } = useForm()
+    formState: { errors },
+  } = useForm();
 
   useEffect(() => {
     if (district) {
-      setValue("name", district.name)
+      setValue("name", district.name);
     }
-  }, [district, setValue])
+  }, [district, setValue]);
 
-  const onSubmit = async data => {
+  const onSubmit = async (data) => {
     try {
-      await updateDistrict(Number(district.id), data)
+      await updateDistrict(Number(district.id), data);
       MySwal.fire({
         icon: "success",
         title: "อัปเดตอำเภอสำเร็จ!",
         showConfirmButton: false,
-        timer: 1500
-      })
-      onClose()
+        timer: 1500,
+      });
+      onDistrictUpdated(); // Call parent function to refresh data
+      onClose(); // Close modal after success
     } catch (error) {
       MySwal.fire({
         icon: "error",
         title: "การอัปเดตอำเภอล้มเหลว",
-        text: "กรุณาลองใหม่อีกครั้ง."
-      })
+        text: "กรุณาลองใหม่อีกครั้ง.",
+      });
     }
-  }
+  };
 
   return (
     <>
@@ -83,7 +84,7 @@ const EditDistrictModal = ({ isOpen, onClose, district }) => {
                     <div>
                       <input
                         {...register("name", {
-                          required: "กรุณากรอกชื่ออำเภอ"
+                          required: "กรุณากรอกชื่ออำเภอ",
                         })}
                         placeholder="ชื่ออำเภอ"
                         className={`w-full border ${
@@ -102,14 +103,14 @@ const EditDistrictModal = ({ isOpen, onClose, district }) => {
                         className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 flex items-center gap-2"
                         onClick={onClose}
                       >
-                        <FaTimes /> {/* ยกเลิกไอคอน */}
+                        <FaTimes />
                         ยกเลิก
                       </button>
                       <button
                         type="submit"
                         className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 flex items-center gap-2"
                       >
-                        <FaSave /> {/* อัปเดตไอคอน */}
+                        <FaSave />
                         อัปเดต
                       </button>
                     </div>
@@ -121,7 +122,7 @@ const EditDistrictModal = ({ isOpen, onClose, district }) => {
         </Dialog>
       </Transition>
     </>
-  )
-}
+  );
+};
 
-export default EditDistrictModal
+export default EditDistrictModal;

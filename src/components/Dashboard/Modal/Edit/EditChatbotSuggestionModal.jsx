@@ -3,14 +3,17 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
-import { updateChatbotSuggestion, getChatbotSuggestionById } from "@/services/admin/chatbot/api";
+import {
+  updateChatbotSuggestion,
+  getChatbotSuggestionById,
+} from "@/services/admin/chatbot/api";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import { FaEdit, FaTimes, FaSave } from "react-icons/fa"; // Import necessary icons
+import { FaEdit, FaTimes, FaSave } from "react-icons/fa";
 
 const MySwal = withReactContent(Swal);
 
-const EditSuggestionModal = ({ id, isOpen, onClose }) => {
+const EditSuggestionModal = ({ id, isOpen, onClose, onSuggestionUpdated }) => {
   const {
     register,
     handleSubmit,
@@ -25,7 +28,7 @@ const EditSuggestionModal = ({ id, isOpen, onClose }) => {
         const suggestion = await getChatbotSuggestionById(id);
         setValue("category", suggestion.category);
         setValue("suggestion_text", suggestion.suggestion_text);
-        setValue("active", suggestion.active); // Set the "active" field
+        setValue("active", suggestion.active);
       } catch (error) {
         MySwal.fire({
           icon: "error",
@@ -50,6 +53,7 @@ const EditSuggestionModal = ({ id, isOpen, onClose }) => {
         showConfirmButton: false,
         timer: 1500,
       });
+      onSuggestionUpdated(); // เรียก callback function เพื่ออัปเดตข้อมูล
       onClose();
     } catch (error) {
       MySwal.fire({

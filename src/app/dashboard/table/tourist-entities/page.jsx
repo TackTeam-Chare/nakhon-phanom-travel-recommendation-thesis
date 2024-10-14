@@ -56,7 +56,21 @@ const PlaceIndexPage = () => {
   const [editPlaceId, setEditPlaceId] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  
   const router = useRouter();
+  useEffect(() => {
+    fetchPlaces();
+  }, []);
+
+  const fetchPlaces = async () => {
+    const result = await getPlaces();
+    setPlaces(result);
+  };
+
+  // Callback function for updating the table
+  const handleUpdateTable = (updatedData) => {
+    setPlaces(updatedData);
+  };
 
   useEffect(() => {
     const fetchPlaces = async () => {
@@ -353,6 +367,7 @@ const PlaceIndexPage = () => {
         <AddPlacesModal
           isOpen={isAddModalOpen}
           onClose={() => setIsAddModalOpen(false)}
+          onAddPlace={handleUpdateTable}  
         />
       )}
 
@@ -361,6 +376,7 @@ const PlaceIndexPage = () => {
           id={editPlaceId}
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
+          onEditPlace={handleUpdateTable} 
         />
       )}
     </div>
