@@ -2,6 +2,7 @@ import Carousel from "../components/Carousel"
 import NearbyPlaces from "../components/Places/NearbyPlaces"
 import CurrentlyOpenTouristEntities from "../components/Places/CurrentlyOpen"
 import RealTimeSeasonalAttractions from "../components/Places/RealTime"
+import RealTimePlaces from "@/components/Places/RealTimePlaces"
 
 export const metadata = {
   title: "เว็บไซต์เเนะนำการท่องเที่ยวจังหวัดนครพนม",
@@ -24,6 +25,9 @@ export default function Home() {
       </div>
       <div>
         <CurrentlyOpenTouristEntities />
+      </div>
+      <div>
+        <RealTimePlaces />
       </div>
     </>
   )
