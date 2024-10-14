@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import io from 'socket.io-client';
-import { FiChevronDown } from 'react-icons/fi';
+import { FiChevronDown, FiSend, FiTrash, FiEye, FiEyeOff } from 'react-icons/fi'; // Added new icons
 import { AiOutlineRobot } from 'react-icons/ai';
 import { BiMessageRoundedDots } from 'react-icons/bi';
 import { FaUser } from 'react-icons/fa';
@@ -28,7 +28,8 @@ const Chatbot = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
   const [isSuggestionsVisible, setIsSuggestionsVisible] = useState(true);
-  const chatContainerRef = useRef(null);
+  const chatContainerRef = useRef(null); // Ref for chat container
+  const dummyDivRef = useRef(null); // Ref for auto-scroll
   const [socket, setSocket] = useState(null);
 
   // Initialize socket inside useEffect
@@ -92,6 +93,13 @@ const Chatbot = () => {
       };
     }
   }, [socket, isChatbotOpen]);
+
+  useEffect(() => {
+    // Automatically scroll to the bottom when messages are updated
+    if (dummyDivRef.current) {
+      dummyDivRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
 
   const sendMessage = (text) => {
     if (text.trim() && socket) {
@@ -179,14 +187,17 @@ const Chatbot = () => {
                 <span>กำลังประมวลผล...</span>
               </div>
             )}
+
+            {/* Dummy div for auto-scroll */}
+            <div ref={dummyDivRef} />
           </div>
 
-          <div className="p-3 border-t flex bg-white">
+          <div className="p-3 border-t flex bg-white items-center">
             <button
               onClick={() => setIsSuggestionsVisible((prev) => !prev)}
-              className="bg-gray-300 text-black px-4 py-2 mr-2 rounded-lg hover:bg-gray-400"
+              className="bg-gray-300 text-black p-2 mr-2 rounded-lg hover:bg-gray-400"
             >
-              {isSuggestionsVisible ? 'ซ่อนคำแนะนำ' : 'แสดงคำแนะนำ'}
+              {isSuggestionsVisible ? <FiEyeOff size={20} /> : <FiEye size={20} />}
             </button>
             <input
               type="text"
@@ -196,11 +207,11 @@ const Chatbot = () => {
               className="w-full p-2 border border-gray-300 rounded-lg mr-2"
               onKeyPress={(e) => e.key === 'Enter' && sendMessage(message)}
             />
-            <button onClick={() => sendMessage(message)} className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700">
-              ส่ง
+            <button onClick={() => sendMessage(message)} className="bg-orange-600 text-white p-2 rounded-lg hover:bg-orange-700">
+              <FiSend size={20} />
             </button>
-            <button onClick={clearChatHistory} className="bg-red-600 text-white px-4 py-2 ml-2 rounded-lg hover:bg-red-700">
-              ล้างประวัติ
+            <button onClick={clearChatHistory} className="bg-red-600 text-white p-2 ml-2 rounded-lg hover:bg-red-700">
+              <FiTrash size={20} />
             </button>
           </div>
         </div>
