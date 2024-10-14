@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-import { fetchCurrentlyOpenTouristEntities } from "@/services/admin/dashboard/general/routes";
+import { fetchCurrentlyOpenTouristEntities } from "@/services/user/api";
 import Image from "next/image";
 import Link from "next/link";
 import { FaRoute } from "react-icons/fa";
@@ -72,7 +72,7 @@ const CurrentlyOpenTouristEntities = ({ latitude, longitude }) => {
 
           return (
             <div key={place.id} className="p-2 h-full flex">
-              <Link href={`/dashboard/place/${place.id}`} className="block w-full">
+              <Link href={`/place/${place.id}`} className="block w-full">
                 <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full">
                 {place.images &&
                 place.images.length > 0 &&

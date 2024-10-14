@@ -148,49 +148,45 @@ const GeocodingSearchPage = () => {
   };
 
   const handleSearchByField = (field, value) => {
-    setSearchParams((prevParams) => ({
-      ...prevParams,
-      [field]: value 
-    }));
-    searchPlaces({ ...searchParams, [field]: value });
-
+    // Reset search results and nearby places when any field is updated
+    setSearchResults([]); 
+    setNearbyPlaces([]); 
+    
+    // Update search parameters and trigger new search
+    const updatedParams = { ...searchParams, [field]: value };
+    setSearchParams(updatedParams);
+    searchPlaces(updatedParams); // Perform search based on the updated params
+  
+    // Update related states for specific fields
     if (field === "category") {
-      const selectedCategory = filters.categories.find(
-        (cat) => cat.id === value
-      );
+      const selectedCategory = filters.categories.find((cat) => cat.id === value);
       setSelectedCategory(selectedCategory?.name || null);
-
-      // Enable season input only if the category is "สถานที่ท่องเที่ยว"
+  
       const isTouristCategory = selectedCategory?.name === "สถานที่ท่องเที่ยว";
       setIsSeasonEnabled(isTouristCategory);
-
-      // Clear season if it's not a tourist category
+  
       if (!isTouristCategory) {
         setSelectedSeason(null);
-        setSearchParams((prevParams) => ({
-          ...prevParams,
-          season: null
-        }));
+        setSearchParams((prevParams) => ({ ...prevParams, season: null }));
       }
     }
-
+  
     if (field === "season") {
-      const seasonName =
-        filters.seasons.find((season) => season.id === value)?.name || null;
+      const seasonName = filters.seasons.find((season) => season.id === value)?.name || null;
       setSelectedSeason(seasonName);
     }
-
+  
     if (field === "district") {
-      const districtName =
-        filters.districts.find((district) => district.id === value)?.name || null;
+      const districtName = filters.districts.find((district) => district.id === value)?.name || null;
       setSelectedDistrict(districtName);
       setIsDistrictDropdownOpen(false);
     }
-
+  
     if (field === "day_of_week") {
       setSelectedDay(value);
     }
   };
+  
 
    const handleCurrentLocationClick = () => {
     if (!navigator.geolocation) {
@@ -267,6 +263,7 @@ const GeocodingSearchPage = () => {
     ]
   };
 
+  
   const categorizePlaces = (categoryId) => {
     return nearbyPlaces.filter((place) => place.category_id === categoryId);
   };
@@ -282,6 +279,11 @@ const GeocodingSearchPage = () => {
     return meters.toFixed(0) + ' เมตร';
   };
 
+  const removeDuplicates = (places) => {
+    return places.filter((place, index, self) =>
+      index === self.findIndex((p) => p.id === place.id && p.name === place.name)
+    );
+  };
   return (
     <div className="container mx-auto p-4 relative">
       {/* Search Bar and Buttons */}
@@ -546,83 +548,108 @@ const GeocodingSearchPage = () => {
           </p>
         )}
 
+           {/* หากไม่มีผลลัพธ์การค้นหา จะแสดงข้อความแจ้งเตือน */}
+  {searchResults.length === 0 && nearbyPlaces.length === 0 && !loading && (
+    <div className="text-center mt-8">
+      <p className="text-xl font-semibold text-orange-500">
+        ไม่พบสถานที่! ที่ตรงกับคำค้นหาของคุณ โปรดลองค้นหาใหม่อีกครั้ง
+      </p>
+      <p className="text-md text-gray-500">
+        ลองค้นหาหรือเลือกตัวกรองใหม่เพื่อค้นหาสถานที่อื่น ๆ
+      </p>
+    </div>
+  )}
         {/* Display search results using Slider */}
-        {searchResults.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-orange-500 mb-4">
-              ผลลัพธ์การค้นหา ({searchResults.length} สถานที่)
-            </h2>
-            <Slider {...settings}>
-              {searchResults.map(place => (
-                <Link href={`/dashboard/place/${place.id}`} key={place.id}>
-                  <div className="p-4 cursor-pointer">
-                    <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full">
-                      <Image
-                        src={
-                          place.images && place.images[0]?.image_url
-                            ? place.images[0].image_url
-                            : "/default-image.jpg"
-                        }
-                        alt={place.name}
-                        width={500}
-                        height={300}
-                        className="w-full h-48 object-cover"
-                      />
-                      <div className="p-4">
-                        <h3 className="text-xl font-semibold mb-2">
-                          {place.name}
-                        </h3>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </Slider>
+        {searchResults.length > 0 && nearbyPlaces.length === 0 && (
+  <div className="mb-8">
+    <h2 className="text-2xl font-bold text-orange-500 mb-4">
+      ผลลัพธ์การค้นหา ({removeDuplicates(searchResults).length} สถานที่)
+    </h2>
+
+    {/* ตรวจสอบว่ามีเพียง 1 ผลลัพธ์ และแสดง card เดียว */}
+    {removeDuplicates(searchResults).length === 1 ? (
+      removeDuplicates(searchResults).map((place) => (
+        <Link href={`/place/${place.id}`} key={place.id}>
+          <div className="p-4 cursor-pointer">
+            <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full max-w-sm mx-auto">
+              <Image
+                src={place.images && place.images[0]?.image_url ? place.images[0].image_url : "/default-image.jpg"}
+                alt={place.name}
+                width={500}
+                height={300}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-4">
+                <h3 className="text-xl font-semibold mb-2">{place.name}</h3>
+              </div>
+            </div>
           </div>
-        )}
+        </Link>
+      ))
+    ) : (
+      <Slider {...settings}>
+        {removeDuplicates(searchResults).map((place) => (
+          <Link href={`/place/${place.id}`} key={place.id}>
+            <div className="p-4 cursor-pointer">
+              <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full">
+                <Image
+                  src={place.images && place.images[0]?.image_url ? place.images[0].image_url : "/default-image.jpg"}
+                  alt={place.name}
+                  width={500}
+                  height={300}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-4">
+                  <h3 className="text-xl font-semibold mb-2">{place.name}</h3>
+                </div>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </Slider>
+    )}
+  </div>
+)}
+
+
+
+
+
       </div>
 
-      {/* Display categorized places using sliders with counts */}
-      {filters.categories.map(category => {
-        const categorizedPlaces = categorizePlaces(category.id);
-        return (
-          <div key={category.id} className="mb-8">
-            <h2 className="text-2xl font-bold text-orange-500 mb-4">
-              {category.name} ({categorizedPlaces.length} สถานที่ใกล้เคียง)
-            </h2>
-            <Slider {...settings}>
-              {categorizedPlaces.map(place => (
-                <Link href={`/dashboard/place/${place.id}`} key={place.id}>
-                  <div className="p-4 cursor-pointer">
-                    <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full">
-                      <Image
-                        src={
-                          place.images && place.images[0]?.image_url
-                            ? place.images[0].image_url
-                            : "/default-image.jpg"
-                        }
-                        alt={place.name}
-                        width={500}
-                        height={300}
-                        className="w-full h-48 object-cover"
-                      />
-                      <div className="p-4">
-                        <h3 className="text-xl font-semibold mb-2">
-                          {place.name}
-                        </h3>
-                        <p className="text-orange-500 font-bold flex items-center">
-                      <FaRoute className="mr-2" />
-                      ระยะห่าง {convertMetersToKilometers(place.distance)}
-                    </p>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </Slider>
+      {nearbyPlaces.length > 0 && searchResults.length === 0 && (
+  <div className="mb-8">
+    <h2 className="text-2xl font-bold text-orange-500 mb-4">
+      สถานที่ใกล้เคียง ({nearbyPlaces.length} สถานที่)
+    </h2>
+    <Slider {...settings}>
+      {removeDuplicates(nearbyPlaces).map((place) => (
+        <Link href={`/place/${place.id}`} key={place.id}>
+          <div className="p-4 cursor-pointer">
+            <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full">
+              <Image
+                src={place.images && place.images[0]?.image_url ? place.images[0].image_url : "/default-image.jpg"}
+                alt={place.name}
+                width={500}
+                height={300}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-4">
+                <h3 className="text-xl font-semibold mb-2">{place.name}</h3>
+                <p className="text-orange-500 font-bold flex items-center">
+                  <FaRoute className="mr-2" />
+                  ระยะห่าง {convertMetersToKilometers(place.distance)}
+                </p>
+              </div>
+            </div>
           </div>
-        );
-      })}
+        </Link>
+      ))}
+    </Slider>
+  </div>
+)}
+
+
     </div>
   );
 };
