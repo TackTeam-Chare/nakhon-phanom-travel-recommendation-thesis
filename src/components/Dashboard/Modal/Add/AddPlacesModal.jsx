@@ -25,7 +25,7 @@ import withReactContent from "sweetalert2-react-content"
 import Select from 'react-select';
 const MySwal = withReactContent(Swal)
 
-const CreatePlaceModal = ({ isOpen, onClose }) => {
+const CreatePlaceModal = ({ isOpen, onClose,onSuccess  }) => {
   const {
     register,
     handleSubmit,
@@ -218,6 +218,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
         showConfirmButton: false,
         timer: 1500
       });
+      onSuccess();
       setTimeout(onClose, 2000);
     } catch (error) {
       MySwal.fire({
@@ -309,7 +310,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
   หมวดหมู่สถานที่
 </label>
 
-              {errors.name && (
+              {errors.category_name && (
                         <p className="text-red-500 text-xs mt-1">
                           {errors.category_name.message}
                         </p>
@@ -324,8 +325,12 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         type="text"
                         id="name"
                         {...register("name", {
-                          required: "ชื่อสถานที่จำเป็นต้องระบุ"
-                        })}
+                          required: "กรุณากรอกชื่อสถานที่",
+        minLength: {
+          value: 3,
+          message: "ชื่อสถานที่ต้องมีอย่างน้อย 3 ตัวอักษร",
+        },
+      })}
                         className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
                         placeholder=" "
                       />
@@ -355,7 +360,11 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                       <textarea
                         id="description"
                         {...register("description", {
-                          required: "จำเป็นต้องระบุคำอธิบายเกี่ยวกับสถานที่"
+                          required: "จำเป็นต้องระบุคำอธิบายเกี่ยวกับสถานที่",
+                          minLength: {
+                            value: 10,
+                            message: "คำอธิบายต้องมีความยาวอย่างน้อย 10 ตัวอักษร"
+                          }
                         })}
                         rows={3}
                         className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
@@ -367,7 +376,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                       >
                         คำอธิบายเกี่ยวกับสถานที่
                       </label>
-                      {errors.name && (
+                      {errors.description && (
                         <p className="text-red-500 text-xs mt-1">
                           {errors.description.message}
                         </p>
@@ -383,7 +392,11 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                         type="text"
                         id="location"
                         {...register("location", {
-                          required: "จำเป็นต้องระบุตั้งของสถานที่"
+                          required: "จำเป็นต้องระบุตั้งของสถานที่",
+                          minLength: {
+                            value: 5,
+                            message: "ตำแหน่งต้องมีอย่างน้อย 5 ตัวอักษร"
+                          }
                         })}
                         className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-black-600 peer"
                         placeholder=" "
@@ -394,7 +407,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
                       >
                         ตำแหน่งที่ตั้ง
                       </label>
-                      {errors.name && (
+                      {errors.location && (
                         <p className="text-red-500 text-xs mt-1">
                           {errors.location.message}
                         </p>
@@ -422,6 +435,11 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
           >
             ละติจูด
           </label>
+          {errors.latitude && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.latitude.message}
+                        </p>
+                      )}
           {latitudeError && (
             <p className="text-red-500 text-xs mt-1">{latitudeError}</p>
           )}
@@ -446,6 +464,11 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
           >
             ลองจิจูด
           </label>
+          {errors.longitude && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.longitude.message}
+                        </p>
+                      )}
           {longitudeError && (
             <p className="text-red-500 text-xs mt-1">{longitudeError}</p>
           )}
@@ -487,7 +510,7 @@ const CreatePlaceModal = ({ isOpen, onClose }) => {
 </label>
 
 
-                        {errors.name && (
+                        {errors.district_name && (
                         <p className="text-red-500 text-xs mt-1">
                           {errors.district_name.message}
                         </p>

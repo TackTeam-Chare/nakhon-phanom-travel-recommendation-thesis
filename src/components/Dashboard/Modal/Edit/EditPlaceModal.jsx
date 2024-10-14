@@ -30,7 +30,7 @@ import Select from 'react-select';
 
 const MySwal = withReactContent(Swal)
 
-const EditPlaceModal = ({ id, isOpen, onClose }) => {
+const EditPlaceModal = ({ id, isOpen, onClose, onSuccess }) => {
   const router = useRouter()
   const [error, setError] = useState("")
   const [existingImagesModalOpen, setExistingImagesModalOpen] = useState(false)
@@ -45,7 +45,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
     handleSubmit,
     setValue,
     control,
-    formState: { isDirty },
+    formState: { isDirty,errors },
     watch
   } = useForm({
     defaultValues: {
@@ -221,7 +221,7 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
   
       setTimeout(() => {
         onClose();
-        router.push("/dashboard/table/tourist-entities");
+        onSuccess();
       }, 2000);
     } catch (error) {
       console.error("ไม่สามารถอัปเดตสถานที่ได้", error);
@@ -314,38 +314,45 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                     onSubmit={handleSubmit(onSubmit)}
                     className="space-y-6 mt-8"
                   >
-                                          <div className="relative z-0 w-full group mb-8">
-                        <FontAwesomeIcon
-                          icon={faTags}
-                          className="absolute left-3 top-3 text-gray-400"
-                        />
-                        <select
-                          id="category_name"
-                          {...register("category_name")}
-                          onClick={() => toggleDropdown("category")}
-                          onChange={handleCategoryChange}  
-                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
-                        >
-                          <option value="">เลือกหมวดหมู่</option>
-                          {categories.map(category => (
-                            <option key={category.id} value={category.name}>
-                              {category.name}
-                            </option>
-                          ))}
-                        </select>
-                        <FontAwesomeIcon
-                          icon={
-                            dropdownOpen.category ? faChevronUp : faChevronDown
-                          }
-                          className="absolute right-3 top-3 text-gray-400"
-                        />
-                        <label
-                          htmlFor="category_name"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
-                        >
-                          หมวดหมู่
-                        </label>
-                      </div>
+                   <div className="relative z-0 w-full group mb-8">
+  <FontAwesomeIcon
+    icon={faTags}
+    className="absolute left-3 top-3 text-gray-400"
+  />
+  <select
+    id="category_name"
+    {...register("category_name", {
+      required: "กรุณาเลือกหมวดหมู่"  // เพิ่ม validation ให้ฟิลด์นี้เป็นฟิลด์บังคับ
+    })}
+    onClick={() => toggleDropdown("category")}
+    onChange={handleCategoryChange}  
+    className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
+  >
+    <option value="">เลือกหมวดหมู่</option>
+    {categories.map(category => (
+      <option key={category.id} value={category.name}>
+        {category.name}
+      </option>
+    ))}
+  </select>
+  <FontAwesomeIcon
+    icon={dropdownOpen.category ? faChevronUp : faChevronDown}
+    className="absolute right-3 top-3 text-gray-400"
+  />
+  <label
+    htmlFor="category_name"
+    className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+  >
+    หมวดหมู่
+  </label>
+  {/* แสดงข้อความแจ้งเตือนเมื่อมีข้อผิดพลาด */}
+  {errors.category_name && (
+    <p className="text-red-500 text-xs mt-1">
+      {errors.category_name.message}
+    </p>
+  )}
+</div>
+
                     <div className="relative z-0 w-full  group mb-8">
                       <FontAwesomeIcon
                         icon={faGlobe}
@@ -354,7 +361,13 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                       <input
                         type="text"
                         id="name"
-                        {...register("name")}
+                        {...register("name", {
+                          required: "กรุณากรอกชื่อสถานที่",
+                          minLength: {
+                            value: 3,
+                            message: "ชื่อสถานที่ต้องมีอย่างน้อย 3 ตัวอักษร",
+                          },
+                        })}
                         className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
                         placeholder=" "
                       />
@@ -364,158 +377,216 @@ const EditPlaceModal = ({ id, isOpen, onClose }) => {
                       >
                         ชื่อ
                       </label>
+                      {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
                     </div>
                     <div className="relative z-0 w-full group mb-10">
-                      <FontAwesomeIcon
-                        icon={faTags}
-                        className="absolute left-3 top-3 text-gray-400"
-                      />
-                      <textarea
-                        id="description"
-                        {...register("description")}
-                        rows={3}
-                        className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
-                        placeholder=" "
-                      />
-                      <label
-                        htmlFor="description"
-                        className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
-                      >
-                        คำอธิบาย
-                      </label>
-                    </div>
-                    <div className="relative z-0 w-full mb-10 group">
-                      <FontAwesomeIcon
-                        icon={faMapMarkerAlt}
-                        className="absolute left-3 top-3 text-gray-400"
-                      />
-                      <input
-                        type="text"
-                        id="location"
-                        {...register("location")}
-                        className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
-                        placeholder=" "
-                      />
-                      <label
-                        htmlFor="location"
-                        className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
-                      >
-                        ตำแหน่ง
-                      </label>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 mb-10">
-                      <div className="relative z-0 w-full group">
-                        <FontAwesomeIcon
-                          icon={faGlobe}
-                          className="absolute left-3 top-3 text-gray-400"
-                        />
-                        <input
-                          type="text"
-                          id="latitude"
-                          {...register("latitude")}
-                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
-                          placeholder=" "
-                        />
-                        <label
-                          htmlFor="latitude"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
-                        >
-                          ละติจูด
-                        </label>
-                      </div>
-                      <div className="relative z-0 w-full group">
-                        <FontAwesomeIcon
-                          icon={faGlobe}
-                          className="absolute left-3 top-3 text-gray-400"
-                        />
-                        <input
-                          type="text"
-                          id="longitude"
-                          {...register("longitude")}
-                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
-                          placeholder=" "
-                        />
-                        <label
-                          htmlFor="longitude"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
-                        >
-                          ลองจิจูด
-                        </label>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-                      <div className="relative z-0 w-full group">
-                        <FontAwesomeIcon
-                          icon={faMapMarkerAlt}
-                          className="absolute left-3 top-3 text-gray-400"
-                        />
-                        <select
-                          id="district_name"
-                          {...register("district_name")}
-                          onClick={() => toggleDropdown("district")}
-                          className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
-                        >
-                          <option value="">เลือกอำเภอ</option>
-                          {districts.map(district => (
-                            <option key={district.id} value={district.name}>
-                              {district.name}
-                            </option>
-                          ))}
-                        </select>
-                        <FontAwesomeIcon
-                          icon={
-                            dropdownOpen.district ? faChevronUp : faChevronDown
-                          }
-                          className="absolute right-3 top-3 text-gray-400"
-                        />
-                        <label
-                          htmlFor="district_name"
-                          className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
-                        >
-                          อำเภอ
-                        </label>
-                      </div>
-                      {selectedCategory === "สถานที่ท่องเที่ยว" && (
-  <Controller
-    control={control}
-    name="season_id"
-    render={({ field: { onChange, value } }) => (
-      <Select
-      isMulti
-      options={seasons}
-      className="basic-multi-select"
-      classNamePrefix="select"
-      value={selectedSeasons} // Use the selected seasons state
-      onChange={handleSeasonChange}
-      placeholder="เลือกฤดูกาล"
-      />
-    )}
+  <FontAwesomeIcon
+    icon={faTags}
+    className="absolute left-3 top-3 text-gray-400"
   />
-)}
+  <textarea
+    id="description"
+    {...register("description", {
+      required: "กรุณากรอกคำอธิบาย",
+      minLength: {
+        value: 10,
+        message: "คำอธิบายต้องมีความยาวอย่างน้อย 10 ตัวอักษร" // ตรวจสอบว่าคำอธิบายต้องยาวอย่างน้อย 10 ตัวอักษร
+      }
+    })}
+    rows={3}
+    className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
+    placeholder=" "
+  />
+  <label
+    htmlFor="description"
+    className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+  >
+    คำอธิบาย
+  </label>
 
-                      <div className="relative z-0 w-full mb-6 group">
-                      <div className="flex items-center ">
-                      <FontAwesomeIcon
-                          icon={faUpload}
-                          className="mr-2 text-gray-500"
-                        />
-<input
-  type="checkbox"
-  id="published"
-  {...register("published")}
-  className="form-checkbox h-4 w-4 text-orange-600 transition duration-150 ease-in-out"
-/>
+  {/* แสดงข้อความแจ้งเตือนเมื่อมีข้อผิดพลาด */}
+  {errors.description && (
+    <p className="text-red-500 text-xs mt-1">
+      {errors.description.message}
+    </p>
+  )}
+</div>
 
+<div className="relative z-0 w-full mb-10 group">
+  <FontAwesomeIcon
+    icon={faMapMarkerAlt}
+    className="absolute left-3 top-3 text-gray-400"
+  />
+  <input
+    type="text"
+    id="location"
+    {...register("location", {
+      required: "กรุณากรอกตำแหน่งที่ตั้ง", // บังคับให้กรอกข้อมูลตำแหน่งที่ตั้ง
+      minLength: {
+        value: 5,
+        message: "ตำแหน่งต้องมีอย่างน้อย 5 ตัวอักษร" // ตรวจสอบให้มีความยาวอย่างน้อย 5 ตัวอักษร
+      }
+    })}
+    className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
+    placeholder=" "
+  />
+  <label
+    htmlFor="location"
+    className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+  >
+    ตำแหน่ง
+  </label>
 
-                      <label
-                        htmlFor="published"
-                        className="ml-2 block text-sm leading-5 text-gray-900"
-                      >
-                        เผยแพร่
-                      </label>
-                    </div>
-                    </div>
-                    </div>
+  {/* แสดงข้อความแจ้งเตือนเมื่อมีข้อผิดพลาด */}
+  {errors.location && (
+    <p className="text-red-500 text-xs mt-1">
+      {errors.location.message}
+    </p>
+  )}
+</div>
+
+<div className="grid grid-cols-2 gap-4 mb-10">
+  <div className="relative z-0 w-full group">
+    <FontAwesomeIcon
+      icon={faGlobe}
+      className="absolute left-3 top-3 text-gray-400"
+    />
+    <input
+      type="text"
+      id="latitude"
+      {...register("latitude", {
+        required: "กรุณากรอกละติจูด",
+        pattern: {
+          value: /^-?\d+(\.\d+)?$/,
+          message: "ละติจูดต้องเป็นตัวเลขเท่านั้น"
+        },
+        validate: (value) =>
+          value >= -90 && value <= 90 || "ละติจูดต้องอยู่ระหว่าง -90 ถึง 90"
+      })}
+      className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
+      placeholder=" "
+    />
+    <label
+      htmlFor="latitude"
+      className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+    >
+      ละติจูด
+    </label>
+    {errors.latitude && (
+      <p className="text-red-500 text-xs mt-1">{errors.latitude.message}</p>
+    )}
+  </div>
+
+  <div className="relative z-0 w-full group">
+    <FontAwesomeIcon
+      icon={faGlobe}
+      className="absolute left-3 top-3 text-gray-400"
+    />
+    <input
+      type="text"
+      id="longitude"
+      {...register("longitude", {
+        required: "กรุณากรอกลองจิจูด",
+        pattern: {
+          value: /^-?\d+(\.\d+)?$/,
+          message: "ลองจิจูดต้องเป็นตัวเลขเท่านั้น"
+        },
+        validate: (value) =>
+          value >= -180 && value <= 180 || "ลองจิจูดต้องอยู่ระหว่าง -180 ถึง 180"
+      })}
+      className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
+      placeholder=" "
+    />
+    <label
+      htmlFor="longitude"
+      className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+    >
+      ลองจิจูด
+    </label>
+    {errors.longitude && (
+      <p className="text-red-500 text-xs mt-1">{errors.longitude.message}</p>
+    )}
+  </div>
+</div>
+
+<div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+  <div className="relative z-0 w-full group">
+    <FontAwesomeIcon
+      icon={faMapMarkerAlt}
+      className="absolute left-3 top-3 text-gray-400"
+    />
+    <select
+      id="district_name"
+      {...register("district_name", {
+        required: "กรุณาเลือกอำเภอ", // การตรวจสอบว่าฟิลด์นี้ต้องกรอก
+      })}
+      onClick={() => toggleDropdown("district")}
+      className="block py-2.5 px-10 w-full text-sm text-gray-900 bg-transparent border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-orange-600 peer"
+    >
+      <option value="">เลือกอำเภอ</option>
+      {districts.map((district) => (
+        <option key={district.id} value={district.name}>
+          {district.name}
+        </option>
+      ))}
+    </select>
+    <FontAwesomeIcon
+      icon={dropdownOpen.district ? faChevronUp : faChevronDown}
+      className="absolute right-3 top-3 text-gray-400"
+    />
+    <label
+      htmlFor="district_name"
+      className="absolute text-sm text-gray-500 bg-white px-1 transform duration-300 -translate-y-6 scale-75 top-0 left-10 -z-10 origin-[0] peer-focus:left-10 peer-focus:text-orange-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-2.5 peer-focus:scale-75 peer-focus:-translate-y-6"
+    >
+      อำเภอ
+    </label>
+    {errors.district_name && (
+      <p className="text-red-500 text-xs mt-1">{errors.district_name.message}</p>
+    )}
+  </div>
+
+  {selectedCategory === "สถานที่ท่องเที่ยว" && (
+    <Controller
+      control={control}
+      name="season_id"
+      render={({ field: { onChange, value } }) => (
+        <Select
+          isMulti
+          options={seasons}
+          className="basic-multi-select"
+          classNamePrefix="select"
+          value={selectedSeasons}
+          onChange={handleSeasonChange}
+          placeholder="เลือกฤดูกาล"
+        />
+      )}
+    />
+  )}
+
+  <div className="relative z-0 w-full mb-6 group">
+    <div className="flex items-center">
+      <FontAwesomeIcon icon={faUpload} className="mr-2 text-gray-500" />
+      <input
+        type="checkbox"
+        id="published"
+        {...register("published", {
+          required: "กรุณาเลือกสถานะเผยแพร่", // เพิ่มการตรวจสอบว่าต้องเลือกสถานะเผยแพร่
+        })}
+        className="form-checkbox h-4 w-4 text-orange-600 transition duration-150 ease-in-out"
+      />
+      <label
+        htmlFor="published"
+        className="ml-2 block text-sm leading-5 text-gray-900"
+      >
+        เผยแพร่
+      </label>
+    </div>
+    {errors.published && (
+      <p className="text-red-500 text-xs mt-1">{errors.published.message}</p>
+    )}
+  </div>
+</div>
+
 
                {/* Operating Hours Section */}
 {fields.length > 0 && (

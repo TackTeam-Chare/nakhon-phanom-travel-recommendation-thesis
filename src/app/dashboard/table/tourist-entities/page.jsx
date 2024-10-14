@@ -56,21 +56,7 @@ const PlaceIndexPage = () => {
   const [editPlaceId, setEditPlaceId] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  
   const router = useRouter();
-  useEffect(() => {
-    fetchPlaces();
-  }, []);
-
-  const fetchPlaces = async () => {
-    const result = await getPlaces();
-    setPlaces(result);
-  };
-
-  // Callback function for updating the table
-  const handleUpdateTable = (updatedData) => {
-    setPlaces(updatedData);
-  };
 
   useEffect(() => {
     const fetchPlaces = async () => {
@@ -121,6 +107,12 @@ const PlaceIndexPage = () => {
 
   const getCategoryStyle = (categoryName) => {
     return categoryStyles[categoryName] || { icon: faQuestionCircle, color: "text-gray-500" };
+  };
+
+   // ฟังก์ชันสำหรับอัปเดตสถานที่ใหม่
+   const handleUpdatePlaces = async () => {
+    const result = await getPlaces();
+    setPlaces(result);
   };
 
   const columns = useMemo(
@@ -367,7 +359,7 @@ const PlaceIndexPage = () => {
         <AddPlacesModal
           isOpen={isAddModalOpen}
           onClose={() => setIsAddModalOpen(false)}
-          onAddPlace={handleUpdateTable}  
+          onSuccess={handleUpdatePlaces}
         />
       )}
 
@@ -376,7 +368,7 @@ const PlaceIndexPage = () => {
           id={editPlaceId}
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
-          onEditPlace={handleUpdateTable} 
+          onSuccess={handleUpdatePlaces}
         />
       )}
     </div>
