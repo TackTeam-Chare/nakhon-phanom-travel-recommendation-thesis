@@ -1,6 +1,5 @@
- "use client"
+"use client"
 import React, { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 import { Slide } from "react-slideshow-image";
 import "react-slideshow-image/dist/styles.css";
 import Carousel from "react-multi-carousel";
@@ -37,10 +36,7 @@ import {
 import { getNearbyFetchTourismData } from "@/services/admin/dashboard/general/routes";
 import Swal from "sweetalert2";
 import { ClipLoader } from "react-spinners";
-const MapComponent = dynamic(() => import("@/components/Dashboard/Map/MapNearbyPlaces"), {
-  loading: () => <ClipLoader size={50} color={"#FF7043"} />, // Loader ระหว่างการโหลด
-  ssr: false, // ปิดการ SSR (Server Side Rendering) เพื่อให้แน่ใจว่า component นี้จะถูกโหลดเฉพาะฝั่ง client เท่านั้น
-});
+import MapComponent from "@/components/Dashboard/Map/MapNearbyPlaces";
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
@@ -215,6 +211,10 @@ const PlaceNearbyPage = ({ params }) => {
           }
           setTourismData(data.entity);
           setNearbyEntities(data.nearbyEntities);
+
+          if (!data.nearbyEntities || data.nearbyEntities.length === 0) {
+            Swal.fire("No Nearby Places", "ไม่พบสถานที่ใกล้เคียง", "info");
+          }
         } catch (error) {
           console.error("Error fetching tourism data:", error);
           Swal.fire("Error", "ไม่สามารถดึงข้อมูลได้ กรุณาลองใหม่อีกครั้ง", "error");
@@ -461,69 +461,65 @@ const PlaceNearbyPage = ({ params }) => {
         )}
       </div>
 
-     {/* Hide nearby places if no nearbyEntities */}
-{nearbyEntities.length > 0 && (
-  <div className="flex justify-between items-center mb-8">
-    <h1 className="text-4xl md:text-4xl lg:text-5xl font-bold text-orange-500 mt-10 mb-5">
-      สถานที่ใกล้เคียง
-    </h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-4xl md:text-4xl lg:text-5xl font-bold text-orange-500 mt-10 mb-5">
+          สถานที่ใกล้เคียง
+        </h1>
+      </div>
 
-    <Carousel responsive={responsive} infinite autoPlay autoPlaySpeed={3000}>
-      {nearbyEntities.map((entity) => (
-        <div key={entity.id} className="p-2 h-full flex">
-          <Link href={`/dashboard/place/${entity.id}`} className="block w-full">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full relative">
-              {entity.images && entity.images.length > 0 ? (
-                <Image
-                  src={entity.images[0].image_url}
-                  alt={entity.name}
-                  width={500}
-                  height={300}
-                  className="w-full h-48 object-cover"
-                />
-              ) : (
-                <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-                  <span className="text-gray-500">ไม่มีรูปภาพ</span>
-                </div>
-              )}
+      <Carousel responsive={responsive} infinite autoPlay autoPlaySpeed={3000}>
+        {nearbyEntities.map((entity) => (
+          <div key={entity.id} className="p-2 h-full flex">
+            <Link href={`/dashboard/place/${entity.id}`} className="block w-full">
+              <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full relative">
+                {entity.images && entity.images.length > 0 ? (
+                  <Image
+                    src={entity.images[0].image_url}
+                    alt={entity.name}
+                    width={500}
+                    height={300}
+                    className="w-full h-48 object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+                    <span className="text-gray-500">ไม่มีรูปภาพ</span>
+                  </div>
+                )}
 
-              <div className="p-4 flex-grow flex flex-col justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold mb-2 flex items-center">
-                    {entity.name}
-                  </h3>
-                  <p className={`font-bold flex items-center mb-2 ${getCategoryDetails(entity.category_name).color}`}>
-                    {getCategoryDetails(entity.category_name).icon}
-                    <span className="ml-2">{entity.category_name}</span>
-                  </p>
+                <div className="p-4 flex-grow flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2 flex items-center">
+                      {entity.name}
+                    </h3>
+                    <p className={`font-bold flex items-center mb-2 ${getCategoryDetails(entity.category_name).color}`}>
+                      {getCategoryDetails(entity.category_name).icon}
+                      <span className="ml-2">{entity.category_name}</span>
+                    </p>
 
-                  <p className="text-orange-500 font-bold flex items-center">
-                    <FaRoute className="mr-2" />
-                    ระยะห่าง {convertMetersToKilometers(entity.distance)} กิโลเมตร
-                  </p>
-                </div>
+                    <p className="text-orange-500 font-bold flex items-center">
+                      <FaRoute className="mr-2" />
+                      ระยะห่าง {convertMetersToKilometers(entity.distance)} กิโลเมตร
+                    </p>
+                  </div>
 
-                {/* Status Section (Open/Closed) */}
-                <div className="flex justify-end mt-5">
-                  {isOpenNow(entity.operating_hours) ? (
-                    <span className="text-green-500 font-bold flex items-center mr-2">
-                      <FaCheckCircle className="mr-1" /> เปิดทำการ
-                    </span>
-                  ) : (
-                    <span className="text-red-500 font-bold flex items-center mr-2">
-                      <FaTimesCircle className="mr-1" /> ปิดทำการ
-                    </span>
-                  )}
+                  {/* Status Section (Open/Closed) */}
+                  <div className="flex justify-end mt-5">
+                    {isOpenNow(entity.operating_hours) ? (
+                      <span className="text-green-500 font-bold flex items-center mr-2">
+                        <FaCheckCircle className="mr-1" /> เปิดทำการ
+                      </span>
+                    ) : (
+                      <span className="text-red-500 font-bold flex items-center mr-2">
+                        <FaTimesCircle className="mr-1" /> ปิดทำการ
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          </Link>
-        </div>
-      ))}
-    </Carousel>
-  </div>
-)}
-
+            </Link>
+          </div>
+        ))}
+      </Carousel>
     </div>
   );
 };

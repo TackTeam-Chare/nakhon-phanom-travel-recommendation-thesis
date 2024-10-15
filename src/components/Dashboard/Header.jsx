@@ -19,9 +19,9 @@ import {
   BuildingStorefrontIcon,
   ArrowLeftOnRectangleIcon,
   CalendarIcon,
-  CubeIcon,
   UserIcon,
   ChartBarIcon,
+  EyeIcon,
   ChatBubbleBottomCenterTextIcon,TagIcon,MapPinIcon,PhotoIcon,LinkIcon
 } from "@heroicons/react/20/solid";
 
@@ -93,16 +93,16 @@ export default function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-4">
             {[
-              { href: "/dashboard", icon: HomeIcon, text: "หน้าเเรก" },
+              { href: "/dashboard", icon: ChartBarIcon, text: "หน้าเเรก" },
               {
                 href: "/dashboard/search",
                 icon: MagnifyingGlassIcon,
                 text: "ค้นหาสถานที่"
               },
               {
-                href: "/dashboard/overview",
-                icon: ChartBarIcon,
-                text: "ภาพรวม"
+                href: "/dashboard/views",
+                icon: EyeIcon,
+                text: "ดูสถานที่"
               }
             ].map((item, index) => (
               <a
@@ -290,12 +290,12 @@ export default function Header() {
             </div>
             <div className="mt-6 space-y-4">
               {[
-                { href: "/dashboard", icon: HomeIcon, text: "หน้าเเรก" },
+                { href: "/dashboard", icon: ChartBarIcon, text: "หน้าเเรก" },
                 { href: "/dashboard/search", icon: MagnifyingGlassIcon, text: "ค้นหาสถานที่" },
                 {
-                  href: "/dashboard/overview",
-                  icon: ChartBarIcon,
-                  text: "ภาพรวม"
+                  href: "/dashboard/views",
+                  icon: EyeIcon,
+                  text: "ดูสถานที่"
                 }
               ].map((item, index) => (
                 <a
