@@ -24,8 +24,27 @@ import {
 } from "@fortawesome/free-solid-svg-icons"
 import { faImage } from "@fortawesome/free-regular-svg-icons"
 import Select from 'react-select';
-
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 const MySwal = withReactContent(Swal)
+
+const responsive = {
+  desktop: {
+    breakpoint: { max: 3000, min: 1024 },
+    items: 4,
+    slidesToSlide: 1, // จำนวนสไลด์ที่เลื่อนในแต่ละครั้ง
+  },
+  tablet: {
+    breakpoint: { max: 1024, min: 464 },
+    items: 2,
+    slidesToSlide: 1,
+  },
+  mobile: {
+    breakpoint: { max: 464, min: 0 },
+    items: 1,
+    slidesToSlide: 1,
+  },
+};
 
 const PlaceDetailsModal = ({ id, isOpen, onClose, onSuccess }) => {
   const [existingImagesModalOpen, setExistingImagesModalOpen] = useState(false)
@@ -525,35 +544,27 @@ const PlaceDetailsModal = ({ id, isOpen, onClose, onSuccess }) => {
 
 
                     <div className="relative z-0 w-full mb-6 group">
-                      <label
-                        htmlFor="image_paths"
-                        className="block text-lg font-medium leading-6 text-gray-900"
-                      >
-                        รูปภาพสถานที่
-                      </label>
 {/* Existing Images Section */}
 {existingImages.length > 0 && (
-  <div className="relative z-0 w-full mb-6 group">
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      {existingImages.map((image, index) => (
-        image.image_url ? (
-          <Image
-            key={index}
-            src={image.image_url}
-            alt={`Existing Image ${index + 1}`}
-            width={200}
-            height={200}
-            className="object-cover rounded-lg cursor-pointer"
-            onClick={() => {
-              setSelectedExistingImage(image.image_url);
-              setExistingImagesModalOpen(true);
-            }}
-          />
-        ) : null
-      ))}
-    </div>
-  </div>
-)}
+        <div className="relative z-0 w-full mb-6 group">
+          <label className="block text-lg font-medium text-gray-900">
+            รูปภาพสถานที่
+          </label>
+          <Carousel responsive={responsive} infinite autoPlay>
+            {existingImages.map((image, index) => (
+              <div key={index} className="p-2">
+                <Image
+                  src={image.image_url}
+                  alt={`Image ${index + 1}`}
+                  width={300}
+                  height={300}
+                  className="object-cover rounded-lg"
+                />
+              </div>
+            ))}
+          </Carousel>
+        </div>
+      )}
 
                     </div>
                     <div className="flex justify-end space-x-2">

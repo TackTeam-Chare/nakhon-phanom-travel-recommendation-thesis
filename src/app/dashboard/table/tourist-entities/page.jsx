@@ -152,7 +152,7 @@ const PlaceIndexPage = () => {
               icon={value ? faCheckCircle : faTimesCircle}
               className="mr-2"
             />
-            {value ? "เผยแพร่" : "ไม่เผยแพร่"}
+            {value ? "เผยแพร่เเล้ว" : "ไม่เผยแพร่"}
           </span>
         ),
       },
