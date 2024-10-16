@@ -50,31 +50,10 @@ const convertMetersToKilometers = (meters) => {
   return meters.toFixed(0) + " เมตร";
 };
 
-
-
-
 const NearbyPlaces = () => {
   const [places, setPlaces] = useState([]);
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
-
-  const showErrorAlert = (title, text) => {
-    MySwal.fire({
-      title,
-      text,
-      icon: "error",
-      confirmButtonText: "ตกลง",
-    });
-  };
-
-  const showInfoAlert = (title, text) => {
-    MySwal.fire({
-      title,
-      text,
-      icon: "info",
-      confirmButtonText: "ตกลง",
-    });
-  };
 
   useEffect(() => {
     const getUserLocation = () => {
@@ -93,17 +72,10 @@ const NearbyPlaces = () => {
           },
           (error) => {
             console.error("Error fetching user location:", error);
-            showErrorAlert(
-              "ไม่สามารถดึงตำแหน่งของคุณได้",
-              "กรุณาเปิดการใช้งานตำแหน่งหรืออนุญาตการเข้าถึงตำแหน่งในเบราว์เซอร์ของคุณ"
-            );
           }
         );
       } else {
-        showErrorAlert(
-          "เบราว์เซอร์ของคุณไม่รองรับการระบุตำแหน่ง",
-          "กรุณาใช้เบราว์เซอร์อื่นที่รองรับ"
-        );
+        console.log("เบราว์เซอร์ของคุณไม่รองรับการระบุตำแหน่ง");
       }
     };
   
@@ -121,18 +93,12 @@ const NearbyPlaces = () => {
             longitude
           );
           if (data.length === 0) {
-            showInfoAlert(
-              "ไม่มีสถานที่ใกล้เคียง",
-              "ไม่พบสถานที่ท่องเที่ยวใกล้ตำแหน่งของคุณ"
-            );
+            console.log("ไม่มีสถานที่ใกล้เคียง");
           }
           setPlaces(data);
         } catch (error) {
           console.error("Error fetching places nearby by coordinates:", error);
-          showErrorAlert(
-            "เกิดข้อผิดพลาด",
-            "ไม่สามารถดึงข้อมูลสถานที่ได้ กรุณาลองใหม่อีกครั้ง"
-          );
+          console.error("Error fetching places nearby by coordinates:", error);
         }
       }
     };

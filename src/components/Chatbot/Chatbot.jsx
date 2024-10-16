@@ -135,15 +135,23 @@ const Chatbot = () => {
     <div className="fixed bottom-5 right-5 z-[10000]">
       {isChatbotOpen ? (
         <div className="w-full sm:max-w-md lg:max-w-lg h-80 sm:h-96 lg:h-[500px] border rounded-lg shadow-lg bg-white flex flex-col justify-between z-[10000]">
-          <div className="bg-orange-600 text-white p-3 rounded-t-lg flex justify-between items-center">
-            <div className="flex items-center space-x-2">
-              <AiOutlineRobot className="text-2xl" />
-              <h3 className="font-bold">แชทบอทช่วยเหลือ</h3>
-            </div>
-            <button onClick={() => setIsChatbotOpen(false)} aria-label="Close chatbot">
-              <FiChevronDown className="text-white text-2xl" />
-            </button>
-          </div>
+        <div className="bg-orange-600 text-white p-3 rounded-t-lg flex flex-col space-y-2">
+  <div className="flex justify-between items-center">
+    <div className="flex items-center space-x-2">
+      <AiOutlineRobot className="text-2xl" />
+      <h3 className="font-bold">แชทบอทเพื่อให้ข้อมูล</h3>
+    </div>
+    <button onClick={() => setIsChatbotOpen(false)} aria-label="Close chatbot">
+      <FiChevronDown className="text-white text-2xl" />
+    </button>
+  </div>
+
+    <p className="text-sm text-center">
+      ข้อมูลที่ได้มาจากฐานข้อมูล หากไม่พบข้อมูลจะใช้จาก ChatGPT
+    </p>
+
+</div>
+
 
           <div ref={chatContainerRef} className="flex-1 p-3 overflow-y-auto space-y-4 bg-gray-50">
             {/* Suggestions */}

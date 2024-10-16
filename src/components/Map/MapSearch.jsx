@@ -18,11 +18,24 @@ const MapSearch = ({
   searchResults,
   nearbyPlaces,
   selectedPlace,
-  onSelectPlace
+  onSelectPlace,
+  fetchNearbyPlaces,
 }) => {
   const mapRef = useRef(null);
+  const [clickLocation, setClickLocation] = useState(null);
+  const [radius, setRadius] = useState(5000);
   const [directions, setDirections] = useState(null);
   const [hoveredMarkerId, setHoveredMarkerId] = useState(null);
+
+  const handleMapClick = (event) => {
+    const { latLng } = event;
+    const clickedLat = latLng.lat();
+    const clickedLng = latLng.lng();
+
+    // อัปเดตตำแหน่งวงกลมและดึงสถานที่ใกล้เคียง
+    setClickLocation({ lat: clickedLat, lng: clickedLng });
+    fetchNearbyPlaces(clickedLat, clickedLng, radius);
+  };
 
   const calculateRoutes = useCallback(
     (origin, searchResults, nearbyPlaces) => {
@@ -145,11 +158,13 @@ const MapSearch = ({
         disableDefaultUI: false,
         clickableIcons: false,
       }}
+      onClick={handleMapClick} 
       onLoad={(map) => {
         mapRef.current = map;
       }}
     >
-      {userLocation && (
+        {/* วงกลมแสดงตำแหน่งปัจจุบันของผู้ใช้ */}
+        {userLocation && (
         <>
           <Marker
             position={userLocation}
@@ -161,16 +176,30 @@ const MapSearch = ({
           />
           <Circle
             center={userLocation}
-            radius={5000}
+            radius={radius}
             options={{
-              fillColor: "#FF8A65",
-              fillOpacity: 0.1,
-              strokeColor: "#FF7043",
-              strokeOpacity: 0.3,
+              fillColor: "#4FC3F7",
+              fillOpacity: 0.2,
+              strokeColor: "#0288D1",
+              strokeOpacity: 0.5,
               strokeWeight: 2,
             }}
           />
         </>
+      )}
+       {/* วงกลมแสดงตำแหน่งที่คลิกบนแผนที่ */}
+       {clickLocation && (
+        <Circle
+          center={clickLocation}
+          radius={radius}
+          options={{
+            fillColor: "#FF8A65",
+            fillOpacity: 0.1,
+            strokeColor: "#FF7043",
+            strokeOpacity: 0.3,
+            strokeWeight: 2,
+          }}
+        />
       )}
 
       {searchResults.map((place) => {

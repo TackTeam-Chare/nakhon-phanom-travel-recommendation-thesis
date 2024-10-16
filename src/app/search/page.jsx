@@ -113,10 +113,10 @@ const GeocodingSearchPage = () => {
   }, [isClient]);
   
 
-  const fetchNearbyPlaces = async (lat, lng) => {
+  const fetchNearbyPlaces = async (lat, lng, radius) => {
     try {
       setLoading(true);
-      const data = await fetchPlacesNearbyByCoordinates(lat, lng, 5000);
+      const data = await fetchPlacesNearbyByCoordinates(lat, lng,  radius);
       setNearbyPlaces(data);
     } catch (error) {
       console.error("Error fetching nearby places:", error);
@@ -535,6 +535,7 @@ const GeocodingSearchPage = () => {
             selectedPlace={selectedPlace}
             onSelectPlace={setSelectedPlace}
             clearSearch={clearSearch}
+            fetchNearbyPlaces={fetchNearbyPlaces}
           />
         )}
       </div>
