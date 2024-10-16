@@ -1,4 +1,4 @@
-"use client"; // บังคับให้รันในฝั่งไคลเอนต์
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -7,7 +7,6 @@ import {
   Bars3Icon,
   ChevronDownIcon,
   XMarkIcon,
-  HomeIcon,
   MagnifyingGlassIcon,
   MapIcon,
   ClockIcon,
@@ -99,11 +98,6 @@ export default function Header() {
                 icon: MagnifyingGlassIcon,
                 text: "ค้นหาสถานที่"
               },
-              {
-                href: "/dashboard/views",
-                icon: EyeIcon,
-                text: "ดูสถานที่"
-              }
             ].map((item, index) => (
               <a
                 key={index}
@@ -114,60 +108,6 @@ export default function Header() {
                 {item.text}
               </a>
             ))}
-
-            {/* Place Management Dropdown */}
-            <Popover className="relative">
-              <Popover.Button className="flex items-center text-lg hover:text-white text-white border border-white-500 bg-transparent hover:bg-orange-600 transition duration-300 ease-in-out transform hover:scale-105 rounded-lg px-3 py-2">
-                <MapIcon className="h-5 w-5 mr-2" />
-                สถานที่
-                <ChevronDownIcon className="ml-1 h-5 w-5" />
-              </Popover.Button>
-              <Popover.Panel className="absolute left-0 z-10 mt-2 w-56 rounded-lg bg-orange-500 text-white shadow-lg">
-                <div className="py-2">
-                  {[
-                    {
-                      href: "/dashboard/places/season-real-time",
-                      icon: SunIcon,
-                      text: "ฤดูกาลนี้"
-                    },
-                    {
-                      href: "/dashboard/places",
-                      icon: BuildingOfficeIcon,
-                      text: "สถานที่ทั้งหมด"
-                    },
-                    {
-                      href: "/dashboard/places/tourist-attractions",
-                      icon: MapIcon,
-                      text: "สถานที่ท่องเที่ยว"
-                    },
-                    {
-                      href: "/dashboard/places/accommodations",
-                      icon: BuildingStorefrontIcon,
-                      text: "ที่พัก"
-                    },
-                    {
-                      href: "/dashboard/places/restaurants",
-                      icon: GiftIcon,
-                      text: "ร้านอาหาร"
-                    },
-                    {
-                      href: "/dashboard/places/souvenir-shops",
-                      icon: ShoppingBagIcon,
-                      text: "ร้านค้าของฝาก"
-                    }
-                  ].map((item, index) => (
-                    <a
-                      key={index}
-                      href={item.href}
-                      className="flex items-center rounded-lg py-2 px-4 hover:bg-orange-600 hover:text-white transition duration-300 ease-in-out transform hover:scale-105"
-                    >
-                      <item.icon className="h-5 w-5 mr-2" />
-                      {item.text}
-                    </a>
-                  ))}
-                </div>
-              </Popover.Panel>
-            </Popover>
 
             {/* Data Management Dropdown */}
             <Popover className="relative">
@@ -292,11 +232,6 @@ export default function Header() {
               {[
                 { href: "/dashboard", icon: ChartBarIcon, text: "หน้าเเรก" },
                 { href: "/dashboard/search", icon: MagnifyingGlassIcon, text: "ค้นหาสถานที่" },
-                {
-                  href: "/dashboard/views",
-                  icon: EyeIcon,
-                  text: "ดูสถานที่"
-                }
               ].map((item, index) => (
                 <a
                   key={index}
@@ -307,60 +242,6 @@ export default function Header() {
                   {item.text}
                 </a>
               ))}
-
-              {/* Mobile Place Management Dropdown */}
-              <Disclosure as="div">
-                <Disclosure.Button className="group flex justify-center items-center w-full rounded-lg py-2 px-4 text-lg hover:text-white text-white border border-white-500 bg-transparent hover:bg-orange-600 duration-300 ease-in-out transform hover:scale-105">
-                  <MapIcon className="h-5 w-5 mr-2" />
-                  สถานที่
-                  <ChevronDownIcon className="h-5 w-5 group-data-[open]:rotate-180 transition duration-300 ease-in-out" />
-                </Disclosure.Button>
-
-                <Disclosure.Panel className="mt-2 space-y-2">
-                  {[
-                    {
-                      href: "/dashboard/places/season-real-time",
-                      icon: SunIcon,
-                      text: "ฤดูกาลนี้",
-                    },
-                    {
-                      href: "/dashboard/places",
-                      icon: BuildingOfficeIcon,
-                      text: "สถานที่ทั้งหมด",
-                    },
-                    {
-                      href: "/dashboard/places/tourist-attractions",
-                      icon: MapIcon,
-                      text: "สถานที่ท่องเที่ยว",
-                    },
-                    {
-                      href: "/dashboard/places/accommodations",
-                      icon: BuildingStorefrontIcon,
-                      text: "ที่พัก",
-                    },
-                    {
-                      href: "/dashboard/places/restaurants",
-                      icon: GiftIcon,
-                      text: "ร้านอาหาร",
-                    },
-                    {
-                      href: "/dashboard/places/souvenir-shops",
-                      icon: ShoppingBagIcon,
-                      text: "ร้านค้าของฝาก",
-                    },
-                  ].map((item, index) => (
-                    <a
-                      key={index}
-                      href={item.href}
-                      className="flex justify-center items-center text-lg text-white border border-white-500 bg-transparent hover:bg-orange-600 rounded-md px-4 py-2 transition duration-300 ease-in-out transform hover:scale-105"
-                    >
-                      <item.icon className="h-5 w-5 mr-2" />
-                      {item.text}
-                    </a>
-                  ))}
-                </Disclosure.Panel>
-              </Disclosure>
-
               {/* Mobile Data Management Dropdown */}
               <Disclosure as="div">
                 <Disclosure.Button className="group flex justify-center items-center w-full rounded-lg py-2 px-4 text-lg hover:text-white text-white border border-white-500 bg-transparent hover:bg-orange-600 duration-300 ease-in-out transform hover:scale-105">

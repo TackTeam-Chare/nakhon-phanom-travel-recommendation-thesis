@@ -14,6 +14,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import AddPlacesModal from "@/components/Dashboard/Modal/Add/AddPlacesModal";
 import EditPlaceModal from "@/components/Dashboard/Modal/Edit/EditPlaceModal";
+import PlaceDetailsModal from "@/components/Dashboard/Modal/View/PlaceDetailsModal";
 
 const MySwal = withReactContent(Swal);
 
@@ -30,28 +31,18 @@ import {
   faArrowLeft,
   faArrowRight,
   faMapMarkerAlt,
-  faUtensils,
   faSnowflake,
   faCheckCircle,
   faTimesCircle,
-  faUmbrellaBeach,
-  faBed,
-  faShoppingBag,
-  faChevronUp,
   faChevronDown,
-  faQuestionCircle,
+  faChevronUp 
 } from "@fortawesome/free-solid-svg-icons";
-
-const categoryStyles = {
-  "สถานที่ท่องเที่ยว": { icon: faUmbrellaBeach, color: "text-blue-600" },
-  "ที่พัก": { icon: faBed, color: "text-green-600" },
-  "ร้านอาหาร": { icon: faUtensils, color: "text-red-600" },
-  "ร้านค้าของฝาก": { icon: faShoppingBag, color: "text-orange-600" },
-};
 
 const PlaceIndexPage = () => {
   const [places, setPlaces] = useState([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [detailsPlaceId, setDetailsPlaceId] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editPlaceId, setEditPlaceId] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -105,12 +96,8 @@ const PlaceIndexPage = () => {
     setSelectedCategory(categoryId);
   };
 
-  const getCategoryStyle = (categoryName) => {
-    return categoryStyles[categoryName] || { icon: faQuestionCircle, color: "text-gray-500" };
-  };
-
-   // ฟังก์ชันสำหรับอัปเดตสถานที่ใหม่
-   const handleUpdatePlaces = async () => {
+  // ฟังก์ชันสำหรับอัปเดตสถานที่ใหม่
+  const handleUpdatePlaces = async () => {
     const result = await getPlaces();
     setPlaces(result);
   };
@@ -130,15 +117,11 @@ const PlaceIndexPage = () => {
       {
         Header: "ชื่อ",
         accessor: "name",
-        Cell: ({ row, cell: { value } }) => {
-          const { icon, color } = getCategoryStyle(row.original.category_name);
-          return (
-            <span className={`font-medium text-lg ${color}`}>
-              <FontAwesomeIcon icon={icon} className="mr-2" />
-              {value}
-            </span>
-          );
-        },
+        Cell: ({ cell: { value } }) => (
+          <span className="font-bold text-lg">
+            {value}
+          </span>
+        ),
       },
       {
         Header: "ฤดูกาล",
@@ -177,6 +160,16 @@ const PlaceIndexPage = () => {
         Header: "การดำเนินการ",
         Cell: ({ row }) => (
           <div className="flex space-x-2">
+           <button
+            onClick={() => {
+              setDetailsPlaceId(row.original.id);
+              setIsDetailsModalOpen(true);
+            }}
+            className="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition duration-300 ease-in-out flex items-center"
+          >
+            <FontAwesomeIcon icon={faSearch} className="mr-2" />
+            ดู
+          </button>
             <button
               onClick={() => {
                 setEditPlaceId(row.original.id.toString());
@@ -354,7 +347,12 @@ const PlaceIndexPage = () => {
           </button>
         </div>
       </div>
-
+            
+      <PlaceDetailsModal
+        id={detailsPlaceId}
+        isOpen={isDetailsModalOpen}
+        onClose={() => setIsDetailsModalOpen(false)}
+      />
       {isAddModalOpen && (
         <AddPlacesModal
           isOpen={isAddModalOpen}
