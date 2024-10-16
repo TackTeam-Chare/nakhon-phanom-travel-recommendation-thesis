@@ -14,7 +14,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import AddPlacesModal from "@/components/Dashboard/Modal/Add/AddPlacesModal";
 import EditPlaceModal from "@/components/Dashboard/Modal/Edit/EditPlaceModal";
-import PlaceDetailsModal from "@/components/Dashboard/Modal/View/PlaceDetailsModal";
+import PlaceDetailsModal from "@/components/Dashboard/Modal/Views/PlaceDetailsModal";
 
 const MySwal = withReactContent(Swal);
 
