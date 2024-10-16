@@ -22,7 +22,7 @@ import {
   faChevronDown,
   faChevronUp 
 } from "@fortawesome/free-solid-svg-icons"
-import { faImage } from "@fortawesome/free-regular-svg-icons"
+
 import Select from 'react-select';
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
@@ -69,12 +69,9 @@ const PlaceDetailsModal = ({ id, isOpen, onClose, onSuccess }) => {
     control,
     name: "operating_hours"
   })
-  const [isLoading, setIsLoading] = useState(true);
   const [districts, setDistricts] = useState([])
   const [categories, setCategories] = useState([])
   const [existingImages, setExistingImages] = useState([])
-  const [uploadedFiles, setUploadedFiles] = useState([])
-  const [submitting, setSubmitting] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState({
     district: false,
     category: false,
