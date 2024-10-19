@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useCallback, useRef, useState, useEffect } from "react";
 import { FaMapMarkerAlt, FaInfoCircle, FaDirections, FaRoute, FaTag } from "react-icons/fa"; 
 import {
@@ -13,41 +13,28 @@ import Link from "next/link";
 
 const MapNearbyPlaces = ({ center, places, mainPlace, isLoaded }) => {
   const mapRef = useRef(null);
-  const [selectedEntity, setSelectedEntity] = useState(null);
+  // const [selectedEntity, setSelectedEntity] = useState(null);
+  const [selectedEntity, setSelectedEntity] = useState(mainPlace); 
   const [hoveredMarkerId, setHoveredMarkerId] = useState(null);
   const [directions, setDirections] = useState(null);
-
+  const [userLocation, setUserLocation] = useState(null);
+  
   const onMapLoad = useCallback((map) => {
     mapRef.current = map;
   }, []);
-
+  
   const calculateRoutes = useCallback(() => {
-    if (!isLoaded || !window.google || !window.google.maps || !mapRef.current)
-      return;
+    if (!userLocation || !selectedEntity || !window.google || !window.google.maps) return;
 
     const directionsService = new window.google.maps.DirectionsService();
-    const destinations = places;
-
-    if (destinations.length === 0) return;
-
     directionsService.route(
       {
-        origin: center,
-        destination: destinations[0]
-          ? {
-              lat: Number(destinations[0].latitude),
-              lng: Number(destinations[0].longitude)
-            }
-          : center,
+        origin: userLocation,
+        destination: {
+          lat: Number(selectedEntity.latitude),
+          lng: Number(selectedEntity.longitude),
+        },
         travelMode: google.maps.TravelMode.DRIVING,
-        waypoints: destinations.slice(1).map((place) => ({
-          location: {
-            lat: Number(place.latitude),
-            lng: Number(place.longitude)
-          },
-          stopover: true
-        })),
-        optimizeWaypoints: true
       },
       (result, status) => {
         if (status === google.maps.DirectionsStatus.OK) {
@@ -57,26 +44,47 @@ const MapNearbyPlaces = ({ center, places, mainPlace, isLoaded }) => {
         }
       }
     );
-  }, [isLoaded, center, places]);
+  }, [userLocation, isLoaded, selectedEntity]);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => console.error("Error fetching location:", error),
+        { enableHighAccuracy: true }
+      );
+    }
+  }, []);
 
   useEffect(() => {
     calculateRoutes();
-  }, [calculateRoutes]);
+  }, [selectedEntity,calculateRoutes]);
 
   if (!isLoaded) {
     return <div>Loading Maps...</div>;
   }
 
+  const handleMarkerClick = (entity) => {
+    setSelectedEntity(entity); // เปลี่ยนปลายทางเป็นสถานที่ที่คลิก
+    if (mapRef.current) {
+      mapRef.current.panTo({ lat: Number(entity.latitude), lng: Number(entity.longitude) }); // ซูมไปยังสถานที่
+      mapRef.current.setZoom(16); // ปรับระดับการซูม
+    }
+  };
   const convertMetersToKilometers = (meters) => {
     return (meters / 1000).toFixed(2);
   };
-
 
   return (
     <div className="w-full h-[300px] md:h-[400px] lg:h-[500px] xl:h-[600px] rounded-lg shadow-md overflow-hidden">
       <GoogleMap
         mapContainerStyle={{ width: "100%", height: "100%" }}
-        center={center}
+        center={userLocation || center}
         zoom={14}
         options={{
           disableDefaultUI: true,
@@ -121,6 +129,15 @@ const MapNearbyPlaces = ({ center, places, mainPlace, isLoaded }) => {
         }}
         onLoad={onMapLoad}
       >
+          {/* Marker for User Location */}
+          {userLocation && (
+          <MarkerF
+            position={userLocation}
+            icon={{ url: "/icons/user.png", scaledSize: new window.google.maps.Size(50, 50) }}
+            title="Your Location"
+            animation={google.maps.Animation.BOUNCE} 
+          />
+        )}
         {/* Main Place Marker */}
         <MarkerF
           position={center}
@@ -153,11 +170,10 @@ const MapNearbyPlaces = ({ center, places, mainPlace, isLoaded }) => {
                 ? google.maps.Animation.BOUNCE
                 : undefined
             }
-            onClick={() => setSelectedEntity(entity)}
+            onClick={() => handleMarkerClick(entity)}
           />
         ))}
 
-        {/* Directions Renderer */}
         {directions && (
           <DirectionsRenderer
             directions={directions}
@@ -167,7 +183,7 @@ const MapNearbyPlaces = ({ center, places, mainPlace, isLoaded }) => {
                 strokeOpacity: 0.8,
                 strokeWeight: 6
               },
-              suppressMarkers: true // ปิดการแสดง markers บนเส้นทาง
+              suppressMarkers: true 
             }}
           />
         )}

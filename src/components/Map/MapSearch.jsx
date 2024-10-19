@@ -27,53 +27,41 @@ const MapSearch = ({
   const [directions, setDirections] = useState(null);
   const [hoveredMarkerId, setHoveredMarkerId] = useState(null);
 
+  // ฟังก์ชันจัดการเมื่อคลิกบนแผนที่
   const handleMapClick = (event) => {
     const { latLng } = event;
     const clickedLat = latLng.lat();
     const clickedLng = latLng.lng();
 
-    // อัปเดตตำแหน่งวงกลมและดึงสถานที่ใกล้เคียง
+    // ลบวงกลมเก่าและสร้างวงกลมใหม่
     setClickLocation({ lat: clickedLat, lng: clickedLng });
+
+    // เรียก API เพื่อดึงสถานที่ใกล้เคียง
     fetchNearbyPlaces(clickedLat, clickedLng, radius);
   };
 
-  const calculateRoutes = useCallback(
-    (origin, searchResults, nearbyPlaces) => {
-      if (!isLoaded || !window.google || !window.google.maps) return;
+  const calculateRoutes = useCallback((origin, destination) => {
+    if (!isLoaded || !window.google || !window.google.maps) return;
 
-      const directionsService = new window.google.maps.DirectionsService();
-      const destinations = [...searchResults, ...nearbyPlaces];
-
-      directionsService.route(
-        {
-          origin,
-          destination: destinations[0]
-            ? {
-                lat: Number(destinations[0].latitude),
-                lng: Number(destinations[0].longitude),
-              }
-            : origin,
-          travelMode: google.maps.TravelMode.DRIVING,
-          waypoints: destinations.slice(1).map((place) => ({
-            location: {
-              lat: Number(place.latitude),
-              lng: Number(place.longitude),
-            },
-            stopover: true,
-          })),
-          optimizeWaypoints: true,
+    const directionsService = new window.google.maps.DirectionsService();
+    directionsService.route(
+      {
+        origin,
+        destination: {
+          lat: Number(destination.latitude),
+          lng: Number(destination.longitude)
         },
-        (result, status) => {
-          if (status === google.maps.DirectionsStatus.OK) {
-            setDirections(result);
-          } else {
-            console.error(`Error fetching directions: ${status}`);
-          }
+        travelMode: google.maps.TravelMode.DRIVING
+      },
+      (result, status) => {
+        if (status === google.maps.DirectionsStatus.OK) {
+          setDirections(result);
+        } else {
+          console.error(`Error fetching directions: ${status}`);
         }
-      );
-    },
-    [isLoaded]
-  );
+      }
+    );
+  }, [isLoaded]);
 
   useEffect(() => {
     if (mapRef.current && userLocation) {
@@ -189,6 +177,15 @@ const MapSearch = ({
       )}
        {/* วงกลมแสดงตำแหน่งที่คลิกบนแผนที่ */}
        {clickLocation && (
+             <>
+          <Marker
+            position={clickLocation}
+            icon={{
+              url: "/icons/tap.png",
+              scaledSize: new window.google.maps.Size(40, 40),
+            }}
+            animation={google.maps.Animation.BOUNCE}
+          />
         <Circle
           center={clickLocation}
           radius={radius}
@@ -200,6 +197,7 @@ const MapSearch = ({
             strokeWeight: 2,
           }}
         />
+         </>
       )}
 
       {searchResults.map((place) => {
@@ -222,7 +220,10 @@ const MapSearch = ({
             animation={hoveredMarkerId === place.id ? google.maps.Animation.BOUNCE : null}
             onMouseOver={() => setHoveredMarkerId(place.id)}
             onMouseOut={() => setHoveredMarkerId(null)}
-            onClick={() => onSelectPlace(place)}
+            onClick={() => {
+              onSelectPlace(place);
+              calculateRoutes(userLocation, place);
+            }}
           />
         );
       })}
@@ -252,7 +253,10 @@ const MapSearch = ({
             }
             onMouseOver={() => setHoveredMarkerId(place.id)}
             onMouseOut={() => setHoveredMarkerId(null)}
-            onClick={() => onSelectPlace(place)}
+            onClick={() => {
+              onSelectPlace(place);
+              calculateRoutes(userLocation, place);
+            }}
           />
         );
       })}

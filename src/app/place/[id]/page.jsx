@@ -28,7 +28,6 @@ import {
   FaChevronUp,
   FaRegClock,
   FaArrowRight,
-  FaTag,
   FaRoute,
   FaChevronLeft,
   FaChevronRight,
@@ -36,7 +35,10 @@ import {
 import { getNearbyFetchTourismData } from "@/services/user/api";
 import Swal from "sweetalert2";
 import { ClipLoader } from "react-spinners";
-import MapComponent from "@/components/Map/MapNearbyPlaces";
+import dynamic from "next/dynamic";
+const MapComponent = dynamic(() => import("@/components/Map/MapNearbyPlaces"), {
+  ssr: false
+});
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 

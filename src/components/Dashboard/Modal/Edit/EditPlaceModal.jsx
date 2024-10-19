@@ -143,16 +143,11 @@ const EditPlaceModal = ({ id, isOpen, onClose, onSuccess }) => {
       fetchData();
     }
   }, [id, setValue]);
-  
-
-  
-  
-  
-  
 
   const handleFileChange = event => {
     const files = Array.from(event.target.files || []);
-
+    const allowedExtensions = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    const maxFileSize = 20 * 1024 * 1024; // 20 MB
     // Limit the number of uploaded files to 10
     if (files.length > 10) {
       MySwal.fire({
@@ -163,11 +158,35 @@ const EditPlaceModal = ({ id, isOpen, onClose, onSuccess }) => {
       return;
     }
 
-    const uploaded = files.map(file => ({
+    const invalidFiles = files.filter(
+      (file) => !allowedExtensions.includes(file.type) || file.size > maxFileSize
+    );
+  
+    if (invalidFiles.length > 0) {
+      const errorMessage = invalidFiles
+        .map((file) => {
+          if (!allowedExtensions.includes(file.type)) {
+            return `ไฟล์ <b>${file.name}</b> ไม่ใช่ประเภทที่รองรับ (JPEG, JPG, PNG, GIF)`;
+          } else if (file.size > maxFileSize) {
+            return `ไฟล์ <b>${file.name}</b> มีขนาดเกิน 20MB`;
+          }
+        })
+        .join('<br />'); // ใช้ <br /> เพื่อเว้นบรรทัด
+  
+      MySwal.fire({
+        icon: "error",
+        title: "ไฟล์ไม่ถูกต้อง!",
+        html: errorMessage, // ใช้ html สำหรับข้อความหลายบรรทัด
+      });
+      return;
+    }
+  
+    // อัปเดตรูปภาพที่ผ่านการตรวจสอบแล้ว
+    const uploaded = files.map((file) => ({
       fileName: file.name,
-      previewUrl: URL.createObjectURL(file)
+      previewUrl: URL.createObjectURL(file),
     }));
-
+  
     setUploadedFiles(uploaded);
   };
 
@@ -390,7 +409,7 @@ const EditPlaceModal = ({ id, isOpen, onClose, onSuccess }) => {
       required: "กรุณากรอกคำอธิบาย",
       minLength: {
         value: 10,
-        message: "คำอธิบายต้องมีความยาวอย่างน้อย 10 ตัวอักษร" // ตรวจสอบว่าคำอธิบายต้องยาวอย่างน้อย 10 ตัวอักษร
+        message: "คำอธิบายต้องมีความยาวอย่างน้อย 10 ตัวอักษร"
       }
     })}
     rows={3}

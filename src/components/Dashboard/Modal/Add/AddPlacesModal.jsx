@@ -131,23 +131,53 @@ const CreatePlaceModal = ({ isOpen, onClose,onSuccess  }) => {
     }
   };
 
-  const handleFileChange = event => {
-    const files = Array.from(event.target.files || [])
+  const handleFileChange = (event) => {
+    const files = Array.from(event.target.files || []);
+    const allowedExtensions = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    const maxFileSize = 20 * 1024 * 1024; // 20 MB
+  
+    // ตรวจสอบจำนวนไฟล์
     if (files.length > 10) {
       MySwal.fire({
         icon: "warning",
         title: "อัพโหลดสูงสุด 10 รูปภาพ",
-        text: "คุณสามารถอัพโหลดภาพได้สูงสุด 10 ภาพเท่านั้น"
-      })
-      return
+        text: "คุณสามารถอัพโหลดภาพได้สูงสุด 10 ภาพเท่านั้น",
+      });
+      return;
     }
-    const filePreviews = files.map(file => ({
+  
+    const invalidFiles = files.filter(
+      (file) =>
+        !allowedExtensions.includes(file.type) || file.size > maxFileSize
+    );
+  
+    if (invalidFiles.length > 0) {
+      const errorMessage = invalidFiles
+        .map((file) => {
+          if (!allowedExtensions.includes(file.type)) {
+            return `ไฟล์ "${file.name}" ไม่ใช่ประเภทที่รองรับ (JPEG, JPG, PNG, GIF)`;
+          } else if (file.size > maxFileSize) {
+            return `ไฟล์ "${file.name}" มีขนาดเกิน 20MB`;
+          }
+        })
+        .join('\n');
+  
+      MySwal.fire({
+        icon: "error",
+        title: "ไฟล์ไม่ถูกต้อง!",
+        text: errorMessage,
+      });
+      return;
+    }
+  
+    const filePreviews = files.map((file) => ({
       file,
       previewUrl: URL.createObjectURL(file),
-      name: file.name
-    }))
-    setUploadedFiles(filePreviews)
-  }
+      name: file.name,
+    }));
+    setUploadedFiles(filePreviews);
+  };
+  
 
   const handleImageClick = url => {
     setSelectedImage(url)
@@ -690,7 +720,7 @@ const CreatePlaceModal = ({ isOpen, onClose,onSuccess  }) => {
                             <p className="pl-1">หรือลากและวาง</p>
                           </div>
                           <p className="text-xs leading-5 text-gray-600">
-                            PNG, JPG, GIF สูงสุด 10MB
+                            PNG, JPG, GIF สูงสุด 20MB
                           </p>
                           <p className="text-xs leading-5 text-red-600">
                             คุณสามารถอัพโหลดภาพได้ไม่เกิน 10 ภาพ

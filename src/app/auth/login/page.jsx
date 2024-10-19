@@ -27,10 +27,10 @@ const AdminLogin = () => {
     try {
       const response = await login(data); // `data` contains `username` and `password`
       console.log("Login successful:", response);
-
+  
       // Store token in cookies
       Cookies.set("token", response.token, { expires: 7 }); // Token lasts for 7 days
-
+  
       MySwal.fire({
         icon: "success",
         title: "เข้าสู่ระบบสำเร็จ!",
@@ -41,13 +41,25 @@ const AdminLogin = () => {
       });
     } catch (error) {
       console.error("Login failed:", error);
-      MySwal.fire({
-        icon: "error",
-        title: "เข้าสู่ระบบล้มเหลว",
-        text: "กรุณาลองอีกครั้ง",
-      });
+  
+      if (error.response && error.response.status === 401) {
+        // แสดงข้อความแจ้งเตือนว่าชื่อผู้ใช้หรือรหัสผ่านผิด
+        MySwal.fire({
+          icon: "error",
+          title: "เข้าสู่ระบบล้มเหลว",
+          text: "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง!",
+        });
+      } else {
+        // แสดงข้อความแจ้งเตือนเมื่อเกิดข้อผิดพลาดอื่น ๆ
+        MySwal.fire({
+          icon: "error",
+          title: "เกิดข้อผิดพลาด",
+          text: "กรุณาลองอีกครั้งในภายหลัง",
+        });
+      }
     }
   };
+  
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
