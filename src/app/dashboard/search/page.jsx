@@ -1,6 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import dynamic from "next/dynamic";
+import React, { useState, useEffect,useCallback } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -16,37 +15,28 @@ import {
   FaCalendarAlt,
   FaLayerGroup,
   FaLeaf,
-  FaRoute,
   FaSun,
   FaCloudRain,
   FaSnowflake,
   FaGlobe,
   FaChevronDown,
-  FaChevronUp 
+  FaChevronUp ,
+  FaEdit, FaTrashAlt,FaPlus 
 } from "react-icons/fa";
-import { Circles } from "react-loader-spinner";
-import Link from "next/link";
 import "react-toastify/dist/ReactToastify.css";
 import {
-  fetchPlacesNearbyByCoordinates,
   searchTouristEntitiesUnified,
   fetchAllFilters
 } from "@/services/admin/dashboard/general/routes";
 import Image from "next/image";
-import { useJsApiLoader } from "@react-google-maps/api";
-
-const MapComponent = dynamic(() => import("@/components/Dashboard/Map/MapSearch"), {
-  ssr: false
-});
-
-const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-const Tooltip = dynamic(() => import("react-tooltip"), { ssr: false });
+import { deletePlace } from "@/services/admin/delete";
+import AddPlacesModal from "@/components/Dashboard/Modal/Add/AddPlacesModal";
+import EditPlaceModal from "@/components/Dashboard/Modal/Edit/EditPlaceModal";
+import MySwal from "sweetalert2";
 
 const GeocodingSearchPage = () => {
-  const [userLocation, setUserLocation] = useState(null);
   const [nearbyPlaces, setNearbyPlaces] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
-  const [selectedPlace, setSelectedPlace] = useState(null);
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
     seasons: [],
@@ -59,17 +49,13 @@ const GeocodingSearchPage = () => {
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [isDistrictDropdownOpen, setIsDistrictDropdownOpen] = useState(false); 
   const [selectedDay, setSelectedDay] = useState(null);
-  const [isTimeFilterVisible, setIsTimeFilterVisible] = useState(false); 
-  const [mapCenter, setMapCenter] = useState({ lat: 0, lng: 0 });
-  const [isClient, setIsClient] = useState(false);
+  const [isTimeFilterVisible, setIsTimeFilterVisible] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isSeasonEnabled, setIsSeasonEnabled] = useState(true);
-
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: GOOGLE_MAPS_API_KEY
-  });
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editPlaceId, setEditPlaceId] = useState(null);
 
   useEffect(() => {
-    setIsClient(true);
     const loadFilters = async () => {
       try {
         const data = await fetchAllFilters();
@@ -82,63 +68,11 @@ const GeocodingSearchPage = () => {
     loadFilters();
   }, []);
 
-  
-  useEffect(() => {
-    if (!isClient) return;
-  
-    const updateLocation = () => {
-      setLoading(true);
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-  
-          // Log the user's location to the console
-          console.log(`User's location: Latitude ${latitude}, Longitude ${longitude}`);
-  
-          // Set the user's location in state
-          setUserLocation({ lat: latitude, lng: longitude });
-  
-          // Fetch nearby places based on user's location
-          fetchNearbyPlaces(latitude, longitude);
-          setLoading(false);
-        },
-        (error) => {
-          console.error("Error getting user's location:", error);
-          setLoading(false);
-        }
-      );
-    };
-  
-    updateLocation();
-  }, [isClient]);
-  
-
-  const fetchNearbyPlaces = async (lat, lng) => {
-    try {
-      setLoading(true);
-      const data = await fetchPlacesNearbyByCoordinates(lat, lng, 5000);
-      setNearbyPlaces(data);
-    } catch (error) {
-      console.error("Error fetching nearby places:", error);
-      setNearbyPlaces([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const searchPlaces = async (params) => {
     try {
       setLoading(true);
       const data = await searchTouristEntitiesUnified(params);
       setSearchResults(data);
-
-      if (data.length > 0) {
-        const firstResult = data[0];
-        setMapCenter({
-          lat: Number(firstResult.latitude),
-          lng: Number(firstResult.longitude)
-        });
-      }
     } catch (error) {
       console.error("Error searching places:", error);
       setSearchResults([]);
@@ -186,37 +120,6 @@ const GeocodingSearchPage = () => {
       setSelectedDay(value);
     }
   };
-  
-
-   const handleCurrentLocationClick = () => {
-    if (!navigator.geolocation) {
-      console.error("Geolocation is not supported by this browser.");
-      return;
-    }
-
-    setLoading(true);
-
-    // Request permission to access location
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        console.log(`User's updated location: Latitude ${latitude}, Longitude ${longitude}`);
-
-        // Update the user's location state and map center
-        setUserLocation({ lat: latitude, lng: longitude });
-        setMapCenter({ lat: latitude, lng: longitude });
-
-        // Fetch nearby places based on the updated location
-        fetchNearbyPlaces(latitude, longitude);
-
-        setLoading(false);
-      },
-      (error) => {
-        console.error("Error getting user's location:", error);
-        setLoading(false);
-      }
-    );
-  };
 
   const clearSearch = () => {
     setSearchParams({});
@@ -227,9 +130,6 @@ const GeocodingSearchPage = () => {
     setSelectedDistrict(null);
     setSelectedDay(null);
     setIsTimeFilterVisible(false);
-    if (userLocation) {
-      setMapCenter(userLocation);
-    }
   };
 
   const resetTogglesAndSearch = () => {
@@ -263,41 +163,46 @@ const GeocodingSearchPage = () => {
     ]
   };
 
-  
-  const categorizePlaces = (categoryId) => {
-    return nearbyPlaces.filter((place) => place.category_id === categoryId);
-  };
-
-  const convertMetersToKilometers = (meters) => {
-    if (!meters && meters !== 0) {
-      return "ไม่ทราบระยะทาง";  // ในกรณีที่ meters เป็น null หรือ undefined
-    }
-  
-    if (meters >= 1000) {
-      return (meters / 1000).toFixed(2) + ' กิโลเมตร';
-    }
-    return meters.toFixed(0) + ' เมตร';
-  };
-
   const removeDuplicates = (places) => {
     return places.filter((place, index, self) =>
       index === self.findIndex((p) => p.id === place.id && p.name === place.name)
     );
   };
+
+  const handleDelete = useCallback(async (id) => {
+    const result = await MySwal.fire({
+      title: "คุณแน่ใจหรือไม่?",
+      text: "คุณต้องการลบสถานที่นี้ใช่ไหม?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "ใช่, ลบเลย!",
+      cancelButtonText: "ยกเลิก",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        await deletePlace(id);
+        setSearchResults((prevResults) =>
+          prevResults.filter((place) => place.id !== id)
+        );
+        MySwal.fire("ลบสำเร็จ!", "สถานที่ถูกลบแล้ว.", "success");
+      } catch (error) {
+        console.error(`Error deleting place with ID ${id}:`, error);
+        MySwal.fire("Error", "เกิดข้อผิดพลาดในการลบสถานที่ กรุณาลองใหม่อีกครั้ง", "error");
+      }
+    }
+  }, []);
+  
+  const handleUpdatePlaces = () => {
+    searchPlaces(searchParams);
+  };
+
   return (
     <div className="container mx-auto p-4 relative">
-      {/* Search Bar and Buttons */}
       <div className="flex flex-col lg:flex-row items-center justify-center mb-6">
         <div className="relative w-full lg:max-w-md mx-auto flex items-center justify-center mb-4 lg:mb-0">
-          <button
-            onClick={handleCurrentLocationClick}
-            className="bg-orange-500 text-white p-3 rounded-full hover:bg-orange-600 transition duration-300"
-            aria-label="Check current location"
-            data-tip="เช็คพิกัดปัจจุบัน"
-          >
-            <FaMapMarkerAlt />
-          </button>
-          <Tooltip place="top" type="dark" effect="solid" />
           <div className="relative w-full max-w-full lg:max-w-md mx-4">
             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-500" />
             <input
@@ -321,7 +226,15 @@ const GeocodingSearchPage = () => {
               </button>
             ) : null}
           </div>
+
         </div>
+        <button
+          onClick={() => setIsAddModalOpen(true)}
+          className="bg-orange-500 text-white flex items-center space-x-2 px-4 py-2 rounded hover:bg-orange-600 transition duration-300"
+        >
+          <FaPlus className="text-lg" />
+          <span>เพิ่มสถานที่ใหม่</span>
+        </button>
       </div>
 
       {/* Toggle Buttons for Categories, Seasons, Districts, and Days */}
@@ -511,34 +424,6 @@ const GeocodingSearchPage = () => {
         )}
       </div>
 
-      {/* Loading Spinner */}
-      {loading && (
-  <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50">
-    <Circles
-      height="80"
-      width="80"
-      color="#FF7043"
-      ariaLabel="loading-indicator"
-    />
-  </div>
-)}
-
-      {/* MapComponent Integration */}
-      <div className={`w-full h-96 mb-6 ${loading ? "blur-sm" : ""}`}>
-        {isClient && (
-          <MapComponent
-            isLoaded={isLoaded}
-            userLocation={userLocation}
-            mapCenter={mapCenter}
-            searchResults={searchResults}
-            nearbyPlaces={nearbyPlaces}
-            selectedPlace={selectedPlace}
-            onSelectPlace={setSelectedPlace}
-            clearSearch={clearSearch}
-          />
-        )}
-      </div>
-
       {/* Display search query and results count */}
       <div className="mt-4">
         {searchParams.q && (
@@ -569,7 +454,6 @@ const GeocodingSearchPage = () => {
     {/* ตรวจสอบว่ามีเพียง 1 ผลลัพธ์ และแสดง card เดียว */}
     {removeDuplicates(searchResults).length === 1 ? (
       removeDuplicates(searchResults).map((place) => (
-        <Link href={`/place/${place.id}`} key={place.id}>
           <div className="p-4 cursor-pointer">
             <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full max-w-sm mx-auto">
               <Image
@@ -579,77 +463,93 @@ const GeocodingSearchPage = () => {
                 height={300}
                 className="w-full h-48 object-cover"
               />
-              <div className="p-4">
+              <div className="p-4 flex-1">
                 <h3 className="text-xl font-semibold mb-2">{place.name}</h3>
               </div>
+              <div className="p-4 flex justify-between">
+              <button
+        onClick={() => {
+          setEditPlaceId(place.id);
+          setIsEditModalOpen(true);
+        }}
+        className="bg-blue-500 text-white flex items-center space-x-2 px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
+      >
+        <FaEdit className="text-lg" />
+        <span>แก้ไข</span>
+      </button>
+
+
+      <button
+        onClick={() => handleDelete(place.id)}
+        className="bg-red-500 text-white flex items-center space-x-2 px-4 py-2 rounded hover:bg-red-600 transition duration-300"
+      >
+        <FaTrashAlt className="text-lg" />
+        <span>ลบ</span>
+      </button>
+      </div>
             </div>
           </div>
-        </Link>
       ))
     ) : (
       <Slider {...settings}>
-        {removeDuplicates(searchResults).map((place) => (
-          <Link href={`/place/${place.id}`} key={place.id}>
-            <div className="p-4 cursor-pointer">
-              <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full">
-                <Image
-                  src={place.images && place.images[0]?.image_url ? place.images[0].image_url : "/default-image.jpg"}
-                  alt={place.name}
-                  width={500}
-                  height={300}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-4">
-                  <h3 className="text-xl font-semibold mb-2">{place.name}</h3>
-                </div>
-              </div>
-            </div>
-          </Link>
-        ))}
+       {removeDuplicates(searchResults).map((place) => (
+  <div key={place.id} className="p-4 cursor-pointer">
+    <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full relative">
+      <Image
+        src={place.images?.[0]?.image_url || "/default-image.jpg"}
+        alt={place.name}
+        width={500}
+        height={300}
+        className="w-full h-48 object-cover"
+      />
+      <div className="p-4 flex-1">
+        <h3 className="text-xl font-semibold mb-2">{place.name}</h3>
+      </div>
+      <div className="p-4 flex justify-between">
+      <button
+        onClick={() => {
+          setEditPlaceId(place.id);
+          setIsEditModalOpen(true);
+        }}
+        className="bg-blue-500 text-white flex items-center space-x-2 px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
+      >
+        <FaEdit className="text-lg" />
+        <span>แก้ไข</span>
+      </button>
+
+      <button
+        onClick={() => handleDelete(place.id)}
+        className="bg-red-500 text-white flex items-center space-x-2 px-4 py-2 rounded hover:bg-red-600 transition duration-300"
+      >
+        <FaTrashAlt className="text-lg" />
+        <span>ลบ</span>
+      </button>
+        
+      </div>
+    </div>
+  </div>
+))}
+
       </Slider>
     )}
   </div>
 )}
-
-
-
-
-
       </div>
-
-      {nearbyPlaces.length > 0 && searchResults.length === 0 && (
-  <div className="mb-8">
-    <h2 className="text-2xl font-bold text-orange-500 mb-4">
-      สถานที่ใกล้เคียง ({nearbyPlaces.length} สถานที่)
-    </h2>
-    <Slider {...settings}>
-      {removeDuplicates(nearbyPlaces).map((place) => (
-        <Link href={`/place/${place.id}`} key={place.id}>
-          <div className="p-4 cursor-pointer">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-95 transition duration-300 ease-in-out flex flex-col h-full">
-              <Image
-                src={place.images && place.images[0]?.image_url ? place.images[0].image_url : "/default-image.jpg"}
-                alt={place.name}
-                width={500}
-                height={300}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4">
-                <h3 className="text-xl font-semibold mb-2">{place.name}</h3>
-                <p className="text-orange-500 font-bold flex items-center">
-                  <FaRoute className="mr-2" />
-                  ระยะห่าง {convertMetersToKilometers(place.distance)}
-                </p>
-              </div>
-            </div>
-          </div>
-        </Link>
-      ))}
-    </Slider>
-  </div>
-)}
-
-
+      {isAddModalOpen && (
+        <AddPlacesModal
+          isOpen={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+          onSuccess={handleUpdatePlaces}
+        />
+      )}
+      {isEditModalOpen && editPlaceId && (
+        <EditPlaceModal
+          id={editPlaceId}
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onSuccess={handleUpdatePlaces}
+        />
+      )}
     </div>
   );
 };

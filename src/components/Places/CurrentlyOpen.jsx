@@ -9,13 +9,6 @@ import Link from "next/link";
 import { FaRoute } from "react-icons/fa";
 import { FaHotel, FaStore, FaUtensils, FaLandmark } from "react-icons/fa";
 
-const categoryIcons = {
-  "สถานที่ท่องเที่ยว": { icon: <FaLandmark />, color: "text-blue-500" },
-  "ที่พัก": { icon: <FaHotel />, color: "text-purple-500" },
-  "ร้านอาหาร": { icon: <FaUtensils />, color: "text-red-500" },
-  "ร้านค้าของฝาก": { icon: <FaStore />, color: "text-green-500" },
-};
-
 const responsive = {
   superLargeDesktop: {
     breakpoint: { max: 4000, min: 1024 },
@@ -64,12 +57,6 @@ const CurrentlyOpenTouristEntities = ({ latitude, longitude }) => {
       </div>
       <Carousel responsive={responsive} infinite autoPlay autoPlaySpeed={3000}>
         {places.map((place) => {
-          const category =
-            categoryIcons[place.category_name] || {
-              icon: <FaRoute />,
-              color: "text-gray-500",
-            };
-
           return (
             <div key={place.id} className="p-2 h-full flex">
               <Link href={`/place/${place.id}`} className="block w-full">
@@ -91,13 +78,9 @@ const CurrentlyOpenTouristEntities = ({ latitude, longitude }) => {
                 )}
                   <div className="p-4 flex-grow flex flex-col justify-between">
                     <div>
-                      <h3 className="text-lg font-semibold  text-orange-500 mb-2">
+                      <h3 className="text-lg font-bold  mb-2">
                         {place.name}
                       </h3>
-                      <p className={`flex items-center font-bold ${category.color}`}>
-                        {category.icon}
-                        <span className="ml-2">{place.category_name}</span>
-                      </p>
                     </div>
                   </div>
                 </div>

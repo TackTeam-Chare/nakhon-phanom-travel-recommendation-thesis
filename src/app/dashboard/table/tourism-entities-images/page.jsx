@@ -162,7 +162,7 @@ const ImagesIndexPage = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       <div className="container mx-auto bg-white p-8 rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold mb-4">รูปภาพทั้งหมด</h1>
+        <h1 className="text-2xl font-bold mb-4  text-center">รูปภาพสถานที่มีในระบบทั้งหมด</h1>
         <div className="flex justify-between items-center mb-4">
           <button
             onClick={() => setIsAddModalOpen(true)}
