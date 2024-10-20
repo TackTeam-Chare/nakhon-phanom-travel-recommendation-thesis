@@ -30,6 +30,7 @@ import {
 } from "@/services/admin/dashboard/general/routes";
 import Image from "next/image";
 import { deletePlace } from "@/services/admin/delete";
+import PlaceDetailsModal from "@/components/Dashboard/Modal/Views/PlaceDetailsModal";
 import AddPlacesModal from "@/components/Dashboard/Modal/Add/AddPlacesModal";
 import EditPlaceModal from "@/components/Dashboard/Modal/Edit/EditPlaceModal";
 import MySwal from "sweetalert2";
@@ -54,7 +55,8 @@ const GeocodingSearchPage = () => {
   const [isSeasonEnabled, setIsSeasonEnabled] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editPlaceId, setEditPlaceId] = useState(null);
-
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [detailsPlaceId, setDetailsPlaceId] = useState(null);
   useEffect(() => {
     const loadFilters = async () => {
       try {
@@ -466,27 +468,40 @@ const GeocodingSearchPage = () => {
               <div className="p-4 flex-1">
                 <h3 className="text-xl font-semibold mb-2">{place.name}</h3>
               </div>
-              <div className="p-4 flex justify-between">
-              <button
-        onClick={() => {
-          setEditPlaceId(place.id);
-          setIsEditModalOpen(true);
-        }}
-        className="bg-blue-500 text-white flex items-center space-x-2 px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
-      >
-        <FaEdit className="text-lg" />
-        <span>แก้ไข</span>
-      </button>
+              <div className="p-4 flex items-center justify-between">
+  <button
+    onClick={() => {
+      setDetailsPlaceId(place.id);
+      setIsDetailsModalOpen(true);
+    }}
+    className="bg-green-500 text-white flex items-center space-x-2 px-4 py-2 rounded hover:bg-green-600 transition duration-300"
+  >
+    <FaSearch className="text-lg" />
+    <span>ดูรายละเอียด</span>
+  </button>
 
+  <div className="flex space-x-2 ml-auto">
+    <button
+      onClick={() => {
+        setEditPlaceId(place.id);
+        setIsEditModalOpen(true);
+      }}
+      className="bg-blue-500 text-white flex items-center space-x-2 px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
+    >
+      <FaEdit className="text-lg" />
+      <span>แก้ไข</span>
+    </button>
 
-      <button
-        onClick={() => handleDelete(place.id)}
-        className="bg-red-500 text-white flex items-center space-x-2 px-4 py-2 rounded hover:bg-red-600 transition duration-300"
-      >
-        <FaTrashAlt className="text-lg" />
-        <span>ลบ</span>
-      </button>
-      </div>
+    <button
+      onClick={() => handleDelete(place.id)}
+      className="bg-red-500 text-white flex items-center space-x-2 px-4 py-2 rounded hover:bg-red-600 transition duration-300"
+    >
+      <FaTrashAlt className="text-lg" />
+      <span>ลบ</span>
+    </button>
+  </div>
+</div>
+
             </div>
           </div>
       ))
@@ -505,27 +520,40 @@ const GeocodingSearchPage = () => {
       <div className="p-4 flex-1">
         <h3 className="text-xl font-semibold mb-2">{place.name}</h3>
       </div>
-      <div className="p-4 flex justify-between">
-      <button
-        onClick={() => {
-          setEditPlaceId(place.id);
-          setIsEditModalOpen(true);
-        }}
-        className="bg-blue-500 text-white flex items-center space-x-2 px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
-      >
-        <FaEdit className="text-lg" />
-        <span>แก้ไข</span>
-      </button>
+      <div className="p-4 flex justify-between items-center">
+  <button
+    onClick={() => {
+      setDetailsPlaceId(place.id);
+      setIsDetailsModalOpen(true);
+    }}
+    className="bg-green-500 text-white flex items-center space-x-2 px-4 py-2 rounded hover:bg-green-600 transition duration-300"
+  >
+    <FaSearch className="text-lg" />
+    <span>ดูรายละเอียด</span>
+  </button>
 
-      <button
-        onClick={() => handleDelete(place.id)}
-        className="bg-red-500 text-white flex items-center space-x-2 px-4 py-2 rounded hover:bg-red-600 transition duration-300"
-      >
-        <FaTrashAlt className="text-lg" />
-        <span>ลบ</span>
-      </button>
-        
-      </div>
+  <div className="flex space-x-2 ml-auto">
+    <button
+      onClick={() => {
+        setEditPlaceId(place.id);
+        setIsEditModalOpen(true);
+      }}
+      className="bg-blue-500 text-white flex items-center space-x-2 px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
+    >
+      <FaEdit className="text-lg" />
+      <span>แก้ไข</span>
+    </button>
+
+    <button
+      onClick={() => handleDelete(place.id)}
+      className="bg-red-500 text-white flex items-center space-x-2 px-4 py-2 rounded hover:bg-red-600 transition duration-300"
+    >
+      <FaTrashAlt className="text-lg" />
+      <span>ลบ</span>
+    </button>
+  </div>
+</div>
+
     </div>
   </div>
 ))}
@@ -535,6 +563,12 @@ const GeocodingSearchPage = () => {
   </div>
 )}
       </div>
+
+      <PlaceDetailsModal
+        id={detailsPlaceId}
+        isOpen={isDetailsModalOpen}
+        onClose={() => setIsDetailsModalOpen(false)}
+      />
       {isAddModalOpen && (
         <AddPlacesModal
           isOpen={isAddModalOpen}
