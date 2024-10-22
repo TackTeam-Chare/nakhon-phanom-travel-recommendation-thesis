@@ -394,6 +394,7 @@ const GeocodingSearchPage = () => {
   </div>
 )}
 
+
 {isSeasonDropdownOpen && (
   <div className="absolute z-10 w-full bg-white border border-orange-500 rounded-md shadow-lg mt-1">
     {filters.seasons.map((season) => (

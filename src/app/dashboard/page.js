@@ -14,6 +14,7 @@ const DashboardPage = () => {
   });
 
   useEffect(() => {
+    let isMounted = true;
     const fetchData = async () => {
       try {
         const entities = await getEntityCounts();
@@ -24,6 +25,10 @@ const DashboardPage = () => {
     };
 
     fetchData();
+
+  return () => {
+    isMounted = false; // Cleanup เพื่อป้องกัน memory leaks
+  };
   }, []);
 
   const chartData = [
@@ -73,25 +78,39 @@ const DashboardPage = () => {
 </div>
 
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-          <div className="bg-white shadow-md rounded-lg p-6">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">จำนวนสถานที่ตามประเภท (BarChart)</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="value">
-                  {chartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                  <LabelList dataKey="value" position="top" formatter={(value) => `จำนวน: ${value}`} />
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+<div className="grid grid-cols-1 gap-8 mt-8">
+  <div className="bg-white shadow-md rounded-lg p-6">
+    <h2 className="text-xl font-semibold text-gray-700 mb-4">
+      จำนวนสถานที่ตามประเภท (BarChart)
+    </h2>
+    <div className="w-full h-96">
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart 
+          data={chartData} 
+          barSize={100}
+          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Bar dataKey="value">
+            {chartData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.color} />
+            ))}
+            <LabelList 
+              dataKey="value" 
+              position="top" 
+              formatter={(value) => `จำนวน: ${value}`} 
+            />
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  </div>
+</div>
+
+
       </div>
     </div>
   );
