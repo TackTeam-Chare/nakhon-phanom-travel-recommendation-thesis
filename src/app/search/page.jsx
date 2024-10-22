@@ -268,11 +268,6 @@ const GeocodingSearchPage = () => {
     ]
   };
 
-  
-  const categorizePlaces = (categoryId) => {
-    return nearbyPlaces.filter((place) => place.category_id === categoryId);
-  };
-
   const convertMetersToKilometers = (meters) => {
     if (!meters && meters !== 0) {
       return "ไม่ทราบระยะทาง";  // ในกรณีที่ meters เป็น null หรือ undefined
@@ -398,7 +393,6 @@ const GeocodingSearchPage = () => {
     ))}
   </div>
 )}
-
 
 {isSeasonDropdownOpen && (
   <div className="absolute z-10 w-full bg-white border border-orange-500 rounded-md shadow-lg mt-1">

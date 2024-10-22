@@ -48,7 +48,9 @@ const GeocodingSearchPage = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSeason, setSelectedSeason] = useState(null);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false); 
   const [isDistrictDropdownOpen, setIsDistrictDropdownOpen] = useState(false); 
+  const [isSeasonDropdownOpen, setIsSeasonDropdownOpen] = useState(false); 
   const [selectedDay, setSelectedDay] = useState(null);
   const [isTimeFilterVisible, setIsTimeFilterVisible] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -57,6 +59,8 @@ const GeocodingSearchPage = () => {
   const [editPlaceId, setEditPlaceId] = useState(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [detailsPlaceId, setDetailsPlaceId] = useState(null);
+  const [hasSearched, setHasSearched] = useState(false);
+
   useEffect(() => {
     const loadFilters = async () => {
       try {
@@ -73,6 +77,7 @@ const GeocodingSearchPage = () => {
   const searchPlaces = async (params) => {
     try {
       setLoading(true);
+      setHasSearched(true); 
       const data = await searchTouristEntitiesUnified(params);
       setSearchResults(data);
     } catch (error) {
@@ -244,23 +249,25 @@ const GeocodingSearchPage = () => {
         <button
           onClick={() => {
             resetTogglesAndSearch();
-            setSelectedCategory(prev => (prev ? null : "category"));
+            setIsCategoryDropdownOpen(prev => (prev ? null : "category"));
           }}
           className="border-2 border-orange-500 text-orange-500 rounded-full py-1 px-3 flex items-center justify-center"
         >
           <FaLayerGroup className="mr-2" /> ประเภทสถานที่
+          {isCategoryDropdownOpen ? <FaChevronUp className="ml-2" /> : <FaChevronDown className="ml-2" />}
         </button>
 
         {/* Disable/Enable Season button based on category */}
         <button
           onClick={() => {
             resetTogglesAndSearch();
-            setSelectedSeason(prev => (prev ? null : "season"));
+            setIsSeasonDropdownOpen(prev => (prev ? null : "season"));
           }}
           className={`border-2 border-orange-500 text-orange-500 rounded-full py-1 px-3 flex items-center justify-center ${!isSeasonEnabled ? "opacity-50 cursor-not-allowed" : ""}`}
           disabled={!isSeasonEnabled} // Disable if the season is not enabled
         >
           <FaLeaf className="mr-2" /> สถานที่ตามฤดูกาล
+          {isSeasonDropdownOpen ? <FaChevronUp className="ml-2" /> : <FaChevronDown className="ml-2" />}
         </button>
         <button
             onClick={() => {
@@ -285,54 +292,53 @@ const GeocodingSearchPage = () => {
   </button>
       </div>
 
-      {/* Category, Season, District, and Time Filters */}
-      {selectedCategory && (
-        <div className="flex flex-wrap gap-2 justify-center mb-4">
-          {filters.categories.map(category => (
-            <button
-              key={category.id}
-              className={`border-2 border-orange-500 text-orange-500 rounded-full py-1 px-3 flex items-center justify-center ${
-                searchParams.category === category.id
-                  ? "bg-orange-500 text-white"
-                  : ""
-              }`}
-              onClick={() => handleSearchByField("category", category.id)}
-            >
-              {category.name === "สถานที่ท่องเที่ยว" && (
-                <FaTree className="mr-2" />
-              )}
-              {category.name === "ที่พัก" && <FaHotel className="mr-2" />}
-              {category.name === "ร้านอาหาร" && <FaUtensils className="mr-2" />}
-              {category.name === "ร้านค้าของฝาก" && (
-                <FaStore className="mr-2" />
-              )}
-              {category.name}
-            </button>
-          ))}
-        </div>
-      )}
+      {isCategoryDropdownOpen && (
+  <div className="absolute z-10 w-full bg-white border border-orange-500 rounded-md shadow-lg mt-1">
+    {filters.categories.map((category) => (
+      <button
+        key={category.id}
+        className={`flex items-center w-full text-left py-2 px-4 text-sm space-x-2 ${
+          searchParams.category === category.id
+            ? "bg-orange-500 text-white"
+            : "text-orange-500"
+        } hover:bg-orange-100`}
+        onClick={() => handleSearchByField("category", category.id)}
+      >
+        {category.name === "สถานที่ท่องเที่ยว" && <FaTree />}
+        {category.name === "ที่พัก" && <FaHotel />}
+        {category.name === "ร้านอาหาร" && <FaUtensils />}
+        {category.name === "ร้านค้าของฝาก" && <FaStore />}
+        <span>{category.name}</span>
+      </button>
+    ))}
+  </div>
+)}
 
-      {selectedSeason && (
-        <div className="flex flex-wrap gap-2 justify-center mb-4">
-          {filters.seasons.map(season => (
-            <button
-              key={season.id}
-              className={`border-2 border-orange-500 text-orange-500 rounded-full py-1 px-3 flex items-center justify-center ${
-                searchParams.season === season.id
-                  ? "bg-orange-500 text-white"
-                  : ""
-              }`}
-              onClick={() => handleSearchByField("season", season.id)}
-            >
-              {season.name === "ฤดูร้อน" && <FaSun className="mr-2" />}
-              {season.name === "ฤดูฝน" && <FaCloudRain className="mr-2" />}
-              {season.name === "ฤดูหนาว" && <FaSnowflake className="mr-2" />}
-              {season.name === "ตลอดทั้งปี" && <FaGlobe className="mr-2" />}
-              {season.name}
-            </button>
-          ))}
-        </div>
-      )}
+{isSeasonDropdownOpen && (
+  <div className="absolute z-10 w-full bg-white border border-orange-500 rounded-md shadow-lg mt-1">
+    {filters.seasons.map((season) => (
+      <button
+        key={season.id}
+        className={`flex items-center w-full text-left py-2 px-4 text-sm space-x-2 ${
+          searchParams.season === season.id
+            ? "bg-orange-500 text-white"
+            : "text-orange-500"
+        } hover:bg-orange-100`}
+        onClick={() => handleSearchByField("season", season.id)}
+      >
+        {/* Icon ข้างหน้าข้อความ */}
+        {season.name === "ฤดูร้อน" && <FaSun />}
+        {season.name === "ฤดูฝน" && <FaCloudRain />}
+        {season.name === "ฤดูหนาว" && <FaSnowflake />}
+        {season.name === "ตลอดทั้งปี" && <FaGlobe />}
+
+        {/* ข้อความของฤดูกาล */}
+        <span>{season.name}</span>
+      </button>
+    ))}
+  </div>
+)}
+
 {isDistrictDropdownOpen && (
             <div className="absolute z-10 w-full bg-white border border-orange-500 rounded-md shadow-lg mt-1">
               {filters.districts.map((district) => (
@@ -436,16 +442,16 @@ const GeocodingSearchPage = () => {
         )}
 
            {/* หากไม่มีผลลัพธ์การค้นหา จะแสดงข้อความแจ้งเตือน */}
-  {searchResults.length === 0 && nearbyPlaces.length === 0 && !loading && (
-    <div className="text-center mt-8">
-      <p className="text-xl font-semibold text-orange-500">
-        ไม่พบสถานที่! ที่ตรงกับคำค้นหาของคุณ โปรดลองค้นหาใหม่อีกครั้ง
-      </p>
-      <p className="text-md text-gray-500">
-        ลองค้นหาหรือเลือกตัวกรองใหม่เพื่อค้นหาสถานที่อื่น ๆ
-      </p>
-    </div>
-  )}
+           {hasSearched && searchResults.length === 0 && nearbyPlaces.length === 0 && !loading && (
+          <div className="text-center mt-8">
+            <p className="text-xl font-semibold text-orange-500">
+              ไม่พบสถานที่! ที่ตรงกับคำค้นหาของคุณ โปรดลองค้นหาใหม่อีกครั้ง
+            </p>
+            <p className="text-md text-gray-500">
+              ลองค้นหาหรือเลือกตัวกรองใหม่เพื่อค้นหาสถานที่อื่น ๆ
+            </p>
+          </div>
+        )}
         {/* Display search results using Slider */}
         {searchResults.length > 0 && nearbyPlaces.length === 0 && (
   <div className="mb-8">
