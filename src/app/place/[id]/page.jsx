@@ -61,6 +61,21 @@ const responsive = {
   },
 };
 
+const highlightNoteInDescription = (description) => {
+  const noteText = "หมายเหตุ: รูปภาพจากแหล่งภายนอก";
+  if (description.includes(noteText)) {
+    const parts = description.split(noteText);
+    return (
+      <>
+        {parts[0]}
+        <span className="font-bold text-red-500">{noteText}</span>
+        {parts[1]}
+      </>
+    );
+  }
+  return description;
+};
+
 const getSeasonIcon = (seasonName) => {
   switch (seasonName) {
     case "ฤดูร้อน":
@@ -329,11 +344,12 @@ const PlaceNearbyPage = ({ params }) => {
             )}
           </div>
 
-          {/* Description */}
-          <div className="flex items-center text-gray-600">
-            <FaInfoCircle className="text-orange-500 mr-2 text-3xl" />
-            <span>{tourismData.description}</span>
-          </div>
+        {/* Description */}
+<div className="flex items-center text-gray-600">
+  <FaInfoCircle className="text-orange-500 mr-2 text-3xl" />
+  <span>{highlightNoteInDescription(tourismData.description)}</span>
+</div>
+
 
           {/* Location */}
           <div className="flex items-center text-gray-600">
