@@ -251,10 +251,9 @@ const MapNearbyPlaces = ({ center, places, mainPlace, isLoaded }) => {
   </InfoWindow>
 )}
 
-        {/* User Location Circle */}
         <Circle
           center={center}
-          radius={1000}
+          radius={5000}
           options={{
             fillColor: "#FF8A65",
             fillOpacity: 0.1,

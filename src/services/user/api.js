@@ -538,7 +538,7 @@ export const fetchPlacesNearbyByCoordinates = async (
 export const fetchPlacesNearbyByCoordinatesRealTime = async (
   latitude,
   longitude,
-  radius = 20000
+  radius = 5000
 ) => {
   try {
     const response = await api.get(`/places/nearby-by-coordinates`, {

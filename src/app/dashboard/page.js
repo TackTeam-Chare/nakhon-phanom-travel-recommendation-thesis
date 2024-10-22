@@ -42,25 +42,25 @@ const DashboardPage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
   <div className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition-shadow duration-300 flex flex-col justify-center items-center text-center">
-    <h2 className="text-xl font-semibold text-gray-700">สถานที่ท่องเที่ยวทั้งหมด</h2>
+    <h2 className="text-xl font-semibold text-gray-700">สถานที่ท่องเที่ยว</h2>
     <p className="text-3xl font-bold text-green-500 mt-4">{entityCounts.total_tourist_spots}</p>
     <p className="text-gray-500 mt-2">ในระบบ</p>
   </div>
 
   <div className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition-shadow duration-300 flex flex-col justify-center items-center text-center">
-    <h2 className="text-xl font-semibold text-gray-700">ที่พักทั้งหมด</h2>
+    <h2 className="text-xl font-semibold text-gray-700">ที่พัก</h2>
     <p className="text-3xl font-bold text-orange-500 mt-4">{entityCounts.total_accommodations}</p>
     <p className="text-gray-500 mt-2">ในระบบ</p>
   </div>
 
   <div className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition-shadow duration-300 flex flex-col justify-center items-center text-center">
-    <h2 className="text-xl font-semibold text-gray-700">ร้านอาหารทั้งหมด</h2>
+    <h2 className="text-xl font-semibold text-gray-700">ร้านอาหาร</h2>
     <p className="text-3xl font-bold text-red-500 mt-4">{entityCounts.total_restaurants}</p>
     <p className="text-gray-500 mt-2">ในระบบ</p>
   </div>
 
   <div className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition-shadow duration-300 flex flex-col justify-center items-center text-center">
-    <h2 className="text-xl font-semibold text-gray-700">ร้านค้าของฝากทั้งหมด</h2>
+    <h2 className="text-xl font-semibold text-gray-700">ร้านค้าของฝาก</h2>
     <p className="text-3xl font-bold text-purple-500 mt-4">{entityCounts.total_souvenir_shops}</p>
     <p className="text-gray-500 mt-2">ในระบบ</p>
   </div>

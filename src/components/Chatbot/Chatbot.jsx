@@ -139,7 +139,7 @@ const Chatbot = () => {
   <div className="flex justify-between items-center">
     <div className="flex items-center space-x-2">
       <AiOutlineRobot className="text-2xl" />
-      <h3 className="font-bold">แชทบอทเพื่อให้ข้อมูล</h3>
+      <h3 className="font-bold">แชตบอทเพื่อให้ข้อมูล</h3>
     </div>
     <button onClick={() => setIsChatbotOpen(false)} aria-label="Close chatbot">
       <FiChevronDown className="text-white text-2xl" />
@@ -225,7 +225,7 @@ const Chatbot = () => {
         </div>
       ) : (
         <button
-          data-tip="เปิดแชทบอท"
+          data-tip="เปิดแชตบอท"
           onClick={() => setIsChatbotOpen(true)}
           className="bg-orange-600 p-3 rounded-full shadow-lg flex items-center justify-center fixed bottom-5 right-5 md:bottom-5 md:right-5 z-[10000]"
           aria-label="Open chatbot"

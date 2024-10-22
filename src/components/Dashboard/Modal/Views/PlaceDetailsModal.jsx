@@ -556,6 +556,10 @@ const PlaceDetailsModal = ({ id, isOpen, onClose, onSuccess }) => {
                   width={300}
                   height={300}
                   className="object-cover rounded-lg"
+                  onClick={() => {
+                    setSelectedExistingImage(image.image_url);
+                    setExistingImagesModalOpen(true);
+                  }}
                 />
               </div>
             ))}
