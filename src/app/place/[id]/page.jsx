@@ -81,15 +81,16 @@ const getSeasonIcon = (seasonName) => {
     case "ฤดูร้อน":
       return <FaSun className="text-orange-500 mr-2" />;
     case "ฤดูฝน":
-      return <FaCloudRain className="text-blue-500 mr-2" />;
+      return <FaCloudRain className="text-orange-500 mr-2" />;
     case "ฤดูหนาว":
-      return <FaSnowflake className="text-teal-500 mr-2" />;
+      return <FaSnowflake className="text-orange-500 mr-2" />;
     case "ตลอดทั้งปี":
-      return <FaGlobe className="text-green-500 mr-2" />;
+      return <FaGlobe className="text-orange-500 mr-2" />;
     default:
-      return <FaLayerGroup className="text-gray-500 mr-2" />;
+      return <FaLayerGroup className="text-orange-500 mr-2" />;
   }
 };
+
 
 const getSeasonColor = (seasonName) => {
   switch (seasonName) {
@@ -277,15 +278,16 @@ const PlaceNearbyPage = ({ params }) => {
   const isValidCoordinates =
     !isNaN(Number(tourismData.latitude)) && !isNaN(Number(tourismData.longitude));
 
-  const categoryIcons = {
-    "สถานที่ท่องเที่ยว": { icon: <FaLandmark />, color: "text-blue-500" },
-    "ที่พัก": { icon: <FaHome />, color: "text-purple-500" },
-    "ร้านอาหาร": { icon: <FaUtensils />, color: "text-red-500" },
-    "ร้านค้าของฝาก": { icon: <FaStore />, color: "text-green-500" },
-  };
-
-  const getCategoryDetails = (categoryName) =>
-    categoryIcons[categoryName] || { icon: <FaLayerGroup />, color: "text-gray-500" };
+    const categoryIcons = {
+      "สถานที่ท่องเที่ยว": { icon: <FaLandmark className="text-orange-500" />, color: "text-orange-500" },
+      "ที่พัก": { icon: <FaHome className="text-orange-500" />, color: "text-orange-500" },
+      "ร้านอาหาร": { icon: <FaUtensils className="text-orange-500" />, color: "text-orange-500" },
+      "ร้านค้าของฝาก": { icon: <FaStore className="text-orange-500" />, color: "text-orange-500" },
+    };
+    
+    const getCategoryDetails = (categoryName) =>
+      categoryIcons[categoryName] || { icon: <FaLayerGroup className="text-orange-500" />, color: "text-orange-500" };
+    
 
   return (
     <div className="container mx-auto mt-12 mb-12 px-4">
@@ -325,19 +327,19 @@ const PlaceNearbyPage = ({ params }) => {
           <div className="flex flex-col space-y-2">
             <div className="flex items-center text-lg">
               <FaMapMarkerAlt className="text-orange-500 mr-2 text-2xl" />
-              <strong className="text-gray-700">{tourismData.district_name}</strong>
+              <strong className="text-orange-500">{tourismData.district_name}</strong>
             </div>
             <div className={`flex items-center text-lg ${getCategoryDetails(tourismData.category_name).color}`}>
               {getCategoryDetails(tourismData.category_name).icon}
-              <strong className={`ml-2 ${getCategoryDetails(tourismData.category_name).color}`}>
+              <strong className="ml-2 text-orange-500">
                 {tourismData.category_name}
               </strong>
             </div>
             {/* Check if it's a tourist spot */}
             {tourismData.category_name === "สถานที่ท่องเที่ยว" && (
-              <div className={`flex items-center text-lg ${getSeasonColor(tourismData.season_name)}`}>
+              <div className={`flex items-center  text-lg ${getSeasonColor(tourismData.season_name)}`}>
                 {getSeasonIcon(tourismData.season_name)}
-                <strong className={`ml-2 ${getSeasonColor(tourismData.season_name)}`}>
+                <strong className="text-orange-500">
                   {tourismData.season_name}
                 </strong>
               </div>
@@ -518,15 +520,17 @@ const PlaceNearbyPage = ({ params }) => {
                     <h3 className="text-lg font-semibold mb-2 flex items-center">
                       {entity.name}
                     </h3>
-                    <p className={`font-bold flex items-center mb-2 ${getCategoryDetails(entity.category_name).color}`}>
+                    {/* <p className={`font-bold flex items-center mb-2 ${getCategoryDetails(entity.category_name).color}`}>
                       {getCategoryDetails(entity.category_name).icon}
                       <span className="ml-2">{entity.category_name}</span>
+                    </p> */}
+                    <p className="text-gray-600 line-clamp-2">
+                      {entity.description}
                     </p>
-
-                    <p className="text-orange-500 font-bold flex items-center">
+                    {/* <p className="text-orange-500 font-bold flex items-center">
                       <FaRoute className="mr-2" />
                       ระยะห่าง {convertMetersToKilometers(entity.distance)} กิโลเมตร
-                    </p>
+                    </p> */}
                   </div>
 
                   {/* Status Section (Open/Closed) */}
