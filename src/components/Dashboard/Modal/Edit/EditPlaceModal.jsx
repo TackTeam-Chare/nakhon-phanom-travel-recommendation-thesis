@@ -2,7 +2,6 @@ import React, { useEffect, useState, Fragment } from "react"
 import Image from "next/image"
 import { useForm, useFieldArray,Controller  } from "react-hook-form"
 import { Dialog, Transition } from "@headlessui/react"
-import { useRouter } from "next/navigation"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import {
@@ -19,7 +18,6 @@ import {
   faPlus,
   faMapMarkerAlt,
   faTags,
-  faSnowflake,
   faGlobe,
   faClock,
   faChevronDown,
@@ -31,7 +29,6 @@ import Select from 'react-select';
 const MySwal = withReactContent(Swal)
 
 const EditPlaceModal = ({ id, isOpen, onClose, onSuccess }) => {
-  const router = useRouter()
   const [error, setError] = useState("")
   const [existingImagesModalOpen, setExistingImagesModalOpen] = useState(false)
   const [uploadedImagesModalOpen, setUploadedImagesModalOpen] = useState(false)
@@ -144,6 +141,17 @@ const EditPlaceModal = ({ id, isOpen, onClose, onSuccess }) => {
     }
   }, [id, setValue]);
 
+  useEffect(() => {
+    if (categories.length > 0) {
+      setValue("category_name", watch("category_name") || "");
+    }
+  
+    if (districts.length > 0) {
+      setValue("district_name", watch("district_name") || "");
+    }
+  }, [categories, districts, setValue, watch]);
+
+  
   const handleFileChange = event => {
     const files = Array.from(event.target.files || []);
     const allowedExtensions = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
@@ -607,20 +615,18 @@ const EditPlaceModal = ({ id, isOpen, onClose, onSuccess }) => {
 </div>
 
 
-               {/* Operating Hours Section */}
-{fields.length > 0 && (
-  <div className="relative z-0 w-full mb-6 group">
-    <label
-      htmlFor="operating_hours"
-      className="block text-sm font-medium text-gray-700 mb-2"
-    >
-      เวลาทำการ
-    </label>
-    {fields.map((item, index) => (
-      <div
-        key={item.id}
-        className="grid grid-cols-4 gap-4 mb-6 items-center"
-      >
+{/* Operating Hours Section */}
+<div className="relative z-0 w-full mb-6 group">
+  <label
+    htmlFor="operating_hours"
+    className="block text-sm font-medium text-gray-700 mb-2"
+  >
+    เวลาทำการ
+  </label>
+
+  {fields.length > 0 ? (
+    fields.map((item, index) => (
+      <div key={item.id} className="grid grid-cols-4 gap-4 mb-6 items-center">
         {/* Container for day_of_week select and chevron icon */}
         <div className="relative">
           <select
@@ -692,23 +698,29 @@ const EditPlaceModal = ({ id, isOpen, onClose, onSuccess }) => {
           <FontAwesomeIcon icon={faTrash} />
         </button>
       </div>
-    ))}
-    <button
-      type="button"
-      onClick={() =>
-        append({
-          day_of_week: "",
-          opening_time: "",
-          closing_time: ""
-        })
-      }
-      className="col-span-3 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 flex items-center justify-center"
-    >
-      <FontAwesomeIcon icon={faPlus} className="mr-2" />
-      เพิ่มเวลาทำการ
-    </button>
-  </div>
-)}
+    ))
+  ) : (
+    <p className="text-sm text-gray-500">
+      ไม่มีเวลาทำการของสถานที่
+    </p>
+  )}
+
+  {/* Add Operating Hours Button */}
+  <button
+    type="button"
+    onClick={() =>
+      append({
+        day_of_week: "",
+        opening_time: "",
+        closing_time: "",
+      })
+    }
+    className="col-span-3 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 flex items-center justify-center mt-4"
+  >
+    <FontAwesomeIcon icon={faPlus} className="mr-2" />
+    เพิ่มเวลาทำการ
+  </button>
+</div>
 
 
                     <div className="relative z-0 w-full mb-6 group">

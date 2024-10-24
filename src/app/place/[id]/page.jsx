@@ -327,11 +327,11 @@ const PlaceNearbyPage = ({ params }) => {
           <div className="flex flex-col space-y-2">
             <div className="flex items-center text-lg">
               <FaMapMarkerAlt className="text-orange-500 mr-2 text-2xl" />
-              <strong className="text-orange-500">{tourismData.district_name}</strong>
+              <strong className="text-gray-600">{tourismData.district_name}</strong>
             </div>
             <div className={`flex items-center text-lg ${getCategoryDetails(tourismData.category_name).color}`}>
               {getCategoryDetails(tourismData.category_name).icon}
-              <strong className="ml-2 text-orange-500">
+              <strong className="ml-2 text-gray-600">
                 {tourismData.category_name}
               </strong>
             </div>
@@ -339,7 +339,7 @@ const PlaceNearbyPage = ({ params }) => {
             {tourismData.category_name === "สถานที่ท่องเที่ยว" && (
               <div className={`flex items-center  text-lg ${getSeasonColor(tourismData.season_name)}`}>
                 {getSeasonIcon(tourismData.season_name)}
-                <strong className="text-orange-500">
+                <strong className="text-gray-600">
                   {tourismData.season_name}
                 </strong>
               </div>
